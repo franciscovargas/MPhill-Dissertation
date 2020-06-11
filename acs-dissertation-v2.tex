@@ -54,6 +54,17 @@
 \theoremstyle{definition}
 \newtheorem{definition}{Definition}[section]
 
+\makeatletter
+\def\mathcolor#1#{\@mathcolor{#1}}
+\def\@mathcolor#1#2#3{%
+  \protect\leavevmode
+  \begingroup
+    \color#1{#2}#3%
+  \endgroup
+}
+\makeatother
+
+
 %% START OF DOCUMENT
 \begin{document}
 
@@ -124,7 +135,7 @@ A probability space is defined as a 3-element tuple $\probspace$, where:
     \item The $\sigalg$ $\mathcal{F} \subseteq 2^{\Omega}$ which represents the set of events we may want to consider. Continuing the coin toss example, we may have $\Omega=\{\emptyset, \text{Head}, \text{Tails},\{\text{Head}, \text{Tails}\}\}$.
     \item A probability measure $\P:\calF \rightarrow [0,1]$, which is a function which assigns a number in $[0,1]$ to any event (set) in the $\sigalg$ $\calF$. The function $\P$ has the following requirements:
     \begin{itemize}
-        \item $\sigma$-additive (also called countable additive), which means that if  $\bigcup_{i=0}^\infty  A_i\in \calF$ then $\P\left(\bigcup_{i=0}^\infty A_i\right) =\sum_{i=0}^\infty \P(A_i) $.
+        \item $\sigma$-additive (also called countable additive), which means that if  $\bigcup_{i=0}^\infty  A_i\in \calF$ and $A_j \cap A_j = \emptyset, \; i \neq j$then $\P\left(\bigcup_{i=0}^\infty A_i\right) =\sum_{i=0}^\infty \P(A_i) $.
         \item $\P(\Omega)=1$, which we can read as the sample space summing up to (integrating) to 1.  Without this condition $\P$ would be a regular measure ($\sigma$-additive).
     \end{itemize}
 \end{itemize}
@@ -138,6 +149,8 @@ A $\sigalg$ $\calF \subseteq 2^{\Omega}$ is a collection of sets satisfying the 
     \item $\calF$ is closed under countable union:  if $A_i \in \calF$ then $\bigcup_i A_i \in \calF$.
 \end{itemize}
 \end{definition}
+
+Note we use the notation $\calB(\R^d)$ for the Borel Sigma Algebra of of $\R^d$ which we can think of this as the canonical sigma algebra for $\R^d$, it is the most compact representation of all measurable sets in $\R^d$. This notation can also be extended for subsets of $\R^d$ and in more general any topological space,.
 
 \begin{definition}\label{def:random_variable}
 For a probability space $\probspace$, real-valued random variable (vector) $\rvx(\omega)$ is a function $\rvx :\Omega \rightarrow \R^d$, with the requirement that $\rvx(\omega)$ is a measurable function, meaning that the pre-image of $\rvx(\omega)$  lies within the $\sigalg$ $\calF$:
@@ -448,7 +461,7 @@ As originally posed by Schrödinger in \citep{schrodinger1931uber, schrodinger19
     \hat{\Q}= \argmin_{\Q \in \calD(\pi_0, \pi_1)} \KL\left(\Q \big|\big| \W\right),
 \end{align}
 where:
-\begin{align} \label{eq:schrobirdge}
+\begin{align} \label{eq:kl_sho}
     \ \KL\left(\Q \big|\big| \W\right) = \E_{\Q}\left[\ln \frac{d\Q}{d\W}\right].
 \end{align}
 To the eye of a probabilistic modeller this objective may be initially quite confusing.  Mainly because it is minimising the KL divergence between a "posterior" distribution $\Q$ and a "prior" distribution $\W$ which does not match the usual variational inference objectives that arise from minimising an Evidence Lower Bound. In order to give a sound interpretation to the objective in Equation \ref{eq:schrobirdge} we will look into the Schrödinger Bridge's formulation as a rare event and additionally comment on the maximum entropy like nature of the objective.
@@ -484,12 +497,12 @@ The two results presented below are from \cite{pavon1991free}. For Pedagogical r
 
 We can represent $\Q$ as the distribution which evolves according to the solution of an SDE of the form:
 \begin{align*}
-    d\rvx(t) = \rvb^{+}_t dt + \sqrt{\gamma} \rvw(t)
+    d\rvx(t) = \rvb^{+}(t) dt + \sqrt{\gamma} \rvw(t)
 \end{align*}
 \begin{lemma}\citep{pavon1991free}
     The KL Divegence between $\Q$ and $\W_{\gamma}$ can be decomposed as:
 \begin{align}\label{eq:free_energy_1}
-     \KL\left(\Q \big|\big| \W^{\gamma}\right) = \KL(\pi^{\Q}_0 || \pi_0) + \E_\Q\left[\int_0^1 \frac{1}{2\gamma}\big|\big|\rvb^{+}_t \big|\big|^2 dt\right]
+     \KL\left(\Q \big|\big| \W^{\gamma}\right) = \KL(\pi^{\Q}_0 || \pi_0) + \E_\Q\left[\int_0^1 \frac{1}{2\gamma}\big|\big|\rvb^{+}(t) \big|\big|^2 dt\right]
 \end{align}
 \end{lemma}
 \begin{proof}
@@ -499,25 +512,25 @@ Via the Disintegration theorem and Theorem \ref{lemma:rn_des} we can condition o
 \end{align*}
 where the disintegration $\Q_{(0,1]}\left(\cdot | \rvx(0) = \vx \right)$ is a solution $d\rvx(t) = \rvb_t dt + \gamma \rvw(t), \; \rvx(0) \sim \pi_0^\Q$ then by Theorem \ref{thrm:ito_ratio} we can express the RN-derivative in terms of  drift $\vb(\rvx(t), t)$:
 \begin{align*}
-    \frac{d\Q}{d\W} = \frac{\pi_0^\Q}{\pi_0}\exp\left(\int_0^1\frac{1}{2\gamma} \big|\big|\rvb^+_t\big|\big|^2 dt\right),
+    \frac{d\Q}{d\W} = \frac{\pi_0^\Q}{\pi_0}\exp\left(\int_0^1\frac{1}{2\gamma} \big|\big|\rvb^+(t)\big|\big|^2 dt\right),
 \end{align*}
 Now substituting the above back into the KL divergence completes the result for Theorem \ref{eq:free_energy_1}.
 \end{proof}
 Now we can equivalently express $\Q$ as the solution to a reverse time diffusion :
 \begin{align}
-    d\rvx(t) = \rvb^{-}_tdt + \sqrt{\gamma} \rvw^{-}(t), 
+    d\rvx(t) = \rvb^{-}(t) dt + \sqrt{\gamma} \rvw^{-}(t), 
 \end{align}
 where $\rvx(t)$ is adapted to the reverse filtration $(\calF^{-}_i)_{i\in T}$ that is $\calF^{-}_t \subseteq \calF^{-}_s \; s \leq t $ \footnote{As mentioned before this just means $\rvx(t)$  is only aware about the future}.  Where:
 \begin{align}\label{eq:nelson}
-    {\rvb^{+}_t - \rvb^{-}_t} = \nabla_{\vx} p(\rvx(t), t).
+    {\rvb^{+}(t) - \rvb^{-}(t)} =\gamma \nabla_{\vx} p(\rvx(t), t).
 \end{align}
 Where $p(\rvx(t), t)$ is the solution to the FPK equation. The above is typically known as Nelson's duality equation and it relates the forwards drift to the dual backwards drift \citep{nelson1967dynamical}. 
 
 Using reverse diffusion \cite{pavon1991free} decompose the KL divergence as done with the forward diffusion:
-\begin{lemma}\citep{pavon1991free}
+\begin{lemma}\label{lemma:control}\citep{pavon1991free}
     The KL Divegence between $\Q$ and $\W_{\gamma}$ can be decomposed as:
-\begin{align}\label{eq:free_energy_1}
-     \KL\left(\Q \big|\big| \W^{\gamma}\right) = \KL(\pi^{\Q}_1 || \pi_1) + \E_\Q\left[\int_0^1\frac{1}{2\gamma} \big|\big|\rvb^{-}_t\big|\big|^2 dt\right]
+\begin{align}\label{eq:free_energy_2}
+     \KL\left(\Q \big|\big| \W^{\gamma}\right) = \KL(\pi^{\Q}_1 || \pi_1) + \E_\Q\left[\int_0^1\frac{1}{2\gamma} \big|\big|\rvb^{-}(t)\big|\big|^2 dt\right]
 \end{align}
 \end{lemma}
 Then using the drift based formulations defined above \cite{pavon1991free} derive alternate (yet equivalent) objectives for the Schrödinger Bridge objective:
@@ -525,13 +538,13 @@ Then using the drift based formulations defined above \cite{pavon1991free} deriv
 \begin{itemize}
 \item Forward Objective: 
 \begin{align} \label{eq:controlled_bridge_forward}
-    \min_{\Q \in \calD(\pi_0, \pi_1)} \KL\big(\Q \big|\big| \W^{\gamma}\big)& = \min_{\rvb^{+} \in \calB }  \E_\Q\left[\int_0^1 \frac{1}{2\gamma}\big|\big|\rvb^{+}_t \big|\big|^2 dt\right] \nonumber \\
-    s.t.\;\;\; d\rvx(t) = \rvb^{-}_t &dt + \sqrt{\gamma} \rvw(t), \;\; \rvx(0) \sim \pi_0, \;\; \rvx(1) \sim \pi_1
+    \min_{\Q \in \calD(\pi_0, \pi_1)} \KL\big(\Q \big|\big| \W^{\gamma}\big)& = \min_{\rvb^{+} \in \calB }  \E_\Q\left[\int_0^1 \frac{1}{2\gamma}\big|\big|\rvb^{+}(t) \big|\big|^2 dt\right] \nonumber \\
+    s.t.\;\;\; d\rvx(t) = \rvb^{-}(t) &dt + \sqrt{\gamma} \rvw(t), \;\; \rvx(0) \sim \pi_0, \;\; \rvx(1) \sim \pi_1
 \end{align}
 \item Backward Objective
 \begin{align} \label{eq:controlled_bridge_backward}
-    \min_{\Q \in \calD(\pi_0, \pi_1)} \KL\big(\Q \big|\big| \W^{\gamma}\big)& = \min_{\rvb^{-} \in \calB }  \E_\Q\left[\int_0^1 \frac{1}{2\gamma}\big|\big|\rvb^{-}_t \big|\big|^2 dt\right] \nonumber \\
-    s.t.\;\;\; d\rvx(t) = \rvb^{+}_t &dt + \sqrt{\gamma} \rvw^{-}(t), \;\; \rvx(1) \sim \pi_1 , \;\; \rvx(0) \sim \pi_0
+    \min_{\Q \in \calD(\pi_0, \pi_1)} \KL\big(\Q \big|\big| \W^{\gamma}\big)& = \min_{\rvb^{-} \in \calB }  \E_\Q\left[\int_0^1 \frac{1}{2\gamma}\big|\big|\rvb^{-}(t) \big|\big|^2 dt\right] \nonumber \\
+    s.t.\;\;\; d\rvx(t) = \rvb^{+}(t) &dt + \sqrt{\gamma} \rvw^{-}(t), \;\; \rvx(1) \sim \pi_1 , \;\; \rvx(0) \sim \pi_0
 \end{align}.
 \end{itemize}
 Notice that the conditioning carried out by the Disintegration theorem allows us to remove one of the boundary constraints and integrate it as an initial value problem to the objective. This result is what inspired us the most in the design of an iterative algorithm for solving finding the Schrödinger Bridge numerically. 
@@ -636,55 +649,55 @@ where:
     \phi_t(\vz) &= \int \phi_1(\vy(1) ) p^{\W^{\gamma}}(\vy(1)|\vz(t)) d\vy(1) \nonumber\\ 
     \hphi_t(\vz) &= \int \hphi_0(\vx(0)) p^{\W^{\gamma}}(\vz(t)|\vx(0)) d\vx(0). \nonumber
 \end{align}
-Note that by Theorem X of \cite{pavon1991free} the optimal control signal/drift $\rvb_t^+$ can be recoverd from the solution of the Schrödinger system:
+Note that by Proposition 3.3 of \cite{pavon1991free} the optimal control signal/drift $\rvb_t^+$ can be recoverd from the solution of the Schrödinger system:
 \begin{align} \label{eq:drifr_potential}
     \rvb_t^{+} = \gamma \nabla \ln \phi_t(\vx(t) )
 \end{align}
-\subsection{Half Bridges}
+\section{Half Bridges}
 
 The half bridge problem as presented in \cite{pavon2018data} is a simpler variant of the full Schrödinger bridge with only one boundary constraint. 
 
 \begin{definition}
 The forward half bridge is given by:
     \begin{align}
-        {\P}^{*} = \inf_{\P  \in \calD(\pi_0, \cdot)} \KL (\P || \W) 
+        {\Q}^{*} = \inf_{\Q  \in \calD(\pi_0, \cdot)} \KL (\Q || \W) 
     \end{align}
 \end{definition}
 \begin{theorem}\label{thrm:half_bridge_forward}
     The forward half bridge admits the following solution: 
 \begin{align}
-    {\P}^{*}\left(A_0 \times A_{(0,1]}\right) =  \int_{A_0\times A_{(0,1]}} \frac{d \pi_0}{ dp_0^\W} d\W
+    {\Q}^{*}\left(A_0 \times A_{(0,1]}\right) =  \int_{A_0\times A_{(0,1]}} \frac{d \pi_0}{ dp_0^\W} d\W
 \end{align}
 \end{theorem}
 \begin{proof}
 Via the disintegration theorem we have the following decomposition of KL
 \begin{align}
-    \KL(\P || \W) = \KL(p|| \pi_0 )  + \E_p\left[\KL(\P(\cdot| \vx) || \W(\cdot | \vx))\right] \nonumber
+    \KL(\Q || \W) = \KL(p|| \pi_0 )  + \E_p\left[\KL(\Q(\cdot| \vx) || \W(\cdot | \vx))\right] \nonumber
 \end{align}
 Thus via matching the terms accordingly we can construct $\hat{P}$ to set the second term to $0$ and match the constraints:
 \begin{align}
-    {P}^{*}\left(A_0 \times A_{(0,1]}\right) = \int_{A_0 \times A_{(0,1]}}\!\!\!\!\!\!\!\!\!\!\!\!\W(A_{(0,1]} | \vx) d\pi_0(\vx)
+    {\Q}^{*}\left(A_0 \times A_{(0,1]}\right) = \int_{A_0 \times A_{(0,1]}}\!\!\!\!\!\!\!\!\!\!\!\!\W(A_{(0,1]} | \vx) d\pi_0(\vx)
 \end{align}
 \begin{align}
-    {P}^{*} &= \int_{A_0}  \frac{d\pi_0}{dp_0^\W}(\vx)   \W(\cdot | \vx) d p^\W(\vx) \nonumber \\
+    {\Q}^{*} &= \int_{A_0}  \frac{d\pi_0}{dp_0^\W}(\vx)   \W(\cdot | \vx) d p^\W(\vx) \nonumber \\
     &= \int_{A_0 \times A_{(0,1]} }  \frac{d\pi_0}{dp_0^\W}(\vx)  d \W
 \end{align}
 \end{proof}
 \begin{definition}
 The backwards half bridge is given by:
     \begin{align}
-        {\Q}^{*} = \inf_{\Q  \in \calD(\cdot, \pi_1)} \KL (\Q || \W) 
+        {\P}^{*} = \inf_{\Q  \in \calD(\cdot, \pi_1)} \KL (\P || \W) 
     \end{align}
 \end{definition}
 \begin{theorem}\label{thrm:half_bridge_backward}
      The backward half bridge admits the following solution: 
 \begin{align}
-    {\Q}^{*}\left( A_{[0,1)} \times A_1\right) =  \int_{ A_{[0,1)} \times A_1}  \frac{d \pi_1}{ d p_0^\W} d\W
+    {\P}^{*}\left( A_{[0,1)} \times A_1\right) =  \int_{ A_{[0,1)} \times A_1}  \frac{d \pi_1}{ d p_1^\W} d\W
 \end{align}
 
 \end{theorem}
 \begin{proof}
-Same as Theorem \ref{thrm:half_bridge}.
+Same as Theorem \ref{thrm:half_bridge_forward}.
 \end{proof}
 
 
@@ -709,14 +722,14 @@ See \cite{pavon2018data} for the solution of the backward half bridge. Proof is 
 \begin{definition}
 The static backward bridge is given by the following objective
  \begin{align}\label{eq:static_bridge_backward}
-        \inf_{q(\vx,\vy)} \KL  &(q(\vx,\vy) || p^{\W^{\gamma}}(\vx,\vy)) \nonumber \\
-        s.t. \;\;\;& \pi_1(\vy) = \int q(\vx,\vy) d\vx, 
+        \inf_{p(\vx,\vy)} \KL  &(p(\vx,\vy) || p^{\W^{\gamma}}(\vx,\vy)) \nonumber \\
+        s.t. \;\;\;& \pi_1(\vy) = \int p(\vx,\vy) d\vx, 
 \end{align}
 \end{definition}
 \begin{theorem}\label{thrm:static_half_backward}
      The static backwards bridge admits the following solution:
      \begin{align}
-         q^{*}(\vx,\vy) = p^{\W_{\gamma}}(\vx, \vy)\frac{\pi_1(\vy)}{p^{\W_{\gamma}}(\vy)}
+         p^{*}(\vx,\vy) = p^{\W_{\gamma}}(\vx, \vy)\frac{\pi_1(\vy)}{p^{\W_{\gamma}}(\vy)}
      \end{align}
 \end{theorem}
 \begin{proof}
@@ -766,12 +779,12 @@ Fortet's algorithm starting at $t=1$ rather than $t=0$ is equivalent sequentiall
 \Input{$\pi_0(\vx), \pi_1(\vy), p(\vy | \vx)$}
 Initialise:\\
 $p^{\W^{\gamma}}_1(\vy)$ such that $p^{\W^{\gamma}}_1(\vy) <\!< \pi_1(\vy)$ \\
-$ p^{*}_{0}(\vx,\vy) =p^{\W^{\gamma}}(\vx,\vy)$\\
+$ q^{*}_{0}(\vx,\vy) =p^{\W^{\gamma}}(\vx,\vy)$\\
 $i=0$ \\
     \Repeat{convergence}{
       $i := i + 1$ \\
-     $ q^{*}_{i}(\vx,\vy) = \inf_{q(\vx,\vy) \in \calD( \cdot, \pi_1)} \KL  (q(\vx,\vy) || p^{*}_{i-1}(\vx,\vy))$\\ 
-     $ p{*}_{i}(\vx,\vy)  = \inf_{p(\vx,\vy) \in \calD(\pi_0, \cdot)} \KL  (p(\vx,\vy) ||  q^{*}_{i}(\vx,\vy))$
+     $ p^{*}_{i}(\vx,\vy) = \inf_{p(\vx,\vy) \in \calD( \cdot, \pi_1)} \KL  (p(\vx,\vy) || p^{*}_{i-1}(\vx,\vy))$\\ 
+     $ q{*}_{i}(\vx,\vy)  = \inf_{q(\vx,\vy) \in \calD(\pi_0, \cdot)} \KL  (q(\vx,\vy) ||  p^{*}_{i}(\vx,\vy))$
     }
 \Return{$q^{*}_{i}(\vx,\vy) , p{*}_{i}(\vx,\vy)$}
 \caption{Alternating half bridges (\cite{kullback1968probability} IPFP) }
@@ -782,32 +795,32 @@ Consider the first two iterations of Algorithm \ref{alg:ipfp_intro}:
 
 Using Theorem \ref{thrm:static_half_backward}  The solution to the Backward half bridge
  \begin{align}
-        \inf_{q(\vx,\vy) \in \calD( \cdot, \pi_1)} \KL  &(q(\vx,\vy) || p^{\W^{\gamma}}(\vx,\vy)) \nonumber 
+        \inf_{p(\vx,\vy) \in \calD( \cdot, \pi_1)} \KL  &(p(\vx,\vy) || p^{\W^{\gamma}}(\vx,\vy)) \nonumber 
 \end{align}
 is:
 \begin{align}
-    q_0^{*} (\vx, \vy) = p^{\W^{\gamma}}_0(\vx) p^{\W^{\gamma}}(\vy| \vx) \frac{\pi_1(\vy)}{p^{\W^{\gamma}}_1(\vy)}
+    p_0^{*} (\vx, \vy) = p^{\W^{\gamma}}_0(\vx) p^{\W^{\gamma}}(\vy| \vx) \frac{\pi_1(\vy)}{p^{\W^{\gamma}}_1(\vy)}
 \end{align}
 Now we setup the following forward bridge:
 \begin{align}
-    \arginf_{p_0(\vx, \vy)  \in \calD(\pi_0 , \cdot)}\KL (p_0(\vx, \vy) ||q_0^{*} (\vx, \vy))
+    \arginf_{q_0(\vx, \vy)  \in \calD(\pi_0 , \cdot)}\KL (q_0(\vx, \vy) ||p_0^{*} (\vx, \vy))
 \end{align}
 which following theorem \ref{eq:static_bridge_forward} can be solved by:
 \begingroup
 \allowdisplaybreaks
 \begin{align}
-    p_0^{*} (\vx, \vy) &= q_0^{*} (\vx, \vy) \frac{\pi_0(\vx)}{q_0^{*} (\vx)} \\
+    q_0^{*} (\vx, \vy) &= p_0^{*} (\vx, \vy) \frac{\pi_0(\vx)}{p_0^{*} (\vx)} \\
  &=  p^{\W^{\gamma}}(\vy| \vx) \frac{\pi_1(\vy)}{p^{\W^{\gamma}}_1(\vy)} \frac{\pi_0(\vx)}{\int   p^{\W^{\gamma}}(\vy| \vx) \frac{\pi_1(\vy)}{p^{\W^{\gamma}}_1(\vy)} d\vy}
 \end{align}
 \endgroup
 
-If we proceed on to the second iteration of this procedure the  following forward bridge step will yield:
+If we proceed on to the second iteration of this procedure the  following backward bridge step will yield:
 \begin{align}
-    q_1^{*} (\vx, \vy) =  p_0^{*} (\vx, \vy) \frac{p^{\W^{\gamma}}_1(\vy)}{ \underbrace{\displaystyle\int \frac{p^{\W^{\gamma}}(\vy| \vx)\pi_0(\vx)}{\int p^{\W^{\gamma}}(\vy| \vx) \frac{\pi_1(\vy)}{p^{\W^{\gamma}}_1(\vy)} d\vy}d\vx}_{{\phi}^{1}(\vy)}} 
+    p_1^{*} (\vx, \vy) =  q_0^{*} (\vx, \vy) \frac{p^{\W^{\gamma}}_1(\vy)}{ \underbrace{\displaystyle\int \frac{p^{\W^{\gamma}}(\vy| \vx)\pi_0(\vx)}{\int p^{\W^{\gamma}}(\vy| \vx) \frac{\pi_1(\vy)}{p^{\W^{\gamma}}_1(\vy)} d\vy}d\vx}_{{\phi}^{1}(\vy)}} 
 \end{align}
-and backward step:
+and forward step:
 \begin{align}
-    p_1{*} (\vx, \vy) &= q_1^{*} (\vx, \vy) \frac{\int    p^{\W^{\gamma}}(\vy| \vx) \frac{\pi_1(\vy)}{p^{\W^{\gamma}}_1(\vy)}  d \vy}{\int    p^{\W^{\gamma}}(\vy| \vx) \frac{\pi_1(\vy)}{{\phi}^{1}(\vy)}  d \vy}
+    q_1{*} (\vx, \vy) &= p_1^{*} (\vx, \vy) \frac{\int    p^{\W^{\gamma}}(\vy| \vx) \frac{\pi_1(\vy)}{p^{\W^{\gamma}}_1(\vy)}  d \vy}{\int    p^{\W^{\gamma}}(\vy| \vx) \frac{\pi_1(\vy)}{{\phi}^{1}(\vy)}  d \vy}
 \end{align}
 re-labeling: 
 \begin{align}
@@ -819,10 +832,10 @@ we can make an inductive argument on $i$ for the following inductive hypothesis 
   {\phi}^{i+1}(\vy) =  \displaystyle\int \frac{p^{\W^{\gamma}}(\vy| \vx)\pi_0(\vx)}{\int p^{\W^{\gamma}}(\vy| \vx) \frac{\pi_1(\vy)}{\phi^i(\vy)} d\vy}d\vx
  \end{align}
  \begin{align}
-  q_i^{*} (\vx, \vy) =   p_{i-1}^{*} (\vx, \vy) \frac{\phi^{i-1}(\vy)}{{\phi}^{i}(\vy)} 
+  p_i^{*} (\vx, \vy) =   q_{i-1}^{*} (\vx, \vy) \frac{\phi^{i-1}(\vy)}{{\phi}^{i}(\vy)} 
 \end{align}
  \begin{align}
-      p_i{*} (\vx, \vy) =     q_i^{*} (\vx, \vy) \frac{\hat{\phi}_0^{i-1}(\vx)}{\hat{\phi}_0^{i}(\vx)} 
+      q_i{*} (\vx, \vy) =     p_i^{*} (\vx, \vy) \frac{\hat{\phi}_0^{i-1}(\vx)}{\hat{\phi}_0^{i}(\vx)} 
 \end{align}
 We can see that the  recurrence in Equation \ref{eq:recurrence} is the exact same set of steps performed by Fortet's algorithm if we were to reverse the time order or start Fortet's algorithm at step 5 and consider the first steps  as an initialisation of $\phi_0(\vy)$.
 \end{proof}
@@ -837,17 +850,24 @@ What we call in this section Kullback's IPFP is in fact Algorithm \ref{alg:ipfp_
 
 \section{Generalised IPFP}
 
+\begin{figure}[t!]
+    \centering
+    \includegraphics[]{images/g-IPFP_ready.PNG}
+    \caption{Illustration of the iterative proportional fitting procedure, inspired and adapted from Figure 1 in \cite{bernton2019schr}. The red line represents valid Ito-process posteriors with the terminal constraint $\P \in \calD(\cdot, \pi_1)$ and the blue representes valid Ito-process posteriors with the initial constraint $\Q \in \calD( \pi_0, \cdot)$. The illustration show the alternation between forwards and backwards steps until the joint bridge solution is reached where both constraints are met. Note the sheet represents the space of all valid Ito-processes in the interval $[0,1]$. By valid we mean Ito-processes driven by the prior of the form $d\rvx(t) = \rvb_t + \gamma d\rvw(t)$}
+    \label{fig:info_pro}
+\end{figure}
+
 We call Generalised Iterative Proportional Fitting Procedure (g-IPFP) the extension of the continuous IPFP initialise proposed by Kullback to a more setting over path measures as presented in \cite{cramer2000probability, bernton2019schr}. The method is identical to the regular IPFP only that it re-states the problem in terms of probability measures:
 \begin{algorithm} \label{alg:gipfp}
 \SetKwInOut{Input}{input}
 \Input{$\pi_0(\vx), \pi_1(\vy), \W^{\gamma}$}
 Initialise:\\
-$\P^{*}_0 =\W^{\gamma}$\\
+$\Q^{*}_0 =\W^{\gamma}$\\
 $i=0$ \\
     \Repeat{convergence}{
       $i := i + 1$ \\
-     $ \Q_i^{*} = \inf_{\Q \in \calD( \cdot, \pi_1)} \KL  (\Q|| \P^{*}_{i-1})$\\ 
-     $ \P_i^{*}  = \inf_{\P \in \calD(\pi_0, \cdot)} \KL  (\P||  \Q^{*}_{i})$
+     $ \P_i^{*} = \inf_{\P \in \calD( \cdot, \pi_1)} \KL  (\P|| \Q^{*}_{i-1})$\\ 
+     $ \Q_i^{*}  = \inf_{\Q \in \calD(\pi_0, \cdot)} \KL  (\Q||  \P^{*}_{i})$
     }
 \Return{$\Q_i^{*}, \P_i^{*}$}
 \caption{g-IPFP \citep{cramer2000probability} }
@@ -855,10 +875,10 @@ $i=0$ \\
 
 Then by Theorems \ref{thrm:half_bridge_forward},\ref{thrm:half_bridge_backward} steps 6 and 7 of Algorithm \ref{alg:gipfp} can be expressed in closed form in terms of known quantities:
 \begin{align}
-    {\Q}^{*}_i\left( A_{[0,1)} \times A_1\right) =  \int_{ A_{[0,1)} \times A_1}  \frac{d \pi_1}{ d p_0^\W} d\P^{*}_{i-1}
+    {\P}^{*}_i\left( A_{[0,1)} \times A_1\right) =  \int_{ A_{[0,1)} \times A_1}  \frac{d \pi_1}{ d p_1^{\Q^{*}_{i-1}}} d\Q^{*}_{i-1}
 \end{align}
 \begin{align}
-    {\P}^{*}_i\left(A_0 \times A_{(0,1]}\right) =  \int_{A_0\times A_{(0,1]}} \frac{d \pi_0}{ dp_0^\W} d\Q^{*}_i
+    {\Q}^{*}_i\left(A_0 \times A_{(0,1]}\right) =  \int_{A_0\times A_{(0,1]}} \frac{d \pi_0}{ dp_0^{\P^{*}_i}} d\P^{*}_i
 \end{align}
 An important thing to note about the above solutions is that while these quantities are written in terms of components that we "know" such components are themselves not available in closed form and require some form of approximation scheme in order to be computed.
 
@@ -869,35 +889,70 @@ The proof from \cite{ruschendorf1995convergence} extends naturally to g-IPFP as 
     \centering
     \includegraphics[width=\linewidth]{images/IPFP_Geanology.png}
     \caption{Genealogy of IPFP based algorithms for solving the Schrödinger. ? Symbolises an area open for development. Diagram could be more fine-grained in terms of the approach i.e. whether it is the control formulation of the problem. }
-    \label{fig:my_label}
+    \label{fig:genealogy}
 \end{figure}
 
 %\chapter{Related Work} 
 \chapter{Related Problems}
-\section{Continuous Time Flows}
+\section{Continuous Time Stochastic Flows}
 
-Imagine as probabilistic modeller if you were given the problem of mapping from one distribution to another. One of the simplest ways of going about such task is to specify a generative process of the form:
+Imagine as probabilistic modeller you were given the problem of mapping from one distribution to another. One of the simplest ways of going about such task is to specify a generative process of the form:
 \begin{align*}
     \rvx &\sim \pi_0 \\
     \rvy &= \calT_{\theta}(\rvx)
 \end{align*}
-And then maximise the marginal likelihood for a set of observations $\{\vy_i \sim \pi_1 \}$:
+Where $\calT_{\theta}(\rvx)$  is a stochastic mapping (i.e. $\calT_{\theta}(\rvx) = f_{\theta}(\rvx) + \rvepsilon$). Then we maximise the marginal likelihood for a set of observations $\{\vy_i \sim \pi_1 \}$:
 \begin{align*}
     \prod_i p(\vy_i) = \prod_i \int p_{\theta}(\vy_i | \vx) d\pi_0(\vx)
 \end{align*}
 
+We can take a further step and model the relationship between the two distributions using an SDE:
+\begin{align*}
+    \rvx &\sim \pi_0 \\
+    d\rvx(t) &= \vb_{\theta}(\rvx(t), t) + \gamma d\rvw(t) \\
+    \rvy &= f_{\theta}(\rvx(1)),
+\end{align*}
+in other words $\rvy$ is generated by the solutions to an SDE with initial distribution $\pi_0$. We can also interpret the above as the latent object living in path space as we have no observations for the trajectories  but only observations of its initial and terminal distributions. Then similarly to the latent variable model example we aim to maximise an estimate of the marginal likelihood under this generative process. Variants of this approach are explored \citep{lahdesmakideep, tzen2019neural} as ways of having infinitely deep neural networks and Gaussian processes.
+
+It is clear that this approach is different to the Schrödinger Bridge, first the generative process requires to observe pairs $\vx_i, \vy_i$ in order to estimate the marginal likelihood. Secondly the Schrödinger bridge is based on a principle of maximum entropy whilst this generative approach is based on maximum likelihood (ML-II).  However they share the similarity of exploiting stochastic dynamics to relate source and target distributions, both have similar notions of prior and posterior dynamics in them.
+
 \section{Domain Adaptation and Generative Adversarial Networks (GANs)}
+
+In this section we will motivate and provide some formal arguments towards the following observation:
+\begin{observation}
+Each half-bridge objective in the IPFP algorithm is equivalent to a GAN like objective with a corresponding cycle-consistency term up to a custom regularisation term.
+\end{observation}
 
 \subsection{Short Introduction to Domain Adaptation via GANs}
 
-To recap what a GAN looks like in our notation its the following two steps:
- Estimating the surrogate to later be fitted by model $p_{\theta}(y)$:
- $$ \hat{\phi} = \argmin_{\phi} \alpha \E_{\pi_1(y)}[-\log D_{\phi}(y)] + (1-\alpha)\E_{p_{\theta}(y)}[-\log (1-D_{\phi}(y))]$$ 
- * Fitting model $p_{\theta}(y)$ on the estimated surrogate:
- $$ -\E_{p_{\theta}(y)}\left[\log(D_{\hat{\phi}}(y))\right] $$ 
+The goal of a GAN is to fit a generative model of the form:
+\begin{align*}
+    \rvx &\sim \pi_0 \\
+    \rvy &= f_{\theta}(\rvx).
+\end{align*}
+In the setting where we can sample from $\pi_0(\vx)$ and $\pi_1(\vy)$ tractably. note that the above model induces likelihood $p_{\theta}(\vy | \vx)$ and marginal $p_{\theta}(\vy)$, however the marginal is never computed explicitly and thus sometimes fitting GANs is refered to as fitting implicit generative models \citep{mohamed2016learning}.
+
+To recap what a the GAN fitting procedure \citep{goodfellow2014generative} looks like in our notation its the following two steps:
+
+\begin{itemize}
+    \item (Discriminator loss) Estimating the surrogate to later be fitted by model $p_{\theta}(y)$:
+ $$ {\beta}^{*} = \argmin_{\phi} \alpha \E_{\pi_1(\vy)}[-\log D_{\beta}(\vy)] + (1-\alpha)\E_{p_{\theta}(\vy)}[-\log (1-D_{\phi}(\vy))]$$ 
+ \item (Generative loss) Fitting model $p_{\theta}(\vy)$ on the estimated surrogate:
+ $$\theta^{*} = \argmin_{\theta}-\E_{p_{\theta}(\vy)}\left[\log(D_{\hat{\phi}}(\vy))\right] $$ 
+\end{itemize}
 
 The generator step in practice for GANs \citep{goodfellow2014generative} typically minimises $-\E_{p_{\theta}(\vy)}\left[\log(D(\vy))\right]$  , following \cite{goodfellow2014generative} this is equivalent to maximising  $\E_{p_{\theta}(\vy)}\left[\log(1-D(\vy))\right]$.
 
+The task of domain adaptation in GANs is that of finding mapping / alignment between two distributions $\pi_0, \pi_1$ that have been observed empirically. This has observations in image and language translation \citep{zhu2017unpaired,lample2017unsupervised}. Typically in domain adaptation with GANs the following two processes are fitted in parallel:
+\begin{align*}
+    \rvx &\sim \pi_0    &\rvy &\sim \pi_1\\
+    \rvy &= f_{\theta}(\rvx)   &\rvx &= g_{\phi}(\rvy).
+\end{align*}
+An interesting variations of GANs used for domain adaptation known as cycle-GAN add an extra term to the generative loss coined the cycle-consistency loss:
+\begin{align*}
+   \E_{\vx \sim \pi_0}\left[ \Big|\Big|\vx- g_\phi\left(f_\theta(\vx) \right) \Big|\Big|^2\right] +  \E_{\vy \sim \pi_1}\left[ \Big|\Big|\vy- f_\theta\left(g_\phi(\vy) \right) \Big|\Big|^2\right]
+\end{align*}
+these auto-encoder losses ensure that the transformations learned from one data-set to another are inverses of each other. We will show in the next section how this cycle consistency term pops out naturally from the Schrödinger bridge problem.
 
 \subsection{Connection To IPFP}
 Starting from the static formulation of the problem
@@ -906,47 +961,48 @@ Starting from the static formulation of the problem
 \end{align*}
 Now let us consider the backwards step in IPFP for the $i$-th iteration:
 \begin{align*}
-\arginf_{q(\vx,\vy)  \in \mathcal{D}(\pi_1)}- \int q(\vx,\vy)  \log p^{i-1}(\vx,\vy)d\vx d\vy +\int  q(\vx,\vy) \log  q(\vx,\vy) d\vx d\vy
+\arginf_{p(\vx,\vy)  \in \mathcal{D}(\pi_1)}- \int p(\vx,\vy)  \log q^{i-1}(\vx,\vy)d\vx d\vy +\int  p(\vx,\vy) \log  p(\vx,\vy) d\vx d\vy
 \end{align*}
-we can enforce this constraint using the product rule i.e. $q(\vx,\vy) = q_{\phi}(\vx|\vy) \pi_1(\vy)$ (we can parametrise $q_{\phi}(\vx|\vy)$ with a powerful estimator):
+we can enforce this constraint using the product rule i.e. $p(\vx,\vy) = p_{\phi}(\vx|\vy) \pi_1(\vy)$ (we can parametrise $p_{\phi}(\vx|\vy)$ with a powerful estimator):
 \begin{align*}
-\argmin_{\phi}&\!\!-\!\!\int\!\!q_{\phi}(\vx|\vy) \pi_1(\vy) \log p^{i-1}(\vx,\vy)d\vx d\vy\!+\!\!\!\int\!\!q_{\phi}(\vx|\vy) \pi_1(\vy) \log q_{\phi}(\vx|\vy)
+\argmin_{\phi}&\!\!-\!\!\int\!\!p_{\phi}(\vx|\vy) \pi_1(\vy) \log q^{i-1}(\vx,\vy)d\vx d\vy\!+\!\!\!\int\!\!p_{\phi}(\vx|\vy) \pi_1(\vy) \log p_{\phi}(\vx|\vy)
 \pi_1(y)d\vx d\vy\\
-\argmin_{\phi}&- \int q_{\phi}(\vx|\vy) \pi_1(\vy) \log p^{i-1}(\vx,\vy)d\vx d\vy +\int q_{\phi}(\vx|\vy)\pi_1(\vy) \log q_{\phi}(\vx|\vy)
+\argmin_{\phi}&- \int p_{\phi}(\vx|\vy) \pi_1(\vy) \log q^{i-1}(\vx,\vy)d\vx d\vy +\int p_{\phi}(\vx|\vy)\pi_1(\vy) \log q_{\phi}(\vx|\vy)
 d\vx d\vy
 \end{align*}
-Now following our selected parametrisation if we are beyond the first iteration the product rule yields $p^{i-1}(\vx , \vy)= p^{i-1}_{\theta}(\vy|\vx)\pi_0(\vx)$
+Now following our selected parametrisation if we are beyond the first iteration the product rule yields $q^{i-1}(\vx , \vy)= q^{i-1}_{\theta}(\vy|\vx)\pi_0(\vx)$
 \begin{align*}
-\argmin_\theta&- \int q_{\phi}(\vx|\vy) \pi_1(\vy) \log  p^{i-1}_{\theta}(\vx|\vy)dxdy - \int q_{\phi}(\vx|\vy) \pi_1(\vy) \log  \pi_0(\vx) d\vx d\vy \\
-&+\int q_{\phi}(\vx|\vx) \pi_1(\vy) \log q_{\phi]}(\vx|\vy)d\vx d\vy 
+\argmin_\theta&- \int p_{\phi}(\vx|\vy) \pi_1(\vy) \log  q^{i-1}_{\theta}(\vx|\vy)dxdy - \int p_{\phi}(\vx|\vy) \pi_1(\vy) \log  \pi_0(\vx) d\vx d\vy \\
+&+\int p_{\phi}(\vx|\vx) \pi_1(\vy) \log p_{\phi]}(\vx|\vy)d\vx d\vy 
 \end{align*}
-Simplifying furhter:
+Simplifying further:
 \begin{align*}
-\argmin_\phi- \E_{q_{\phi}(\vx|\vy)\pi_1(\vy)}\left[  \log  p^{i-1}_{\theta}(\vy|\vx)\right] -  \E_{q_{\phi}(\vx)}\left[ \log  \pi_0(\vx) \right] - H\left(q_{\phi}(\vx|\vy)\pi_1(\vy)\right)
+\argmin_\phi- \E_{p_{\phi}(\vx|\vy)\pi_1(\vy)}\left[  \log  q^{i-1}_{\theta}(\vy|\vx)\right] -  \E_{p_{\phi}(\vx)}\left[ \log  \pi_0(\vx) \right] - H\left(p_{\phi}(\vx|\vy)\pi_1(\vy)\right)
 \end{align*}
 
-Sampling from $q_{\phi}(\vy|\vx)\pi_1(y)$ can be achieved via  ancestral sampling and we can parametrise $q_{\phi}(\vy|\vx)=\mathcal{N}(\vx | \mu_{\phi}(\vy), \sigma^2_\phi(\vy))$ following \cite{kingma2013auto} such that it is easy to sample conditioned on $\vy$. Under the discussed parametrisations expectations are taken with respect to the empirical distribution via ancestral sampling and thus we don't require any importance sampling or the likes, however we have introduced some bias by parametrising $q_{\phi}(\vy|\vx)$ with a class of distributions.
+Sampling from $p_{\phi}(\vy|\vx)\pi_1(y)$ can be achieved via  ancestral sampling and we can parametrise $p_{\phi}(\vy|\vx)=\mathcal{N}(\vx | \mu_{\phi}(\vy), \sigma^2_\phi(\vy))$ following \cite{kingma2013auto} such that it is easy to sample conditioned on $\vy$. Under the discussed parametrisations expectations are taken with respect to the empirical distribution via ancestral sampling and thus we don't require any importance sampling or the likes, however we have introduced some bias by parametrising $p_{\phi}(\vy|\vx)$ with a class of distributions.
 
 What is more interesting is that the above objectives is very similar to the cycle-GAN \citep{zhu2017unpaired} objective which gives us a nice link to a wide variety of successful empirical methods:
 
 Backwards step:
 \begin{align*}
-\argmin_\phi- \E_{q_{\phi}(\vy|\vx)\pi_1(\vy)}\left[  \log  p^{i-1}_{\theta}(\vy|\vx)\right] -  \E_{q_{\phi}(\vx)}\left[ \log  \pi_0(\vx) \right] - H\left(q_{\phi}(\vy|\vx)\pi_1(\vy)\right)
+\argmin_\phi- \E_{p_{\phi}(\vy|\vx)\pi_1(\vy)}\left[  \log  q^{i-1}_{\theta}(\vy|\vx)\right] -  \E_{p_{\phi}(\vx)}\left[ \log  \pi_0(\vx) \right] - H\left(p_{\phi}(\vy|\vx)\pi_1(\vy)\right)
 \end{align*}
 Forwards step:
 \begin{align*}
-\argmin_\theta- \E_{p_{\theta}(\vy|\vx)\pi_0(\vx)}\left[  \log  q^i_{\phi}(\vy|\vx)\right] -  \E_{p_{\theta}(\vy)}\left[ \log  \pi_1(\vy) \right] - H\left(p_{\theta}(\vy|\vx)\pi_0(\vx)\right)
+\argmin_\theta- \E_{q_{\theta}(\vy|\vx)\pi_0(\vx)}\left[  \log  p^i_{\phi}(\vy|\vx)\right] -  \E_{q_{\theta}(\vy)}\left[ \log  \pi_1(\vy) \right] - H\left(q_{\theta}(\vy|\vx)\pi_0(\vx)\right)
 \end{align*}
 
 \begin{observation}\label{obs:cycle}
 Using our proposed parametrisation we can see that the term:
-$$\E_{p^i_{\theta}(\vy|\vx)\pi_0(\vx)}\left[  \log  q^i_{\phi}(\vy|\vx)\right] \propto \E_{\pi_0(\vx)\mathcal{N}(\epsilon|\textbf{0},\I )}\left[  -  \frac{1}{2\sigma_x^2}\Big|\Big|\vx- \mu_\phi\left(\mu_\theta(\vx) + \sigma_y \bm{\epsilon}\right) \Big|\Big|^2\right],$$
+$$\E_{q^i_{\theta}(\vy|\vx)\pi_0(\vx)}\left[  \log  p^i_{\phi}(\vy|\vx)\right] \propto \E_{\pi_0(\vx)\mathcal{N}(\epsilon|\textbf{0},\I )}\left[  -  \frac{1}{2\sigma_x^2}\Big|\Big|\vx- \mu_\phi\left(\mu_\theta(\vx) + \sigma_y \bm{\epsilon}\right) \Big|\Big|^2\right],$$
 matches the corresponding the cycle-consistency loss terms in cycle GAN \cite{zhu2017unpaired} in the $\sigma_y \downarrow 0$ limit.
 \end{observation}
 \begin{proof}
-For simplicily lets make the variance function independent of the input $\sigma^2_{\theta}(\vx) = \sigma_{x}^2 \I$ 
+
+For simplicity lets make the variance function independent of the input $\sigma^2_{\theta}(\vx) = \sigma_{x}^2 \I$ 
 \begin{align*}
-\E_{p_{\theta}(\vy|\vx)\pi_0(\vx)}\left[  \log  q^i_{\phi}{\phi}(\vy|\vx)\right] \propto \E_{p_{\theta}(\vy|\vx)\pi_0(\vx)}\left[  -  \frac{1}{2\sigma_x^2}||\vx- {\mu}_{\phi}(\vy))||^2\right]
+\E_{q_{\theta}(\vy|\vx)\pi_0(\vx)}\left[  \log  p^i_{\phi}{\phi}(\vy|\vx)\right] \propto \E_{q_{\theta}(\vy|\vx)\pi_0(\vx)}\left[  -  \frac{1}{2\sigma_x^2}||\vx- {\mu}_{\phi}(\vy))||^2\right]
 \end{align*}
 We can apply the reparametrisation trick \cite{kingma2013auto} to $p_{\theta}(\vy|\vx)\pi_0(\vx)$ : 
 \begin{align*}
@@ -957,7 +1013,7 @@ We can apply the reparametrisation trick \cite{kingma2013auto} to $p_{\theta}(\v
 Using the above reparametrisation we can re-write the cross-term loss as : 
 
 \begin{align*}
- \E_{p_{\theta}(\vy|\vx)\pi_0(\vx)}\left[  \log  q^i_{\phi}{\phi}(\vy|\vx)\right] \propto \E_{\pi_0(\vx)\mathcal{N}(\epsilon|\textbf{0},\I )}\left[  -  \frac{1}{2\sigma_x^2}\Big|\Big|\vx- \mu_\phi\left(\mu_\theta(\vx) + \sigma_y \bm{\epsilon}\right) \Big|\Big|^2\right]
+ \E_{q_{\theta}(\vy|\vx)\pi_0(\vx)}\left[  \log  p^i_{\phi}{\phi}(\vy|\vx)\right] \propto \E_{\pi_0(\vx)\mathcal{N}(\epsilon|\textbf{0},\I )}\left[  -  \frac{1}{2\sigma_x^2}\Big|\Big|\vx- \mu_\phi\left(\mu_\theta(\vx) + \sigma_y \bm{\epsilon}\right) \Big|\Big|^2\right]
 \end{align*}
 
 Where $ -  \frac{1}{2\sigma_x^2}\Big|\Big|\vx- \mu_\phi\left(\mu_\theta(\vx) + \sigma_y \bm{\epsilon}\right) \Big|\Big|^22$ takes the same autoencoder(AE) form as the cycle consistency loss in cycle GAN with some added noise (they are related asymptotically in the zero noise limit just like VAEs and AEs).
@@ -969,9 +1025,9 @@ For notational simplicity we have treated the the $\sigma_i$ terms as constants 
  Now we will focus on the connection between our remaining terms and the generative loss:
 
 \begin{observation}
-Up to optimisation constants and for the optimal discriminator $D^{*}$ and a generator $p_{\theta}(\vy | \vx)$ as defined in \citep{goodfellow2014generative,mohamed2016learning}, we have the following:
+Up to optimisation constants and for the optimal discriminator $D^{*}$ and a generator $q_{\theta}(\vy | \vx)$ as defined in \citep{goodfellow2014generative,mohamed2016learning}, we have the following:
 \begin{align*}
--\E_{p_{\theta}(\vy)}\left[ \log  \pi_1(\vy) \right] \propto-\E_{p_{\theta}(\vy)}\left[\log(D^{*}(\vy))\right] - \E_{p_{\theta}(\vy)}\left[\log\left(p_{\theta}(\vy) + \pi_1(\vy)\right)\right],
+-\E_{q_{\theta}(\vy)}\left[ \log  \pi_1(\vy) \right] \propto-\E_{q_{\theta}(\vy)}\left[\log(D^{*}(\vy))\right] - \E_{q_{\theta}(\vy)}\left[\log\left(q_{\theta}(\vy) + \pi_1(\vy)\right)\right],
 \end{align*}
 In short we can express cross entropy between our model and the empirical distribution in terms of of the optimal discriminator $D^{*}$ and a further term (which is one of the terms in the Jensen Shannon Divergence - JSD ). 
 \end{observation}
@@ -987,41 +1043,489 @@ Using the ratio expression from \cite{mohamed2016learning}
 
 Considering the case for $\alpha=\frac{1}{2}$ we have : 
 \begin{align*}
-\log D^{*}(\vy) \propto \log\left(\pi_1(\vy)\right) - \log\left(p_{\theta}(\vy) + \pi_1(\vy)\right)
+\log D^{*}(\vy) \propto \log\left(\pi_1(\vy)\right) - \log\left(q_{\theta}(\vy) + \pi_1(\vy)\right)
 \end{align*}
 
 thus:
 \begin{align}\label{eq:gan_entropy}
-\E_{p_{\theta}(\vy)}\left[\log D^{*}(\vy)\right] \propto \E_{p_{\theta}(\vy)}\left[\log\left(\pi_1(\vy)\right)\right] -\E_{p_{\theta}(\vy)}\left[\log\left(p_{\theta}(\vy) + \pi_1(\vy)\right)\right]
+\E_{q_{\theta}(\vy)}\left[\log D^{*}(\vy)\right] \propto \E_{q_{\theta}(\vy)}\left[\log\left(\pi_1(\vy)\right)\right] -\E_{q_{\theta}(\vy)}\left[\log\left(q_{\theta}(\vy) + \pi_1(\vy)\right)\right]
 \end{align}
 
 \end{proof}
 
-This holds for an optimal classifier $D$ that can tell apart samples from $\pi_\theta(y)$ and $\pi_1(y)$ see [shakir density ratio](http://blog.shakirm.com/2018/01/machine-learning-trick-of-the-day-7-density-ratio-trick/) for proof/motivation (for more details  in context of GANs see [here](https://arxiv.org/pdf/1610.03483.pdf)), the main differences we have in our method is the aditional entropy term which helps with making our estimates spread out, whilst GANs instead have this half JS term.  So effectively we have two GANs going forwards and backwards in turn.
+The above observation hold true for an optimal classifier $D^{*}$ that can tell apart samples from $\pi_\theta(\vy)$ and $\pi_1(\vy)$ see \cite{mohamed2016learning} for furhter motivations. The main differences we have in each half bridge objective is the additional entropy term which helps with making our estimates spread out, whilst GANs instead have one of the terms from the JSD.  So up to a term IPFP has two GANs trained until convergence going forwards and backwards in turn.
 
 Lets quickly zoom into the terms that differ between our loss and the GAN loss removing constants the terms are:
 
-
 \begin{align}
- \E_{p_{\theta}(y|x)\pi_0(x)}\left[ \log p_{\theta}(y|x) \right]\quad &\text{vs} \quad  \E_{p_{\theta}(y)}\left[\log\left(p_{\theta}(y) + \pi_1(y)\right)\right]
+ \E_{q_{\theta}(\vy|\vx)\pi_0(\vx)}\left[ \log q_{\theta}(\vy|\vx) \right]\quad &\text{vs} \quad  \E_{q_{\theta}(\vy)}\left[\log\left(q_{\theta}(\vy) + \pi_1(\vy)\right)\right]
 \end{align}
 
-The term $H_{\theta}(y|x) =\E_{p_{\theta}(y|x)\pi_0(x)}\left[ \log p_{\theta}(y|x) \right]$ is a conditoinal entropy whilst the term $\E_{p_{\theta}(y)}\left[\log\left(p_{\theta}(y) + \pi_1(y)\right)\right]$ is one of the terms in the Jensen Shanon divergence, both prevent the delta collapse of the reverse cross entropy, and is the main difference between GANs and a single forward (or backwards) pass of IPF on the schrodinger bridge problem.
+The term $H_{\theta}(\vy|\vx) =\E_{q_{\theta}(\vy|\vx)\pi_0(\vx)}\left[ \log q_{\theta}(y|x) \right]$ is a conditoinal entropy whilst the term $\E_{q_{\theta}(\vy)}\left[\log\left(q_{\theta}(\vy) + \pi_1(\vy)\right)\right]$ is one of the terms in the Jensen Shanon divergence, both prevent the delta collapse of the reverse cross entropy, and is the main difference between GANs and a single forward (or backwards) pass of IPF on the schrodinger bridge problem.
 
- Note than under this parametrisation the term $H_{\theta}(y|x)$ can be obtained in closed form $\E_{\pi_1(y)}[\log \text{NN}_{\sigma}(y)]$ and has the clear interpretation in that it maximises variance / spread of our mapping.
-
+ Note than under this parametrisation the term $H_{\theta}(\vy|\vx)$ can be obtained in closed form $\E_{\pi_1(\vy)}[\log {\sigma}_{\theta}(\vy)]$ and has the clear interpretation in that it maximises the variance / spread of our mapping.
+ 
+ The above results raise an interesting question: Is it possible to train GANs for domain adaptation by alternating  half bridge styled GAN iterations until convergence as some form of approximate IPFP? the additional term difference from the half bridges removes the theoretical support from this proposed heuristic nonetheless there might still be a further relationship that we may have missed between the two such as a lower bound.
 
 
 
 %\chapter{Design and Implementation}
-\chapter{Empirical Schrodinger Bridges}
+\chapter{Empirical Schrödinger Bridges}
+
+Now we have finally reached the core section of this thesis, were we propose and discuss numerical implementations for the Schrodinger Bridge Problem. We call the Empirical Schrodinger Bridge, the setting of the Schrodinger bridge problem when the marginal/boundary distributions are only available via samples (i.e. their empirical distribution):
+\begin{align}
+    \hat{\pi}_0(\vx)  = \frac{1}{N}\sum_i \delta(\vx -\vx_i) &, \quad\hat{\pi}_1(\vy)  = \frac{1}{M}\sum_j \delta(\vy -\vy_j) \nonumber\\
+    \vx_i \sim \pi_0 &, \quad \vy_j \sim \pi_1
+\end{align}
+
+Note that \cite{pavon2018data} refer to this problem as the Data Driven Schrodinger Bridge. We will discuss  different algorithms derived from the g-IPFP for solving the Schrodinger Bridge under this Empirical setting. As this is a fairly new problem of interest in the applied/numerical setting there is not much accessible and validated prior work out there already thus for prior approaches will will only be reproducing and commenting on the work of \cite{pavon2018data}.
+
+Our main contributions are:
+
+\begin{itemize}
+    \item The proposal of two completely new numerical algorithms for solving the empirical Schrodinger bridge problem.
+    \item The rephrasing of the Method by \cite{pavon2018data} as an un-normalised likelihood estimation problem and connection to alternative methods within the Machine Learning and applied statistics community.
+\end{itemize}
+
+\section{Direct Half Bridge Drift Estimation with Gaussian Processes}
+
+In this approach we wish to exploit the fact that we have an expression for the path measure that globally solves for the half bridge problems.  Thus rather than parametrise the optimisation problem in the half bridge and solve that numerically, here we seek to directly approximate the measure that solves for the half bridge via a Gaussian process estimate of the drift on trajectories sampled from the optimal measure.
+
+We start from the following observation which in short tells us how to sample from the optimal distribution that solves the half bridge:
+\begin{observation}
+Given that we can parametrise a measure $\W$ with its drift as the weak solution to the following SDE:
+\begin{align*}
+    d\rvx^{\pm}(t) =  \pm \rvb^{\pm}(t) + \gamma d \rvw^{\pm}(t) 
+\end{align*}
+Then we can sample from the solution to the following half bridges:
+\begin{align*}
+   \P^{*-} = \arginf_{\P \in \calD(\cdot,\pi_1)}\KL(\P || \W) \\ 
+   \P^{*+} = \arginf_{\P \in \calD(\pi_0,\cdot )}\KL(\P || \W)
+\end{align*}
+via simulating trajectories (i.e. via EM) using the following SDEs respectively:
+\begin{align*}
+     d\rvx^{-}(t) &=  - \rvb^{-}(t) + \gamma d \rvw^{-}(t) , \quad  \rvx(1) \sim \pi_1, \\
+     d\rvx^{+}(t) &=  \rvb^{+}(t) + \gamma d \rvw^{+}(t) , \quad  \rvx(0) \sim \pi_0.
+\end{align*}
+That is paths sampled from the above SDEs will be distributed according to $\P^{*-}$ and $\P^{*+}$ respectively.
+\end{observation}
+\begin{proof}(Sketch.) This is nothing but enforcing the constraints via the product rule (disintegration theorem) and then matching the remainder of the unconstrained interval with the prior distribution $\W$ following Theorems \ref{thrm:half_bridge_forward}, \ref{thrm:half_bridge_backward}.
+\end{proof}
+Intuitively we are performing a surgery styled operation by cutting and pasting over the dynamics on the shortened (unconstrained) time interval and attaching the constraint to it at the corresponding boundary.
+\begin{figure}
+    \centering
+    \includegraphics[width=\linewidth]{images/gp_IPFP.PNG}
+    \caption{$i^{\text{th}}$ Iteration for drift based approximation to g-IPFP. In each iteration we draw samples from the process in the direction that incorporates the constraint as an initial value, and we learn the drift which simulates the same path measure in the opposite direction to the sampling. With each iteration $\mathbf{\color{blue}{p^{\P^{*}_i}_0}}$ and $\mathbf{\color{red}{p^{\Q^{*}_i}_1}}$ get close to $\mathbf{\color{blue}{\pi_0}}$ and $\mathbf{\color{red}{\pi_1}}$ respectively}
+    \label{fig:gp_drift}
+\end{figure}
+\subsection{Fitting the Drift from Samples}
+
+Once we have sampled trajectories from the half bridge solution ($\{\vx^{+}_i(t_k)\}_{i,k}^N$ or  $\{\vx^{-}_j(t_l)\}_{j,l}^M$ ) we  apply the methodology from \cite{ruttor2013approximate} in order to infer the drift:
+
+Via the Euler-Mayurama discretisations we have that the transition probabilites follow a Gaussian distribution:
+
+For the backwards samples, we wish to infer the forwards drift:
+\begin{align*}
+    p&\left(\{\vx^{-}_j(t_l)\}_{l}^M \Big| \vb^{+}_{\P_{i}}(\cdot, \cdot)\right) \propto\\
+    &\prod \exp \left( -\frac{1}{2\Delta t} ||\vx^{-}_j(t_l) - \vx^{-}_j(t_l - \Delta t) -  \Delta t\vb^{+}_{\P_{i}}\left(\vx^{-}_j(t_l - \Delta t), t_l - \Delta t\right) ||^2 \right), 
+\end{align*}
+and conversely for forwards samples, we wish to infer the backwards drift:
+\begin{align*}
+    p&\left(\{\vx^{-}_j(t_l)\}_{l}^M \Big| \vb^{-}_{\Q_{i}}(\cdot, \cdot)\right) \propto\\
+    &\prod \exp \left( -\frac{1}{2\Delta t} ||\vx^{-}_j(t_l - \Delta t)  - \vx^{-}_j(t_l)  +  \Delta t\vb^{-}_{\Q_{i}}\left(\vx^{-}_j(t_l - \Delta t), t_l - \Delta t\right) ||^2 \right), 
+\end{align*}
+placing Gaussian process priors on the drift functions $\vb^{-}_{\Q_{i}}$ and $\vb^{+}_{\P_{i}}$ we arrive at the following multioutput GP regression problems:
+\begin{align*}
+        \frac{\vx^{-}_j(t_l) - \vx^{-}_j(t_l - \Delta t)}{\Delta t} = \vb^{+}_{\P_{i}}\left(\vx^{-}_j(t_l - \Delta t), t_l - \Delta t\right) +\frac{\bm{\sigma}}{\Delta t}\epsilon ,\\
+        \frac{\vx^{-}_j(t_l - \Delta t)  - \vx^{-}_j(t_l)}{\Delta t}  = -\vb^{-}_{\Q_{i}}\left(\vx^{-}_j(t_l - \Delta t), t_l - \Delta t\right) +\frac{\bm{\sigma}}{\Delta t}\epsilon,
+\end{align*}
+where
+\begin{align}
+   \vb^{+}_{\P_{i}} \sim \mathcal{GP} \quad \vb^{-}_{\Q_{i}} \sim \mathcal{GP}\quad \epsilon \sim \calN(\vzero, \I).
+\end{align}
+Following \cite{ruttor2013approximate} we assume the dimensions of the drift function are independent (which is equivalent to imposing a block diagonal kernel matrix on a multi-output GP) and thus we fit a separate GP for each dimension, yielding the following predictive mean per dimension $k$ of the drift:
+\begin{align}
+[\bar{\vb}^{+}_{\P_{i}}(\vx, t)]_k = \vk_k^{+}(\vx \oplus t)^{\top} \left(\mK_k^{+} + \frac{(\sigma_k^{+})^2}{\Delta t} \I\right)^{-1}\!\!\!\!\!\!\vy_k^{+}, \\
+[\vb^{-}_{\Q_{i}}(\vx, t)]_k = \vk_k^{-}(\vx \oplus t)^{\top} \left(\mK_k^{-} + \frac{(\sigma_k^{-})^2}{\Delta t} \I\right)^{-1}\!\!\!\!\!\!\vy_k^{-} ,
+\end{align}
+where:
+\begin{align*}
+   &[ \mK_k^{+} ]_{il} = {K}\big([\vx^{-}_j(t_i- \Delta t)]_k\oplus t_i - \Delta t, [\vx^{-}_j(t_i - \Delta t)]_k \oplus t_l - \Delta t \big) \\
+   &[ \mK_k^{+} ]_{il} = {K}\big([\vx^{+}_j(t_i)]_k \oplus t_i , [\vx^{+}_j(t_i)]_k\oplus t_l \big)  \\
+   &\vy_k^{+} =  \left[\frac{\vx^{-}_j(t_l) - \vx^{-}_j(t_l - \Delta t)}{\Delta t}\right]_k \quad \vy_k^{-} =  \left[\frac{\vx^{-}_j(t_l - \Delta t)  - \vx^{-}_j(t_l)}{\Delta t} \right]_k
+\end{align*}
+In practice we are not making use of the predictive variances \footnote{we are effectively just doing Kernel Ridge Regression.}. Instead we just use the predictive mean as an estimate for the drift and subsequently use that estimate to run the EM method required in this flavour of approximate g-IPFP.
+
+
+Now we have the relevant ingredients to carry out this flavour of approximate g-IPFP specified in Algorithm  \ref{alg:gp_gipfp}.
+%  $\{\vx^{+}_i(t_k)\}_{i,k}^N$ or  $\{\vx^{-}_j(t_l)\}_{j,l}^M$
+\begin{algorithm} \label{alg:gp_gipfp}
+\SetKwInOut{Input}{input}
+\Input{$\pi_0(\vx), \pi_1(\vy), \W^{\gamma}$}
+Initialise:\\
+$i=0$ \\
+$\Q^{*}_0 =\W^{\gamma}$\\
+Obtain or estimate backwards drift of prior: \\
+$\bar{\vb}^{-}_{\Q_{0}}(\vx, t) := \text{ObtainBackwardDrift}(\Q^{*}_0)$\\
+
+\Repeat{convergence}{
+      $i := i + 1$ \\
+      $\{\vx^{-}_j(t_l)\}_{j,l}^M = \text{SDESolve}\Big(-\bar{\vb}^{-}_{\Q_{i-1}}, \pi_1\Big)$\\
+     $ \bar{\vb}^{+}_{\P_{i}} := \text{GaussianProcessDriftEstimate}\Big( \{\vx^{-}_j(t_l)\}_{j,l}^M, \, \text{forwards=True} \Big)$\\ 
+     $\{\vx^{+}_n(t_k)\}_{n,k}^N = \text{SDESolve}\Big(\bar{\vb}^{+}_{\P_{i}}, \pi_0\Big)$ \\
+     $\bar{\vb}^{-}_{\Q_{i}} := \text{GaussianProcessDriftEstimate}\Big( \{\vx^{+}_n(t_k)\}_{n,k}^N, \, \text{forwards=False} \Big)$
+    }
+\Return{$\bar{\vb}^{-}_{\Q_{i}}, \bar{\vb}^{+}_{\P_{i}}$}
+\caption{ Approximate g-IPFP with Gaussian processes   }
+\end{algorithm}
+
 \section{Stochastic Control Approach}
+
+We would like to carry out a variant of g-IPFP that is based on the stochastic control formulations of the half bridge problems. Via a slight adaptation of Lemma \ref{lemma:control} we can re-write the half bridge steps of g-IPFP as:
+\begin{itemize}
+\item Backward Half bridge (time-reversed dynamics): 
+\begin{align} \label{eq:controlled_haalf_bridge_forward}
+  \rvb^{-}_{\P_{i}}(t) = \min_{\rvb^{-} \in \calB }  &\E_\P\left[\int_0^1 \frac{1}{2\gamma}\big|\big|\rvb^{-}(t) -\rvb^{-}_{\Q_{i-1}}(t) \big|\big|^2 dt\right] \nonumber \\
+    s.t.\;\;\; d\rvx(t) = \rvb^{-}(t) &dt + \sqrt{\gamma} \rvw^{-}(t), \;\; \rvx(1) \sim \pi_1
+\end{align}
+\item Forward Half bridge:
+\begin{align} \label{eq:controlled_half_bridge_backward}
+   \rvb^{+}_{\Q_{i}}(t) =\min_{\rvb^{-} \in \calB } & \E_\Q\left[\int_0^1 \frac{1}{2\gamma}\big|\big|\rvb^{+}(t) -\rvb^{+}_{\P_{i}}(t)\big|\big|^2 dt\right] \nonumber \\
+    s.t.\;\;\; d\rvx(t) = \rvb^{+}(t) &dt + \sqrt{\gamma} \rvw^{+}(t), \;\; \rvx(0) \sim \pi_0
+\end{align}.
+\end{itemize}
+Where the dual drifts can be obtained via Nelson's duality equation:
+\begin{align*}
+      \rvb^{-}_{\Q_{i-1}}(t)   &=\rvb^{+}_{\Q_{i-1}}(t) -\gamma\nabla_{\vx} p^{\Q_{i-1}}(\rvx(t), t) \\
+    \rvb^{+}_{\P_{i}}(t) &=  \rvb^{-}_{\P_{i}}(t) +\gamma\nabla_{\vx} p^{\P_{i}}(\rvx(t), t)
+\end{align*}
+Note that we carry express the dynamical evolution for $\P$ in the backwards half bridge as a time reversed process \citep{pavon1991free, nelson1967dynamical} such that the terminal distribution constraint $\rvx(1) \sim \pi_1$ becomes an initial value problem in reversed time, which is something we know how to sample from. 
+
+Now in theory we have all the elements to carry out g-IPFP under this control formulation, however note that the dual drifts require the gradient of the solution to their respective Fokker-Plank equations (i.e. $\nabla_{\vx} p^{\P_{i}}(\rvx(t), t)$, $\nabla_{\vx} p^{\Q_{i-1}}(\rvx(t), t)$). Estimating $p^{\P_{i}}(\rvx(t), t)$ or $p^{\Q_{i-1}}(\rvx(t), t)$ is going to be very costly since we  will also need to evaluate such estimations for every point in the interval $[0,1]$ that we use to estimate the integral $\int_0^1 \hdots dt$.
+
 \subsection{Forwards and Backwards Diffusion's}
+
+As mentioned earlier Equations \ref{eq:controlled_half_bridge_backward}, and \ref{eq:controlled_haalf_bridge_forward} exhibit the computational challenge of estimating solutions to the FPK equation along trajectories in $[0,1]$.  In order to overcome this we will derive alternate expressions for Equations \ref{eq:controlled_half_bridge_backward},  \ref{eq:controlled_haalf_bridge_forward} that do not involve FPK solution terms inside the time integral (path functional).
+\begin{proposition}\label{prop:halfforcontrol}
+The Forward half bridge (We set $\gamma=1$  for simplicity):
+\begin{align*} 
+   \rvb^{+}_{\Q_{i}}(t) =\min_{\rvb_\Q^{-} \in \calB } & \E_\Q\left[\int_0^1 \frac{1}{2}\big|\big|\rvb_\Q^{+}(t) +\rvb^{+}_{\P_{i}}(t)\big|\big|^2 dt\right] \nonumber \\
+    s.t.\;\;\; d\rvx(t) = \rvb_\Q^{+}(t) &dt +  \rvw^{+}(t), \;\; \rvx(0) \sim \pi_0
+\end{align*}
+can be expressed as:
+\begin{align} \label{eq:div_control_forward}
+   \rvb^{+}_{\Q_{i}}(t) =\min_{\rvb^{-} \in \calB } -2\E_{p^{\Q}_1}\left[\log \pi_1 \right] &+ \E_{\Q}\left[\int_0^1 \left(\frac{1}{2}(b_\Q^{+}(t) - b_{\P_{i}}^{-}(t))^2 - \nabla\cdot b^{-}_{\P_{i}}(t) \right)\right] \nonumber \\
+    s.t.\;\;\; d\rvx(t) = \rvb_\Q^{+}(t) &dt + \rvw^{+}(t), \;\; \rvx(0) \sim \pi_0
+\end{align}.
+\end{proposition}
+\begin{proof}
+First lets  abbreviate  terms of the form $p^{\X}(\rvx(t), t)$ with $p^{\X}_t$ and $b^{\X}_{\pm}(t)$ with $b^{\X}_{\pm}$ for compactness purposes. Lets express the KL in terms of backwards drifts (known result):
+\begin{align}
+\KL(\Q||{\P_{i}}) = \KL( p_0^{\Q}|| p_0^{{\P_{i}}}) + \frac{1}{2}\E_{\Q}\left[\int_0^1 ( b_\Q^{+} - b^{\P_{i}}_{+})^2 dt\right].
+\end{align}
+Using Nelson's duality formula $b^{\P_{i}}_+(t) =b^{\P_{i}}_-(t) + \nabla\log p_t$:
+\begin{align}
+\KL(\Q||{\P_{i}}) = \KL( p_0^{\Q}|| p_0^{{\P_{i}}}) + \frac{1}{2}\E_{\Q}\left[\int_0^1 ( b_\Q^{+} - b_{\P_{i}}^{-} - \nabla\log p_t^{\P_{i}})^2 dt\right].
+\end{align}
+Expanding:
+\begin{align*}
+\KL(\Q&||{\P_{i}}) = \KL( p_0^{\Q}|| p_0^{{\P_{i}}}) +\\ &\frac{1}{2}\E_{\Q}\left[\int_0^1 \left(( b_\Q^{+} - b_{\P_{i}}^{-})^2 - 2\nabla\log p_t^{\P_{i}} \cdot ( b_\Q^{+} - b_{\P_{i}}^{-}) + {\nabla\log p_t^{\P_{i}}}^2 \right)dt\right].
+\end{align*}
+Using the chain rule for the second derivative $\Delta \log  p = -\frac{(\nabla p)^2}{ p^2}  + \frac{\Delta  p}{ p}$:
+\begin{align*}
+&\KL(\Q||{\P_{i}}) =\KL( p_0^{\Q}|| p_0^{{\P_{i}}}) +\\ &\frac{1}{2}\E_{\Q}\left[\int_0^1 \left(\!\!( b_\Q^{+} - b_{\P_{i}}^{-})^2 \!\!- 2\nabla\log p_t^{\P_{i}}\!\!\!\cdot \!( b_\Q^{+} - b_{\P_{i}}^{-}) - \Delta \log  p^{\P_{i}}\!\!\!+ \frac{\nabla  p^{\P_{i}}}{ p^{\P_{i}}}\!\!\right)dt\right].
+\end{align*}
+
+Using Ito's rule we can show the following is true: 
+\begin{align*}
+\E_\Q\left[\log p^{\P_{i}}_1-\log p^{\P_{i}}_0\right] = \E_\Q\left[\int dt \left(b_+^\Q\cdot\nabla\log p_t^{\P_{i}} + \frac{1}{2}\Delta \log p_t^{\P_{i}}\right)\right]\\
+\E_\Q\left[\int dt \left(b_+^\Q\cdot\nabla\log p_t^{\P_{i}} \right)\right] = \E_\Q\left[\log p^{\P_{i}}_1-\log p^{\P_{i}}_0 - \int dt \left( \frac{1}{2}\Delta \log p_t^{\P_{i}}\right)\right]
+\end{align*}
+
+Quick proof sketch of the above step. Via Ito's formula we have:
+\begin{align*}
+d\log  p_t^{{\P_{i}}} = b_+^\Q\cdot\nabla\log p_t^{\P_{i}} dt + \frac{1}{2}\Delta \log p_t^{\P_{i}} dt + \nabla \log p_t^{\P_{i}} \cdot dW
+\end{align*}
+Which implies (via taking expectations on both sides wrt $\Q$ and then dividing by $dt$)
+\begin{align*}
+\partial_t \E_{\Q}[\log  p_t^{{\P_{i}}}] = \E_{\Q}\overbrace{\left[b_+^\Q\cdot\nabla\log p_t^{\P_{i}} + \frac{1}{2}\Delta \log p_t^{\P_{i}}\right]}^{\mathcal{A}(\log  p_t^{{\P_{i}}})}
+\end{align*}
+Then integrating both sides from $0$ to $1$ (and applying Fubbini) gives exactly the above result
+
+Pluging this back into the KL (the laplacians cancel out):
+\begin{align*}
+\KL(\Q||{\P_{i}}) = &\E_\Q\left[-\log \frac{ p^{\P_{i}}_1}{ p^\Q_0}\right] \\+ &\frac{1}{2}\E_{\Q}\left[\int_0^1 \left(( b_\Q^{+} - b_{\P_{i}}^{-})^2 + 2\nabla\log p_t^{\P_{i}} \cdot b_{\P_{i}}^{-}+ \frac{\Delta  p^{\P_{i}}}{ p^{\P_{i}}}\right)dt\right].
+\end{align*}
+Now we use the fact that $ p_t^{\P_{i}}$ obeys the Fokker—Planck equation (this is the case for diagonal covariance Ito-Processes, otherwise we would have cross terms form the Hessian) see Equation 13.4 in \cite{nelson1967dynamical}\footnote{more generally we have $\pm\partial_t p_t^{\P_{i}} = \frac{1}{2}\Delta p_t^{\P_{i}}\mp\nabla\cdot(b_\pm^{\P_{i}} p_t^{\P_{i}})$}: 
+\begin{align*}
+-\partial_t p_t^{\P_{i}} = \frac{1}{2}\Delta p_t^{\P_{i}}+\nabla\cdot(b_{-}^{\P_{i}} p_t^{\P_{i}})
+\end{align*}
+Using the product rule : 
+\begin{align*}
+-\partial_t p_t^{\P_{i}} = \frac{1}{2}\Delta p_t^{\P_{i}}+  p_t^{\P_{i}} \nabla\cdot(b_{-}^{\P_{i}}) + b_{-}^{\P_{i}} \cdot \nabla p_t^{\P_{i}} \\
+-\partial_t p_t^{\P_{i}} -  p_t^{\P_{i}} \nabla\cdot b_{-}^{\P_{i}}  = \frac{1}{2}\Delta p_t^{\P_{i}}+ b_{-}^{\P_{i}} \cdot\nabla  p_t^{\P_{i}}
+\end{align*}
+Dividing both sides by $ p_t^{\P_{i}}$:
+\begin{align*}
+-\partial_t \log  p_t^{\P_{i}} - \nabla\cdot b_{-}^{\P_{i}}  = \frac{1}{2}\frac{\Delta  p_t^{\P_{i}}}{ p_t^{\P_{i}}}+  b_{-}^{\P_{i}} \cdot \nabla \log  p_t^{\P_{i}}
+\end{align*}
+Pluging back into the KL we have:
+\begin{align*}
+\KL(\Q||{\P_{i}}) &= \E_\Q\left[-\log \frac{{ p^{\P_{i}}_1}^2}{ p^\Q_0  p_0^{{\P_{i}}}}\right] + \frac{1}{2}\E_{\Q}\left[\int_0^1 \left(( b_\Q^{+} - b_{\P_{i}}^{-})^2 - 2\nabla\cdot b_{-}^{\P_{i}} \right)dt\right]. \\
+D(\Q||{\P_{i}}) &= \E_\Q\left[-\log \frac{{ p^{\P_{i}}_1}^2}{ p^\Q_0   p_0^{{\P_{i}}}}\right] + \E_{\Q}\left[\int_0^1 \left(\frac{1}{2}( b_\Q^{+} - b_{\P_{i}}^{-})^2 - \nabla\cdot b_{-}^{\P_{i}} \right)dt\right]
+\end{align*}
+We only care about terms that depend on $b_{+}^\Q$ for the optimisation and using $p^{\P_{i}}_1=\pi_1$ following as a constraint from the previous iteration we arrive at:
+\begin{align}
+\KL(\Q||{\P_{i}}) \propto -2\E_{ p^\Q_1}\left[\log {{ \pi_1 }} \right] + \E_{\Q}\left[\int_0^1 \left(\frac{1}{2}( b_\Q^{+} - b_{\P_{i}}^{-})^2 - \nabla\cdot b_{-}^{\P_{i}} \right)dt\right]
+\end{align}
+\end{proof}
+Now following the same steps as above we can derive the equivalent result for the backwards bridge:
+\begin{proposition}
+The Backwards half bridge :
+\begin{align*} 
+   \rvb^{-}_{\P_{i}}(t) =\min_{\rvb_{\P}^{-} \in \calB } & \E_\Q\left[\int_0^1 \frac{1}{2}\big|\big|\rvb_\P^{-}(t) -\rvb^{-}_{\Q_{i-1}}(t)\big|\big|^2 dt\right] \nonumber \\
+    s.t.\;\;\; d\rvx(t) = \rvb_\P^{-}(t) &dt +  \rvw^{-}(t), \;\; \rvx(1) \sim \pi_1
+\end{align*}.
+can be expressed as:
+\begin{align} \label{eq:div_control_backward}
+   \rvb^{+}_{\P_{i}}(t) =\min_{\rvb_\P^{-} \in \calB } -2\E_{p^{\P}_0}\left[\log \pi_0 \right] &+ \E_{\P}\left[\int_0^1 \left(\frac{1}{2}(b_\P^{-}(t) - b_{\Q_{i-1}}^{+}(t))^2 + \nabla\cdot b^{+}_{\Q_{i-1}}(t) \right)\right] \nonumber \\
+    s.t.\;\;\; d\rvx(t) = \rvb_\P^{-}(t) &dt +  \rvw^{-}(t), \;\; \rvx(1) \sim \pi_1
+\end{align}.
+\end{proposition}
+Now we have all the ingredients to carry out g-IPFP using the newly derived half bridge formulations:
+\begin{itemize}
+    \item Backward step:
+    \begin{align*}
+   \rvb^{+}_{\P_{i}}(t) =\min_{\rvb_\P^{-} \in \calB } -2\E_{p^{\P}_0}\left[\log \pi_0 \right] &+ \E_{\P}\left[\int_0^1 \left(\frac{1}{2}(b_\P^{-}(t) - b_{\Q_{i-1}}^{+}(t))^2 + \nabla\cdot b^{+}_{\Q_{i-1}}(t) \right)\right] \nonumber \\
+    s.t.\;\;\; d\rvx(t) = \rvb_\P^{-}(t) &dt + \sqrt{\gamma} \rvw^{-}(t), \;\; \rvx(1) \sim \pi_1
+    \end{align*}
+    \item Forward step:
+    \begin{align*} 
+   \rvb^{+}_{\Q_{i}}(t) =\min_{\rvb^{-} \in \calB } -2\E_{p^{\Q}_1}\left[\log \pi_1 \right] &+ \E_{\Q}\left[\int_0^1 \left(\frac{1}{2}(b_\Q^{+}(t) - b_{\P_{i}}^{-}(t))^2 - \nabla\cdot b^{-}_{\P_{i}}(t) \right)\right] \nonumber \\
+    s.t.\;\;\; d\rvx(t) = \rvb_\Q^{+}(t) &dt + \sqrt{\gamma} \rvw^{+}(t), \;\; \rvx(0) \sim \pi_0
+    \end{align*}
+\end{itemize}
+Where $\rvb^{+}_{\Q^{0}}(t)$  is initialised in accordance to the prior (such that $\Q^0=\W^\gamma$)which in the case of Brownian $\W^\gamma$ motion it is zero $\rvb^{+}_{\Q_{0}}(t) =0$.
+
+We quickly highlight that the newly derived has an interpretable  decomposition:
+\begin{align*}
+ \mathcolor{blue}{\overbrace{-2\E_{p^{\P}_0}\left[\log \pi_0 \right]}^{\textbf{cross entropy/data fit}}} &+ \mathcolor{red}{\overbrace{\E_{\P}\left[\int_0^1 \left(\frac{1}{2}(b_\P^{-}(t) - b_{\Q_{i-1}}^{+}(t))^2 + \nabla\cdot b^{+}_{\Q_{i-1}}(t) \right)\right] }^{\textbf{path error}}}
+\end{align*}
+
+Where the $\mathcolor{blue}{\textbf{cross entropy / data fit}}$ term acts a density estimator encouraging the drift to match its end point distribution in this case $\mathcolor{blue}{\pi_0}$ (remember the starting distribution $\pi_1$ is already enforced via the SDE parematerisation). Meanwhile the $\mathcolor{red}{\textbf{path error}}$ term enforces the duality of the drifts as well as making the process akin to the reference prior.
+
+Note that the  new terms left to estimate that may seem unnatural are the cross entropy terms $\E_{p^{\Q}_1}\left[\log \pi_1 \right]$ and $\E_{p^{\P}_0}\left[\log \pi_0 \right]$ which we can estimate from samples and are only evaluated at the end poitns of the intervals rather than across a grid of points in $[0,1]$. 
+
+\subsection{Numerical Implementation}
+
+Note that the objectives we have just derived are in general not solvable in closed form for the optimal drift (control signal), thus we will require three main approximations:
+\begin{itemize}
+    \item A parametrisation of the drift such that we can optimise the objectives approximately using gradient based methods.
+    \item One to approximation the path integrals arising from the expectations.
+    \item We need to be able to estimate the cross entropy terms as discussed previously.
+\end{itemize}
+
+We will now proceed to discuss these approximations in more detail.
+\subsubsection{Numerical Optimization (Differnitable Parametrisation)}
+
+In oreder to optimise the control based variants of the half bridge objectives we need to parametrise the drift/control-sigmal as a differential function \footnote{We could alternatively parametrise the space of admissible control signals $\calB$ as a functional space (i.e. an  RKHS) in which we may be able to carry out minimisation of the half bridges in closed form, however we were unable to come up with such a space.}. Thus we parametrise the forwards and backwards drift with neural networks:
+\begin{align}
+    \rvb^{+}_{\Q}(t) := \rvb^{+}_{\phi}(\vx(t), t) \nonumber \\
+    \rvb^{-}_{\P}(t) := \rvb^{-}_{\theta}(\vx(t), t)
+\end{align}
+So now rather than optimising over $\calB$ the optimisations are carried out in terms of the parameters $\theta$ and $\phi$ respectively. Note that this will also help us in the next step which is estimating the expectations and integrals in the half bridge objective.
+
+Note we refer to the path measures induced under this parametrisation as $\P_{\theta}$ and $\Q_{\phi}$ accordingly.
+
+\subsubsection{Numerical Integration (Path Error Term)}
+We can sample from $\Q_{\phi}$ and $\P_{\theta}$ whilst enabling the single boundary constraints using the Euler-Mayurama method:
+\begin{itemize}
+    \item  Forward SDE discretisation for $\Q_{\phi}$:
+\begin{align*}
+    \rvx_{t + \Delta t} = \rvx_t + \rvb^{+}_{\phi}(\vx_t, t) + \gamma \rvepsilon, \quad \rvx_0 \sim \pi_0, \;\;\rvepsilon \sim \calN(\vzero, \I) 
+\end{align*}
+    \item  Backward SDE discretisation for $\P_{\theta}$:
+\begin{align*}
+    \rvx_{t} = \rvx_{t+\Delta t} - \rvb^{-}_{\phi}(\vx_t, t) + \gamma \rvepsilon, \quad \rvx_1 \sim \pi_1,\;\; \rvepsilon \sim \calN(\vzero, \I)
+\end{align*}
+\end{itemize}
+A quick note to the reader is that the sign multiplying the drift may seem a bit ad-hoc however we can motivate it via seeing Ito-process as the continuous time limit of discrete time Markov chains:
+
+We want to consider the case where both backwards and forward transitions  obey the same joint probability law, that is:
+\begin{align}\label{eq:markov_e}
+    p^{+}(\vx_{t+\Delta t}|\vx_t)p_t(\vx_t)=p^{-}(\vx_t|\vx_{t+\Delta t})p_{t+\epsilon}(\vx_{t+\Delta t}),
+\end{align}
+where $p_t(\cdot)$ is the marginal distribution at time $t$. $p^{+}(\cdot|\cdot)$ and $p^{-}(\cdot|\cdot)$ are Gaussian's of the form:
+\begin{align*}
+p^{+}(\vx_{t+\Delta t}|\vx_t)&=\frac{1}{2\pi \Delta t }\exp\left(-\frac{1}{2\Delta t}\left[\vx_{t+\Delta t}-(\vx_t+\vb^{+}(\vx_t,t)\Delta t)\right]^2\right) \\
+p^{-}(\vx_t|\vx_{t+\Delta t})&=\frac{1}{2\pi \Delta t}\exp\left(-\frac{1}{2\Delta t}\left[\vx_t-\left(\vx_{t+\Delta t}-\vb^{-}(\vx_{t+\Delta t},t+\Delta t)\Delta t\right)\right]^2\right).
+\end{align*}
+Taking logs on Equation \ref{eq:markov_e} and preserving a linear order in $\Delta t$ gives
+\begin{align*}
+    (\vb^+(\vx_t,t)-\vb^-(\vx_{t+\Delta t},t+\Delta t)(\vx_{t+\Delta t}-\vx_t)=\log p_{t+\Delta t}(\vx_{t+\Delta t}) - \log p_t(\vx_t), 
+\end{align*}
+which in the continuous time limit arrives to our chosen flavour \footnote{Different authors parametrise the duality formula with different signs in result changing the sign of the EM discretisation.} of Nelson's duality formula:
+\begin{align*}
+      \vb^+(\vx_t,t) -\vb^-(\vx_t,t) = \nabla\log p(\vx_t, t)
+\end{align*}
+Once we have sampled trajectories batches $\{\vx^{+}_i(t_k)\}_{i,k}^N$ and $\{\vx^{-}_j(t_l)\}_{j,l}^M$ we can proceed to estimate the path error term in the objective using the Montecarlo method:
+
+
+\begin{itemize}
+    \item Backward path error term 
+\begin{align}
+    \E_{\P}\left[\int_0^1 \left(\frac{1}{2}(b_\P^{-}(\vx(t),t) - b_{\Q_{i-1}}^{+}(\vx(t),t))^2 + \nabla\cdot b^{+}_{\Q_{i-1}}(\vx(t),t) \right)\right] \approx \nonumber   \\
+    \frac{\Delta t}{M} \sum_{j,l}\left(\frac{1}{2}(b_\phi^{-}(\vx^{-}_j(t_l), t_l) - b_{\theta}^{+}(\vx^{-}_j(t_l), t_l))^2 + \nabla\cdot b^{+}_{\theta}(\vx^{-}_j(t_l), t_l)\right)
+\end{align}
+    \item Forward path error term
+\begin{align}
+    \E_{\Q}\left[\int_0^1 \left(\frac{1}{2}(b_\Q^{+}(\vx^{-}(t), t) - b_{\P_{i}}^{-}(\vx, t))^2 - \nabla\cdot b^{-}_{\P_{i}}(\vx, t) \right)\right]  \approx \nonumber   \\
+    \frac{\Delta t}{N} \sum_{i,k}\left(\frac{1}{2}(b_\theta^{+}(\vx^{-}_i(t_l), t_k) - b_{\phi}^{-}(\vx^{-}_i(t_l), t_k))^2 - \nabla\cdot b^{-}_{\phi}(\vx^{-}_i(t_l), t_k)\right)
+\end{align}
+\end{itemize}
+\subsubsection{Cross-entropy Boundary Terms}
+
+Note that the densities inside the cross-entropy terms are $\pi_0, \pi_1$ which we only have access to via samples, thus we cannot apply the standard Montecarlo method as we cant evaluate the integrands $\pi_0, \pi_1$ at the Montecarlo samples.
+
+Thus now we are required to do some form of density estimation for the boundary distributions $\pi_0, \pi_1$ so that we can compute a Montecarlo estimator for the cross entropy boundary terms. The two approximations we consider are non parametric approximations using Kernel Density Estimation and K-Nearest Neighbours.
+
+We need to estimate:
+\begin{align*}
+\E_{\pi_0^\P}[\ln\pi_{0}] &\approx \frac{1}{M}\sum_{j}^{M} \ln \hat{\pi}_0(\vx_j^{-}(1)) \\
+\E_{\pi_1^\Q}[\ln\pi_{1}] &\approx \frac{1}{N}\sum_{i}^{N} \ln \hat{\pi}_1(\vx_i^{+}(0)),
+\end{align*}
+where $\hat{\pi}_i$ is a KDE based approximation of $\pi_i$:
+\begin{align*}
+\hat{\pi}_0(\vx) = \frac{1}{N} \sum_b^{N} \kk_{\mH_x}(\vx - \vx_i) \\
+\hat{\pi}_1(\vy) = \frac{1}{M} \sum_b^{M} \kk_{\mH_y}(\vy - \vy_i)
+\end{align*}
+where, $\kk_{\textbf{H}}$ is a smooth function called a kernel, in our case we use the Squared Exponential (SE aka Gaussian) kernel:
+\begin{align*}
+\kk_{\mH}(\vx-\vx') = (2\pi)^{d/2}|\mH|^{-1/2}\exp\left(-\frac{1}{2}||\vx-\vx'||^{2}_{\mH^{-1}}\right),
+\end{align*}
+where the bandwidth matrix $\mH$ is set using Silverman's rule :
+\begin{align}
+\mH_{ij} = \begin{cases}
+\left(\frac{4}{d+2}\right)^{\frac{2}{d+4}} N_i^{\frac{-2}{d+4}} \sigma_{i}^2  &\text{  if  } i=j \\
+0  &\text{otherwise}.
+\end{cases}
+\end{align}
+Alternatively for estimating the densities non-parametrically we also considered K-nearest neighbours basis \citep{veksler2013nonparametric}:
+\begin{align*}
+\hat{\pi}_0(\vx) \propto  \text{R}_k(\vx, \{\vx_i\})^{-d}\\
+\hat{\pi}_1(\vy) \propto \text{R}_k(\vy, \{\vy_j\})^{-d},
+\end{align*}
+where $\text{R}_k(\vx, \{\vx_i\})$ is the distance to the kth nearest neighbour of $\vx$ in $\{\vx_i\}$.  Approximating the density with a KNN basis is the core ingredients of approximating entropy's in \cite{singh2016analysis}.
+
+\subsection{Mode Collapse in Reverse KL}
+
+\begin{figure}
+    \centering
+    \includegraphics[scale=0.5]{images/zhang_et_al.PNG}
+    \caption{Figure 1 from \cite{zhang2019variational}:  Fitting a Gaussian to a mixture of Gaussians (black) by
+minimizing the forward KL (red) and the reverse KL (blue).}
+    \label{fig:babrber_kl}
+\end{figure}
+
+It is a well studied fact that minimising the reverse KL that is $\argmin_{\Q \in \cdot }$ $\KL(\Q ||\P)$ can be prone to mode collapse \citep{zhang2019variational}. The issue arises from the expectations and extremisations are both taken with respect to $\Q$ and thus we can set the measure $\Q$ to 0 for regions where $\P$ has mass without incurring any penalty what so ever since this zeroes out the cost over that region. This is different to the forward KL (i.e. Maximum Likelihood)  $\argmin_{\P \in \cdot }\KL(\Q ||\P)$  which blows up  when $\P$ tries to assign $0$ to regions where $\Q$ has mass.
+
+As put succinctly in \cite{lawrence2001variational}:
+
+\textit{"In other words, when the approximating distribution is not
+well matched to the true posterior, the former case is likely to produce a very implausible inference.
+The latter case will only produce plausible inference, in legal terms it would find the truth, nothing
+but the truth, but not the whole truth."}
+
+Meaning that the reverse KL provides you with the truth (it is precise ), yet  it does not provide you with the whole truth (i.e. does not cover the whole space, has low recall).
+
+
 \section{Maximum Likelihood Approach \citep{pavon2018data}}
-\subsection{MLE-IPFP is not Coordinate Ascent}
-\subsection{Non-parametric Approach}
+
+The Approach proposed in \cite{pavon2018data} is an adaptation of Fortet's algorithm (Algorithm \ref{alg:fortet}) to the Empirical setting and is based on the following unstated observation:
+\begin{observation}\label{obs:pavon}
+Steps 3 and 5 of Algorithm \ref{alg:fortet}:
+\begin{align}
+    \hphi_0^{(i)}(\vx) := \frac{\pi_0(\vx)}{\phi_0^{(i)}(\vx)} \label{eq:term1}\\    \quad \phi_1^{(i)}(\vy) := \frac{\pi_1(\vy)}{\hphi_1^{(i)}(\vy)}  \label{eq:term2}
+\end{align}
+can equivalently be stated as a cross entropy minimisation problem over the space of probability distributions $\calH$:
+\begin{align} \label{eq:pavon_cros_ent}
+   \hphi_0^{(i)}(\vx)= \argsup_{\hphi_0(\vx) \in \calH} \E_{\pi_0(\vx)} \left[\log \hphi_0(\vx)   \phi_0^{(i)}(\vx)\right]\\
+   \phi_1^{(i)}(\vy)= \argsup_{\phi_1(\vy) \in \calH} \E_{\pi_1(\vy)} \left[\log \phi_1(\vy)   \hphi_1^{(i)}(\vy)\right].
+\end{align}
+\end{observation}
+\begin{proof}
+Equation \ref{eq:term1}  implies the following:
+\begin{align}\label{eq:zero}
+    \KL\left(\pi_0(\vx) || \hphi_0^{(i)}(\vx)   \phi_0^{(i)}(\vx) \right)  = 0 ,
+\end{align} 
+% \phi_0^{(i)}(\vx) 
+which can be restated as
+\begin{align}
+   \hphi_0^{(i)}(\vx) = \arginf_{\hphi_0(\vx)\in \mathcal{H}} \KL\left(|\pi_0(\vx) || \hphi_0(\vx)   \phi_0^{(i)}(\vx) \right),  
+\end{align} 
+then removing the constant entropy term we arrive at:
+\begin{align*}
+   \hphi_0^{(i)}(\vx)= \arginf_{\hphi_0(\vx) \in \calH} -\E_{\pi_0(\vx)} \left[\log \hphi_0(\vx)   \phi_0^{(i)}(\vx)\right]
+\end{align*}
+A similar argument follows for Equation \ref{eq:term2}
+\end{proof}
+Note that Equation \ref{eq:zero} motivates the use of other probability metrics/divergences as long as they share the same property of being minimised  when its arguments are equal. Then following Observation \ref{obs:pavon} the core escense of the method in \cite{pavon2018data} is parametrising  $\hphi_0(\vx), \;  \phi_1(\vy) $ with a parametric family of positive functions and minimise an empirical estimate of Equation \ref{eq:pavon_cros_ent}:
+\begin{align}
+    \hat{\beta}^*_i = \argmax_{\hat{\beta} } &\frac{1}{M} \sum_s \log \hphi_0(\vx_s; \hat{\beta} )   \phi_0^{(i)}(\vx_s)
+    \quad \vx_s\sim \pi_0(\vx) \nonumber \\
+   & s.t. \text{ }  \int \hphi_0(\vx; \hat{\beta} )   \phi_0^{(i)}(\vx) d\vx =1
+\end{align}
+and
+\begin{align}
+    {\beta}^*_i = \argmax_{{\beta} } &\frac{1}{N} \sum_s \log \phi_1(\vy_s; {\beta} )   \hphi_1^{(i)}(\vy_s)
+    \quad \vy_s\sim \pi_1(\vy) \nonumber \\
+   & s.t. \text{ }  \int \phi_1(\vy; {\beta} )   \hphi_1^{(i)}(\vy) d\vy =1
+\end{align}
+Furthermore via the method of Lagrange multipliers \cite{pavon1991free} show that the above two objectives can be reduced to:
+\begin{align}
+    \hat{\beta}^*_i = \argmax_{\hat{\beta} } &\frac{1}{M} \sum_s \log \hphi_0(\vx_s; \hat{\beta} )   \phi_0^{(i)}(\vx_s)- \int \hphi_0(\vx; \hat{\beta} )   \phi_0^{(i)}(\vx) d\vx ,
+    \quad \vx_s\sim \pi_0(\vx)   \nonumber 
+\end{align}
+and
+\begin{align}
+    {\beta}^*_i = \argmax_{{\beta} } &\frac{1}{N} \sum_s \log \phi_1(\vy_s; {\beta} )   \hphi_1^{(i)}(\vy_s)- \int \phi_1(\vy; {\beta} )   \hphi_1^{(i)}(\vy) d\vy ,
+    \quad \vy_s\sim \pi_1(\vy) \nonumber 
+\end{align}
+Now all that is left to numerically carry out this approximate variant of fortets algorithm is to estimate the propagation terms $ \phi_0^{(i)}(\vx_s), \hphi_1^{(i)}(\vy_s)$ and incorporate the constraint $\int \phi_1(\vy; {\beta} )   \hphi_1^{(i)}(\vy) d\vy, \, \int \hphi_0(\vx; \hat{\beta} )   \phi_0^{(i)}(\vx) d\vx $ which depend on a non-trivial multidimensional integral.
+
+
 \subsection{Importance Sampling Approach by \citet{pavon2018data} }
-\subsection{Analysis of simple Gaussian Parametrisation}
+
+Estimating the terms $ \phi_0^{(i)}(\vx_s), \hphi_1^{(i)}(\vy_s)$, can be done without much trouble as they are effectively expectations with respect to the prior which we can sample from either directly in the case of Brownian motion or via the EM discretisation for more complex Ito-process prios. Furthermore in \cite{pavon1991free} they only estimate the term $\hphi_1^{(i)}(\vy_s)$:
+
+\begin{align}\label{eq:pavon_transition_mc}
+    \phi_1^{(i)}(\vx_s) &= \int P(\vy| \vx_s) \phi_1^{(i)}(\vy; \beta) d\vy \nonumber \\
+    &\approx \frac{1}{\tilde{M}} \sum_l \phi_1^{(i)}(\tilde{\vy}_{ls}; \beta) \quad \tilde{\vy}_{ls} \sim   P(\vy| \vx_s)
+\end{align}
+
+as we require only one of the propagations in order to compute the normalising constraints  $\int \phi_1(\vy; {\beta} )   \hphi_1^{(i)}(\vy) d\vy , \, \int \hphi_0(\vx; \hat{\beta} )   \phi_0^{(i)}(\vx) d\vx $.
+
+\cite{pavon2018data} Note that the integrals arising from the constraint can be decomposed in the following convenient order:
+\begin{align}
+\int \hphi_0(\vx; \hat{\beta} )   \phi_0^{(i)}(\vx) d\vx &=\nonumber\\
+& = \int  \hphi_0(\vx; \hat{\beta} ) \int P(\vy| \vx_s) \phi_1^{(i)}(\vx; \beta) d\vy d\vx \\
+    \int \phi_1(\vy; {\beta} )   \hphi_1^{(i)}(\vy) d\vy &=\nonumber\\
+    &=\int  \hphi_0(\vx; \hat{\beta} ) \int P(\vy| \vx_s) \phi_1^{(i)}(\vx; \beta) d\vy d\vx.
+\end{align}
+Now all that is required is estimating the outer integrals with respect to $d\vx$ as we have already provided a Monte-Carlo estimate for the $d\vy$ integral in Equation \ref{eq:pavon_transition_mc}. In order to estimate the outer integrals  \cite{pavon2018data} propose to use a method of importance sampling:
+\begin{align}
+    \int&  \hphi_0(\vx; \hat{\beta} ) \int P(\vy| \vx_s) \phi_1^{(i)}(\vx; \beta) d\vy d\vx = \nonumber \\
+    & = \int \tilde{\pi}_0(\vx) \frac{\hphi_0(\vx; \hat{\beta} ) \int P(\vy| \vx_s) \phi_1^{(i)}(\vx; \beta) d\vy}{\tilde{\pi}_0(\vx)} d\vx \nonumber \\ 
+     &\approx  \frac{1}{\tilde{M}\tilde{N}}\sum_{lk} \frac{\hphi_0(\vx_k; \hat{\beta} )\phi_1^{(i)}(\tilde{\vy}_{lk}; \beta) }{\tilde{\pi}_0(\vx_k)} ,  \quad \vy_{lk} \sim   P(\vy| \vx_k), \, \vx_k\sim\tilde{\pi}_0(\vx),
+\end{align}
+where the authors of \cite{pavon2018data} recommend  to set  $\tilde{\pi}_0(\vx)$ to a density estimator of $\pi_0(\vx)$ since the integrand  $\hphi_0(\vx; \hat{\beta} )\phi_0^{(i)}(\vx)$ will converge  to a density estimator for  $\pi_0(\vx)$ as we iterate Fortet's algorithm. However in the early iterations of Fortet's algorithm there is no particular advantage in this heuristic to initialise the importance sampler. Furthermore this naive importance sampling scheme does not take into account sampling in areas where the integrand has mass (i.e. near its modes for example). Another comment is that due to the curse of dimensionality vanilla importance samplers will not scale to high dimensions.
+
+
+\subsection{Analysis of simple Gaussian like Parametrisation}
+
+Here we consider the case of parametrising the potentials with unimodal Gaussian's this allows for further analysis of the method since both the normalisation and the updates can be attained in closed form. 
+
+Firstly we put forward the following counter example that valid Gaussian like parametrisation's for the potentials cannot solve the bridge even for uni-modal Gaussian marginals:
 \subsection{Mixture of Exponentiated Quadratics}
 
 \subsection{Noise Contrastive Estimation}
