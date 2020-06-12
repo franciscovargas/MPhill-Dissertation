@@ -30,6 +30,8 @@
 \usepackage{amsfonts}
 
 \usepackage{natbib}
+\usepackage{ marvosym }
+
 
 \usepackage{tikz}
 \usepackage{bayesnet}
@@ -106,11 +108,11 @@
  \end{align*}
  where $p(x, 0, y , 1) = p(y_1| x_0)$ represents the transition density under the Brownian motion, that is, the probability of transitioning from $x$ at time $0$ to $y$ at time $1$. We can model this event as the particles at time $0$ were transported to time $1$ in an unlikely manner (a rare event). Out of the many unlikely ways in which this event could have happened, the Schrödinger bridge answers the question of which one is the most likely. We will see down the line that this question boils down to finding a drift-augmented Brownian motion that satisfies the observed distributions and is as close to Brownian motion as possible in a KL-divergence sense.
  
- Rephrasing this in a more machine learning setting , the Schrödinger bridge is concerned with finding the most likely stochastic process that evolves a distribution $\pi_0(x)$ to another distribution $\pi_1(y)$, and is in line with a pre-specified Brownian motion prior.
+ Rephrasing this in a more machine learning setting, the Schrödinger bridge is concerned with finding the most likely stochastic process that evolves a distribution $\pi_0(x)$ to another distribution $\pi_1(y)$, and is in line with a pre-specified Brownian motion prior.
  
  From an application viewpoint, the Schrödinger bridge provides us with a well-grounded mechanism for mapping between two distributions, and when those distributions are only available through samples, we effectively have a classical, unsupervised domain-adaptation problem, as illustrated in Figure \ref{fig:intuitive_bridge}. Furthermore, the Schrödinger bridge also provides us with the probability of this stochastic evolution, thus allowing us to compare two data sets/distributions which can be useful for hypothesis testing and semantic similarly.
  
- In this project will be exploring machine-learning- (neural-) based approaches to estimate the Schrödinger bridge between two distributions that are available through samples.
+ In this project will be exploring machine learning based approaches to estimate the Schrödinger bridge between two distributions that are available through samples.
 \begin{figure}
     \centering
     \includegraphics[scale=0.7]{images/charicaturistic_bridge.PNG}
@@ -166,7 +168,7 @@ Effectively, the above formalism of the random variable allows us to assign a nu
  \begin{align*}
      \text{P}(\rx(\omega) \leq r) = \P( \{\omega : \rx(\omega) \leq r \} ).
  \end{align*}
- The random-variable formalism provides us with a more clear connection between the probability measure $\P$ and the more familiar CDF. For simplicity in some cases, we may drop the argument $\omega$ from the random variable notation (i.e $\rvx \sim \mathcal{N}(\bm{0}, \mathbb{I})$). 
+ The random-variable formalism provides us with a more clear connection between the probability measure $\P$ and the more familiar CDF. For simplicity in some cases, we may drop the argument $\omega$ from the random variable notation (i.e $\rvx \sim \calN(\bm{0}, \mathbb{I})$). 
 
 \subsection{Lebesgue–Stieltjes Integral}
 Here we will attempt a pragmatic introduction to the Lebesgue–Stieltjes integral, in the context of a probability space. For a more technical introduction, we point the reader to advanced probability theory or measure and integration courses.
@@ -238,7 +240,7 @@ A simpler way of looking at the above definition is by examining what the joint 
 \end{align*}
 From this we can see that $\calN\left(\rvw(t_{n+1})\big| \rvw(t_{n}), (t_{n+1}- t_{n})\I \right)$ shows us that the transition probability is given by a random increment  centered at  $\rvw(t_{n})$ i.e. :
 \begin{align*}
-    \rvw(t_{n+1}) = \rvw(t_{n}) +  \sqrt{(t_{n+1}- t_{n})}\rvz , \quad \rvz \sim \mathcal{N}(\vzero, \I) 
+    \rvw(t_{n+1}) = \rvw(t_{n}) +  \sqrt{(t_{n+1}- t_{n})}\rvz , \quad \rvz \sim \calN(\vzero, \I) 
 \end{align*}
 We can also observe from the definition that a Wiener process is also a Gaussian Process (GP) more specifically a Gaussian Markov process parametrised by mean and covariance functions:
 \begin{align*}
@@ -338,6 +340,24 @@ At a high level Itô's-Rule is the equivalent to the change of variables rule fo
 See \cite{oksendal2003stochastic}.
 \end{proof}
 Note that the above is very similar to standard change of variables formula with the difference that an extra quadratic term for more intuition behind this result see \cite[Chapter~4]{sarkka2019applied}.
+
+\subsubsection{Euler Mayurama Discretisation}
+
+A particular tool that is useful when deriving and interpreting Itô processes is considering their time discretisations:
+\begin{algorithm} \label{alg:em}
+\SetKwInOut{Input}{input}
+\Input{$[t_0, t],\quad  p(\vx(t_0)),\quad  \Delta t,\quad d\rvx(t)= \rvb(\rvx(t), t)+ \rvsigma(\vx(t), t)d \rvw(t) $}
+Divide the interval$[t_0, t]$ into steps of size $\Delta t$: $t_0, \;t_0 + \Delta t,\; \hdots ,\; t_0 + k \Delta t,\; \hdots, \;t$ \\
+$\vx(t_0) \sim p(\vx(t_0))$\\
+\For{each step $k$}{
+      $\Delta \rvw(t_k) \sim \calN(\vzero, \Delta t \I)$\\
+      $\vx(t_{k+1}) =\vx(t_{k}) + \vb(\vx(t_{k}), t_k) \Delta t + \rvsigma(\vx(t_k), t_k) \Delta \rvw(t_k)$
+    }
+\Return{$\{\vx(t_{k}) \}_k $}
+\caption{Euler-Mayurama (EM) Discretisation }
+\end{algorithm}
+The EM discretisation will be the method that we will use throughout this work to sample trajectories to compute expectations and other quantities.
+
 \section{Radon-Nikodym Derivative}
 
 The RN-Theorem allows us to write a probability measure in terms of an integral with respect to another probability measure. 
@@ -980,7 +1000,7 @@ Simplifying further:
 \argmin_\phi- \E_{p_{\phi}(\vx|\vy)\pi_1(\vy)}\left[  \log  q^{i-1}_{\theta}(\vy|\vx)\right] -  \E_{p_{\phi}(\vx)}\left[ \log  \pi_0(\vx) \right] - H\left(p_{\phi}(\vx|\vy)\pi_1(\vy)\right)
 \end{align*}
 
-Sampling from $p_{\phi}(\vy|\vx)\pi_1(y)$ can be achieved via  ancestral sampling and we can parametrise $p_{\phi}(\vy|\vx)=\mathcal{N}(\vx | \mu_{\phi}(\vy), \sigma^2_\phi(\vy))$ following \cite{kingma2013auto} such that it is easy to sample conditioned on $\vy$. Under the discussed parametrisations expectations are taken with respect to the empirical distribution via ancestral sampling and thus we don't require any importance sampling or the likes, however we have introduced some bias by parametrising $p_{\phi}(\vy|\vx)$ with a class of distributions.
+Sampling from $p_{\phi}(\vy|\vx)\pi_1(y)$ can be achieved via  ancestral sampling and we can parametrise $p_{\phi}(\vy|\vx)=\calN(\vx | \mu_{\phi}(\vy), \sigma^2_\phi(\vy))$ following \cite{kingma2013auto} such that it is easy to sample conditioned on $\vy$. Under the discussed parametrisations expectations are taken with respect to the empirical distribution via ancestral sampling and thus we don't require any importance sampling or the likes, however we have introduced some bias by parametrising $p_{\phi}(\vy|\vx)$ with a class of distributions.
 
 What is more interesting is that the above objectives is very similar to the cycle-GAN \citep{zhu2017unpaired} objective which gives us a nice link to a wide variety of successful empirical methods:
 
@@ -995,7 +1015,7 @@ Forwards step:
 
 \begin{observation}\label{obs:cycle}
 Using our proposed parametrisation we can see that the term:
-$$\E_{q^i_{\theta}(\vy|\vx)\pi_0(\vx)}\left[  \log  p^i_{\phi}(\vy|\vx)\right] \propto \E_{\pi_0(\vx)\mathcal{N}(\epsilon|\textbf{0},\I )}\left[  -  \frac{1}{2\sigma_x^2}\Big|\Big|\vx- \mu_\phi\left(\mu_\theta(\vx) + \sigma_y \bm{\epsilon}\right) \Big|\Big|^2\right],$$
+$$\E_{q^i_{\theta}(\vy|\vx)\pi_0(\vx)}\left[  \log  p^i_{\phi}(\vy|\vx)\right] \propto \E_{\pi_0(\vx)\calN(\epsilon|\textbf{0},\I )}\left[  -  \frac{1}{2\sigma_x^2}\Big|\Big|\vx- \mu_\phi\left(\mu_\theta(\vx) + \sigma_y \bm{\epsilon}\right) \Big|\Big|^2\right],$$
 matches the corresponding the cycle-consistency loss terms in cycle GAN \cite{zhu2017unpaired} in the $\sigma_y \downarrow 0$ limit.
 \end{observation}
 \begin{proof}
@@ -1007,13 +1027,13 @@ For simplicity lets make the variance function independent of the input $\sigma^
 We can apply the reparametrisation trick \cite{kingma2013auto} to $p_{\theta}(\vy|\vx)\pi_0(\vx)$ : 
 \begin{align*}
     \vx &\sim \pi_0(\vx) \\
-    \vy &= {\mu}_{\theta}(\vx) + \sigma_y \bm{\epsilon} \quad \bm{\epsilon} \sim \mathcal{N}(\textbf{0}, \I)
+    \vy &= {\mu}_{\theta}(\vx) + \sigma_y \bm{\epsilon} \quad \bm{\epsilon} \sim \calN(\textbf{0}, \I)
 \end{align*}
 
 Using the above reparametrisation we can re-write the cross-term loss as : 
 
 \begin{align*}
- \E_{q_{\theta}(\vy|\vx)\pi_0(\vx)}\left[  \log  p^i_{\phi}{\phi}(\vy|\vx)\right] \propto \E_{\pi_0(\vx)\mathcal{N}(\epsilon|\textbf{0},\I )}\left[  -  \frac{1}{2\sigma_x^2}\Big|\Big|\vx- \mu_\phi\left(\mu_\theta(\vx) + \sigma_y \bm{\epsilon}\right) \Big|\Big|^2\right]
+ \E_{q_{\theta}(\vy|\vx)\pi_0(\vx)}\left[  \log  p^i_{\phi}{\phi}(\vy|\vx)\right] \propto \E_{\pi_0(\vx)\calN(\epsilon|\textbf{0},\I )}\left[  -  \frac{1}{2\sigma_x^2}\Big|\Big|\vx- \mu_\phi\left(\mu_\theta(\vx) + \sigma_y \bm{\epsilon}\right) \Big|\Big|^2\right]
 \end{align*}
 
 Where $ -  \frac{1}{2\sigma_x^2}\Big|\Big|\vx- \mu_\phi\left(\mu_\theta(\vx) + \sigma_y \bm{\epsilon}\right) \Big|\Big|^22$ takes the same autoencoder(AE) form as the cycle consistency loss in cycle GAN with some added noise (they are related asymptotically in the zero noise limit just like VAEs and AEs).
@@ -1170,14 +1190,37 @@ $\bar{\vb}^{-}_{\Q_{0}}(\vx, t) := \text{ObtainBackwardDrift}(\Q^{*}_0)$\\
 
 \Repeat{convergence}{
       $i := i + 1$ \\
-      $\{\vx^{-}_j(t_l)\}_{j,l}^M = \text{SDESolve}\Big(-\bar{\vb}^{-}_{\Q_{i-1}}, \pi_1\Big)$\\
+      $\{\vx^{-}_j(t_l)\}_{j,l}^M = \text{SDESolve}\Big(-\bar{\vb}^{-}_{\Q_{i-1}}, \gamma, \pi_1, \Delta t, M\Big)$\\
      $ \bar{\vb}^{+}_{\P_{i}} := \text{GaussianProcessDriftEstimate}\Big( \{\vx^{-}_j(t_l)\}_{j,l}^M, \, \text{forwards=True} \Big)$\\ 
-     $\{\vx^{+}_n(t_k)\}_{n,k}^N = \text{SDESolve}\Big(\bar{\vb}^{+}_{\P_{i}}, \pi_0\Big)$ \\
+     $\{\vx^{+}_n(t_k)\}_{n,k}^N = \text{SDESolve}\Big(\bar{\vb}^{+}_{\P_{i}}, \gamma, \pi_0, \Delta t, N\Big)$ \\
      $\bar{\vb}^{-}_{\Q_{i}} := \text{GaussianProcessDriftEstimate}\Big( \{\vx^{+}_n(t_k)\}_{n,k}^N, \, \text{forwards=False} \Big)$
     }
 \Return{$\bar{\vb}^{-}_{\Q_{i}}, \bar{\vb}^{+}_{\P_{i}}$}
 \caption{ Approximate g-IPFP with Gaussian processes   }
 \end{algorithm}
+
+Where the $\text{SDESolve}\Big(-\bar{\vb}^{-}_{\Q_{i-1}}, \gamma, \pi_1, \Delta t, M\Big)$ routine generates $M$ trajectories using the Euler-Mayurama method.
+
+\subsubsection{Sampling a Reverse-time Difussion }
+A quick note to the reader is that the sign multiplying the drift in line $8$ of Algorithm \ref{alg:gp_gipfp} may seem a bit ad-hoc however we can motivate it via seeing Ito-process as the continuous time limit of discrete time Markov chains:
+
+We want to consider the case where both backwards and forward transitions  obey the same joint probability law, that is:
+\begin{align}\label{eq:markov_e}
+    p^{+}(\vx_{t+\Delta t}|\vx_t)p_t(\vx_t)=p^{-}(\vx_t|\vx_{t+\Delta t})p_{t+\epsilon}(\vx_{t+\Delta t}),
+\end{align}
+where $p_t(\cdot)$ is the marginal distribution at time $t$. $p^{+}(\cdot|\cdot)$ and $p^{-}(\cdot|\cdot)$ are Gaussian's of the form:
+\begin{align*}
+p^{+}(\vx_{t+\Delta t}|\vx_t)&=\frac{1}{2\pi \Delta t }\exp\left(-\frac{1}{2\Delta t}\left[\vx_{t+\Delta t}-(\vx_t+\vb^{+}(\vx_t,t)\Delta t)\right]^2\right) \\
+p^{-}(\vx_t|\vx_{t+\Delta t})&=\frac{1}{2\pi \Delta t}\exp\left(-\frac{1}{2\Delta t}\left[\vx_t-\left(\vx_{t+\Delta t}-\vb^{-}(\vx_{t+\Delta t},t+\Delta t)\Delta t\right)\right]^2\right).
+\end{align*}
+Taking logs on Equation \ref{eq:markov_e} and preserving a linear order in $\Delta t$ gives
+\begin{align*}
+    (\vb^+(\vx_t,t)-\vb^-(\vx_{t+\Delta t},t+\Delta t)(\vx_{t+\Delta t}-\vx_t)=\log p_{t+\Delta t}(\vx_{t+\Delta t}) - \log p_t(\vx_t), 
+\end{align*}
+which in the continuous time limit arrives to our chosen flavour \footnote{Different authors parametrise the duality formula with different signs in result changing the sign of the EM discretisation.} of Nelson's duality formula:
+\begin{align*}
+      \vb^+(\vx_t,t) -\vb^-(\vx_t,t) = \nabla\log p(\vx_t, t)
+\end{align*}
 
 \section{Stochastic Control Approach}
 
@@ -1248,7 +1291,7 @@ d\log  p_t^{{\P_{i}}} = b_+^\Q\cdot\nabla\log p_t^{\P_{i}} dt + \frac{1}{2}\Delt
 \end{align*}
 Which implies (via taking expectations on both sides wrt $\Q$ and then dividing by $dt$)
 \begin{align*}
-\partial_t \E_{\Q}[\log  p_t^{{\P_{i}}}] = \E_{\Q}\overbrace{\left[b_+^\Q\cdot\nabla\log p_t^{\P_{i}} + \frac{1}{2}\Delta \log p_t^{\P_{i}}\right]}^{\mathcal{A}(\log  p_t^{{\P_{i}}})}
+\partial_t \E_{\Q}[\log  p_t^{{\P_{i}}}] = \E_{\Q}{\left[b_+^\Q\cdot\nabla\log p_t^{\P_{i}} + \frac{1}{2}\Delta \log p_t^{\P_{i}}\right]}
 \end{align*}
 Then integrating both sides from $0$ to $1$ (and applying Fubbini) gives exactly the above result
 
@@ -1349,25 +1392,7 @@ We can sample from $\Q_{\phi}$ and $\P_{\theta}$ whilst enabling the single boun
     \rvx_{t} = \rvx_{t+\Delta t} - \rvb^{-}_{\phi}(\vx_t, t) + \gamma \rvepsilon, \quad \rvx_1 \sim \pi_1,\;\; \rvepsilon \sim \calN(\vzero, \I)
 \end{align*}
 \end{itemize}
-A quick note to the reader is that the sign multiplying the drift may seem a bit ad-hoc however we can motivate it via seeing Ito-process as the continuous time limit of discrete time Markov chains:
 
-We want to consider the case where both backwards and forward transitions  obey the same joint probability law, that is:
-\begin{align}\label{eq:markov_e}
-    p^{+}(\vx_{t+\Delta t}|\vx_t)p_t(\vx_t)=p^{-}(\vx_t|\vx_{t+\Delta t})p_{t+\epsilon}(\vx_{t+\Delta t}),
-\end{align}
-where $p_t(\cdot)$ is the marginal distribution at time $t$. $p^{+}(\cdot|\cdot)$ and $p^{-}(\cdot|\cdot)$ are Gaussian's of the form:
-\begin{align*}
-p^{+}(\vx_{t+\Delta t}|\vx_t)&=\frac{1}{2\pi \Delta t }\exp\left(-\frac{1}{2\Delta t}\left[\vx_{t+\Delta t}-(\vx_t+\vb^{+}(\vx_t,t)\Delta t)\right]^2\right) \\
-p^{-}(\vx_t|\vx_{t+\Delta t})&=\frac{1}{2\pi \Delta t}\exp\left(-\frac{1}{2\Delta t}\left[\vx_t-\left(\vx_{t+\Delta t}-\vb^{-}(\vx_{t+\Delta t},t+\Delta t)\Delta t\right)\right]^2\right).
-\end{align*}
-Taking logs on Equation \ref{eq:markov_e} and preserving a linear order in $\Delta t$ gives
-\begin{align*}
-    (\vb^+(\vx_t,t)-\vb^-(\vx_{t+\Delta t},t+\Delta t)(\vx_{t+\Delta t}-\vx_t)=\log p_{t+\Delta t}(\vx_{t+\Delta t}) - \log p_t(\vx_t), 
-\end{align*}
-which in the continuous time limit arrives to our chosen flavour \footnote{Different authors parametrise the duality formula with different signs in result changing the sign of the EM discretisation.} of Nelson's duality formula:
-\begin{align*}
-      \vb^+(\vx_t,t) -\vb^-(\vx_t,t) = \nabla\log p(\vx_t, t)
-\end{align*}
 Once we have sampled trajectories batches $\{\vx^{+}_i(t_k)\}_{i,k}^N$ and $\{\vx^{-}_j(t_l)\}_{j,l}^M$ we can proceed to estimate the path error term in the objective using the Montecarlo method:
 
 
@@ -1521,13 +1546,103 @@ Now all that is required is estimating the outer integrals with respect to $d\vx
 where the authors of \cite{pavon2018data} recommend  to set  $\tilde{\pi}_0(\vx)$ to a density estimator of $\pi_0(\vx)$ since the integrand  $\hphi_0(\vx; \hat{\beta} )\phi_0^{(i)}(\vx)$ will converge  to a density estimator for  $\pi_0(\vx)$ as we iterate Fortet's algorithm. However in the early iterations of Fortet's algorithm there is no particular advantage in this heuristic to initialise the importance sampler. Furthermore this naive importance sampling scheme does not take into account sampling in areas where the integrand has mass (i.e. near its modes for example). Another comment is that due to the curse of dimensionality vanilla importance samplers will not scale to high dimensions.
 
 
+\subsection{Alternative Formulation as an Unnormalised Likelihood Problem}
+
+Rather than enforcing the integrate to one constraint via a method of Lagrange multipliers we can enforce it via the following reparametrisation:
+\begin{align}
+    \hat{\beta}^*_i = \argmax_{\hat{\beta} } &\frac{1}{M} \sum_s \log \frac{\hphi_0(\vx_s; \hat{\beta} )   \phi_0^{(i)}(\vx_s)}{ \int \hphi_0(\vx; \hat{\beta} )   \phi_0^{(i)}(\vx) d\vx}
+    \quad \vx_s\sim \pi_0(\vx) \nonumber 
+\end{align}
+and
+\begin{align}
+    {\beta}^*_i = \argmax_{{\beta} } &\frac{1}{N} \sum_s \log\frac{ \phi_1(\vy_s; {\beta} )   \hphi_1^{(i)}(\vy_s)}{ \int \phi_1(\vy; {\beta} )   \hphi_1^{(i)}(\vy) d\vy }
+    \quad \vy_s\sim \pi_1(\vy) \nonumber 
+\end{align}
+
+Turning the problem into estimating and fitting an un-normalised likelihood \cite{gutmann2010noise}. This formulation opens up the door to alternate estimation techniques to maximum likelihood such as Noise Contrastive Estimation \cite{gutmann2010noise}.
+
 \subsection{Analysis of simple Gaussian like Parametrisation}
 
-Here we consider the case of parametrising the potentials with unimodal Gaussian's this allows for further analysis of the method since both the normalisation and the updates can be attained in closed form. 
+Following the reparamtrisation introduced in the previous section we consider the case of parametrising the potentials with unimodal Gaussian's this allows for further analysis of the method since both the normalisation and the updates can be attained in closed form. 
 
 Firstly we put forward the following counter example that valid Gaussian like parametrisation's for the potentials cannot solve the bridge even for uni-modal Gaussian marginals:
+\begin{proposition}
+If we parametrise the potentials as:
+\begin{align}
+\hphi_0( \vx ; \beta) =  \calN(\vx | \vmu_x, \mSigma_x) \\
+\phi_1( \vy ; \hat{\beta}) =  \calN(\vy | \vmu_y, \mSigma_y) 
+\end{align}
+and try to solve the Empirical bridge for the marginals:
+\begin{align*}
+    \pi_0(x) =  \mathcal{Z}_x^{-1}\calN(x,0, 1) \\
+    \pi_1(y) = \mathcal{Z}_y^{-1} \calN(y,0, 10^2) 
+\end{align*}
+then the MLE based approximation of Fortet's in \cite{pavon2018data} will not meet the marginal constraints.
+\end{proposition}
+\begin{proof}
+ Assuming a Brownian motion $\W^{\gamma}$ Propagating:
+\begin{align*}
+\phi_0( \vx ; \hat{\beta}) = \mathcal{Z}_x^{-1} \calN(\vx| \vmu_y, \mSigma_y + \gamma \I)  \\
+{\hphi}_1( \vy ; {\beta}) = \mathcal{Z}_y^{-1}  \calN(\vy| \vmu_x, \mSigma_x + \gamma \I) 
+\end{align*}
+Then:
+\begin{align*}
+ \phi_0( \vx ; \hat{\beta})  \phi_0(\vx ; \beta) = \calN\Big(\vx \Big|& \big(\mSigma_x^{-1} + (\mSigma_y + \gamma \I)^{-1}\big)^{-1}\big( \mSigma_x^{-1}\vmu_x + (\mSigma_y + \gamma \I)^{-1}\vmu_y)\big), \\ &\big(\mSigma_x^{-1} + (\mSigma_y + \gamma \I)^{-1}\big)^{-1} \Big)
+\end{align*}
+Via MLE (holding $y$-params constant)we have:
+\begin{align*}
+\left(\mSigma_x^{-1} + (\mSigma_y + \gamma \I)^{-1}\right)^{-1}  = \mS_x 
+\end{align*}
+Yielding update
+\begin{align*}
+\mSigma_x^{(t)} = (\mS_x^{-1}  - (\mSigma_y^{(t-1)} + \gamma \I)^{-1})^{-1} 
+\end{align*}
+and 
+\begin{align*}
+\left(\mSigma_x + (\mSigma_y + \gamma \I)^{-1}\right)^{-1}\left( \mSigma_x^{-1}\vmu_x + (\mSigma_y + \gamma \I)^{-1}\vmu_y)\right) = \bar{\vx} \\
+\left( \mSigma_x^{-1}\vmu_x + (\mSigma_y + \gamma \I)^{-1}\vmu_y)\right) = \left(\mSigma_x^{-1} + (\mSigma_y + \gamma \I)^{-1}\right)\bar{\vx} 
+\end{align*}
+Yielding update:
+\begin{align*}
+\vmu_x^{(i)}  = \left(\mathbb{I} + \mSigma_x^{(i)}(\mSigma_y^{(i-1)} + \gamma \I)^{-1}\right)\bar{\vx} -  \mSigma_x^{(i)}(\mSigma_y^{(i-1)} + \gamma \I)^{-1}\vmu_y^{(i-1)}
+\end{align*}
+and similarity  for $\mSigma_y, \vmu_y$.
+In 1D (and in terms of the free paramters) the fitted marginal desnity variances are:
+\begin{align*}
+\sigma_y^{*} = \left(\frac{1}{1+\sigma^2_x} + \frac{1}{\sigma^2_y}\right)^{-1} \\
+\sigma_x^{*} = \left(\frac{1}{1+\sigma^2_y} + \frac{1}{\sigma^2_x}\right)^{-1}
+\end{align*}
+If the empirical marginal variances were $1,10$ :
+\begin{align*}
+1 = \left(\frac{1}{1+\sigma^2_x} + \frac{1}{\sigma^2_y}\right)^{-1} \\
+10 = \left(\frac{1}{1+\sigma^2_y} + \frac{1}{\sigma^2_x}\right)^{-1}
+\end{align*}
+Then the above system has no valid solutions (can be solved only for negative values of $\sigma_x$), by the quadratic formula:
+\begin{align*}
+0.8 \sigma_x^4 + 1.9 \sigma_x^2 + 1 = 0 \quad \quad \quad \text{\Lightning}
+\end{align*}
+
+\end{proof}
+
+In short what the above tells us is that if we wish to do a squared exponential paremetrisation for the potentials we must drop the positive definite constraint . In geometric terms if one potential is log concave then the other needs to be log convex due to how the variances combine.
+
+We still however must enforce an integrability constraint (required to make the inner product of potentials converge):
+\begin{align*}
+\left(\mSigma_x^{-1} +\mSigma_y^{-1}\right)^{-1} = \mL\mL^{\top}
+\end{align*}
+which implies:
+\begin{align*}
+\mSigma_x^{-1} +\mSigma_y^{-1} = \mL\mL^{\top}
+\end{align*}
+which can be enforced via a simple reparametrisation (this allows for negative lengthscales):
+\begin{align*}
+\mSigma_x = (\mL\mL^{\top} -\mSigma_y^{-1})^{-1}
+\end{align*}
+Where $\mL$ can be paramterised in terms of an unconstrained vector.
 \subsection{Mixture of Exponentiated Quadratics}
 
+
+We now wish to consider if its possible to extend the exponentiated quadratic  parametrisation of the potentials to a mixture of exponentiated quadratics. In order to achieve this parametrisation we need to reconsider the integrability constraint.
 \subsection{Noise Contrastive Estimation}
 \section{Comparison of Approaches}
 
