@@ -28,7 +28,12 @@
 \usepackage{subfigure}
 \usepackage{booktabs}
 \usepackage{amsfonts}
+\usepackage{xcolor}
 
+\usepackage{pifont}% http://ctan.org/pkg/pifont
+\newcommand{\cmark}{\textcolor{green}{\ding{51}}}%
+\newcommand{\xmark}{\textcolor{red}{\ding{55}}}%
+\newcommand{\mmark}{\textcolor{yellow}{\textbf{!}}}
 \usepackage{natbib}
 \usepackage{ marvosym }
 
@@ -41,8 +46,8 @@
 \usepackage{amsthm}
 \usepackage{amsfonts}
 \usepackage{amsthm}
-
-
+\usepackage{adjustbox}
+\usepackage{multirow}
 
 
 \input{math_commands.tex}
@@ -65,6 +70,12 @@
   \endgroup
 }
 \makeatother
+
+%TC:ignore
+\newcolumntype{L}{@{}l}
+\newcolumntype{F}{l@{}}
+\newcolumntype{C}{c@{}}
+%TC:endignore
 
 
 %% START OF DOCUMENT
@@ -94,23 +105,23 @@
  \chapter{Introduction}
  \pagenumbering{arabic} 
  
- The motion of small particles in a fluid and the value of financial instruments as a function of time have an interesting intersection. These two processes have a large number of underlying factors (i.e. physical forces) that impact their trajectories and constantly change as a function of time. This dramatic and constant stream of varying forces cause the trajectory of these systems to seem random and make it infeasible  to model with classical physics. 
+ The motion of small particles in a fluid and the value of financial instruments as a function of time have an interesting intersection. These two processes have a large number of underlying factors (e.g. physical forces) that impact their trajectories and constantly change as a function of time. This dramatic and constant stream of varying forces cause the trajectory of these systems to seem random and make it infeasible  to model with classical physics. 
  
- What we today call Brownian motion is a random process and one of the simplest physical models that is used to describe the motion of small particles in a fluid. Some of the earliest mathematical formulations of this process date back to \cite{einstein1905motion}, where the diffusion-based formulation of Brownian motion was used to describe the motion of pollen particles in a fluid.
+ What we today call Brownian motion is a random process. It is one of the simplest physical models that we use to describe the motion of small particles in a fluid. Some of the earliest mathematical formulations of this process date back to \cite{einstein1905motion}, where the diffusion-based formulation of Brownian motion was used to describe the motion of pollen particles in a fluid.
  
- As one then may naturally and accurately conjecture, many day-to-day processes have an element of Brownian motion within them, and thus Brownian motion has become a substantial mathematical tool when describing the motion of volatile temporal processes.
+ As one then may naturally and accurately conjecture, many day-to-day processes have an element of Brownian motion within them, and thus Brownian motion has become a fundamental mathematical tool when describing the motion of stochastic temporal processes.
  
- A class of Brownian-motion-driven processes that are of particular interest to many areas of applied science are the drift-augmented Brownian motions. In simple terms, this family of processes can be split into two components: one being a Brownian-motion-driven term and the other being a drift which provides a directional drive to the system, much like a driving force.  A particular example process that is popular in the Machine Learning and Computational Neuroscience communities is the Ornstein–Uhlenbeck (OU) process. The OU-process is used to model particles undergoing Brownian motion that are subject to friction, here the drift term represents the friction. Another interesting remark is that the discrete-time analogue of the OU-process is the auto-regressive process of order $1$ -- $\text{AR}(1)$, which has multiple uses in time-series analysis and signal processing. Whilst in practice these processes are discretised, their continuous time formulation remain useful objects for the study of their theoretical properties.
+ A class of Brownian-motion-driven processes that are of particular interest to many areas of applied science are the drift-augmented Brownian motions. In simple terms, this family of processes can be split into two components: one being a Brownian-motion-driven term and the other being a drift which provides a directional drive to the system, much like a driving force.  A particular example process that is popular in the machine learning and computational neuroscience communities is the Ornstein–Uhlenbeck (OU) process \citep{doob1942brownian}. The OU-process is used to model particles undergoing Brownian motion that are subject to friction represented by the drift term. Another interesting remark is that the discrete-time analogue of the OU-process is the auto-regressive process of order $1$ -- $\text{AR}(1)$. Whilst in practice these processes are often discretised, their continuous time formulation remains useful for the study of their theoretical properties.
  
- This project is concerned with a specific event regarding Brownian-motion-driven processes proposed by Schrödinger in \citep{schrodinger1931uber, schrodinger1932theorie} . The event proposes a group of particles undergoing Brownian motion in $\R^d$, where we observe their position distributions $\pi_0(x)$ at time $0$, and then $\pi_1(y)$ at time $1$. Then, consider the case where $\pi_1(y)$ differs significantly from the predicted distribution by Brownian motion, that is
+ This project is concerned with a specific event regarding Brownian-motion-driven processes proposed by Schrödinger in \citep{schrodinger1931uber, schrodinger1932theorie} . The event proposes a group of particles undergoing Brownian motion in $\R^d$, where we observe their position distributions $\pi_0(\vx)$ at time $0$, and then $\pi_1(\vy)$ at time $1$. Then, consider the case where $\pi_1(\vy)$ differs significantly from the predicted distribution by Brownian motion, that is
  \begin{align*}
-     \pi_1(y) \neq \int p(x, 0, y , 1) \pi_1(x) dx,
+     \pi_1(\vy) \neq \int p(\vx, 0, \vy , 1) \pi_1(\vx) d\vx,
  \end{align*}
- where $p(x, 0, y , 1) = p(y_1| x_0)$ represents the transition density under the Brownian motion, that is, the probability of transitioning from $x$ at time $0$ to $y$ at time $1$. We can model this event as the particles at time $0$ were transported to time $1$ in an unlikely manner (a rare event). Out of the many unlikely ways in which this event could have happened, the Schrödinger bridge answers the question of which one is the most likely. We will see down the line that this question boils down to finding a drift-augmented Brownian motion that satisfies the observed distributions and is as close to Brownian motion as possible in a KL-divergence sense.
+ where $p(\vx, 0, \vy , 1) = p(\vy_1| \vx_0)$ represents the transition density under the Brownian motion, that is, the probability of transitioning from $\vx$ at time $0$ to $\vy$ at time $1$. We can model this event as the particles at time $0$ were transported to time $1$ in an unlikely manner (a rare event). Out of the many unlikely ways in which this event could have happened, the Schrödinger bridge answers the question of which one is the most likely. This question turns out to be equivalent to finding a drift-augmented Brownian motion that satisfies the observed distributions and is as close to Brownian motion as possible in an information theoretic sense.
  
- Rephrasing this in a more machine learning setting, the Schrödinger bridge is concerned with finding the most likely stochastic process that evolves a distribution $\pi_0(x)$ to another distribution $\pi_1(y)$, and is in line with a pre-specified Brownian motion prior.
+ Rephrasing this in a more machine learning setting, the Schrödinger bridge is concerned with finding the most likely stochastic process that evolves a distribution $\pi_0(\vx)$ to another distribution $\pi_1(\vy)$, and is in line with a pre-specified Brownian motion prior.
  
- From an application viewpoint, the Schrödinger bridge provides us with a well-grounded mechanism for mapping between two distributions, and when those distributions are only available through samples, we effectively have a classical, unsupervised domain-adaptation problem, as illustrated in Figure \ref{fig:intuitive_bridge}. Furthermore, the Schrödinger bridge also provides us with the probability of this stochastic evolution, thus allowing us to compare two data sets/distributions which can be useful for hypothesis testing and semantic similarly.
+ From an application viewpoint, the Schrödinger bridge provides us with a theoretically grounded mechanism for mapping between two distributions. When those distributions are only available through samples, we effectively have a classical, unsupervised domain-adaptation problem, as illustrated in Figure \ref{fig:intuitive_bridge}. Furthermore, the Schrödinger bridge also provides us with the probability of this stochastic evolution, thus allowing us to compare two data sets/distributions which can be useful for hypothesis testing \citep{gretton2012kernel,ramdas2017wasserstein} and semantic similarity \citep{vargas2019model}.
  
  In this project will be exploring machine learning based approaches to estimate the Schrödinger bridge between two distributions that are available through samples.
 \begin{figure}
@@ -125,7 +136,10 @@
 
 % \setcounter{page}{1}
 
-The goal of this chapter is to introduce mathematical notation, concepts and lemmas that we will make use of throughout this study. Whilst many of these lemmas seem to be omitted as steps or taken for granted in the stochastic process literature, we found that some of them were not directly accessible when searched for and not taught in graduate-level measure and probability theory courses. Therefore, it will be useful for the community to restate and re-derive some of these results, in order to make the theory behind Schrödinger Bridges more accessible to the computational sciences.
+The goal of this chapter is to introduce mathematical notation, concepts and lemmas that we will make use of throughout the thesis. Whilst many of these lemmas seem to be omitted as steps or taken for granted in the stochastic process literature, we found that some of them were not directly accessible when searched for and not taught in graduate-level measure and probability theory courses \citep{ethmeasure,mitmeasure,cambprob}. Therefore, it will be useful to the community to restate and re-derive some of these results, in order to make the theory behind Schrödinger bridges more accessible to the computational sciences.
+
+Due to limitations of the Riemann integral we will be briefly covering a measure-theoretic introduction to probability in order to have the background required to introduce the  Lebesgue–Stieltjes integral which we will be using to express some of the expectations in this thesis. Furthermore we will also be providing a sketch proof of standard results for decompositions of the Radon-Nikodym which we will employ in decomposing the Kullback–Leibler  (KL) divergence. 
+
 \section{Probability Space Formalism}
 
 For many of the technical derivations in the methodology we will study, a basic notion of measure and integration is required, thus we will refresh concepts such as $\sigalg$, probability measures,  measurable functions and the Lebesgue–Stieltjes integral, without going into unnecessary technical detail.
@@ -142,7 +156,7 @@ A probability space is defined as a 3-element tuple $\probspace$, where:
     \end{itemize}
 \end{itemize}
 \end{definition}
-One thing to note from the above definition is that we want to be able to measure (assign a value/probability to a set) to each set in $\calF$, and this is not always possible. In other words, one can construct sets that cannot be measured (or can only be measured by the trivial measure $\callambda(A) = 0$, which is not a probability measure). Thus, we require $\calF$ to only contain measurable sets and this is what a $\sigalg$ guarantees:
+One thing to note from the above definition is that we want to be able to measure (assign a value/probability to a set) to each set in $\calF$, and this is not always possible. In other words, one can construct sets that cannot be measured (or can only be measured by the trivial measure $\callambda(A) = 0$, which is not a probability measure). Thus, we require $\calF$ to only contain measurable sets and this is what a $\sigalg$ guarantees.
 \begin{definition}\label{def:sigma_algebra}
 A $\sigalg$ $\calF \subseteq 2^{\Omega}$ is a collection of sets satisfying the property:
 \begin{itemize}
@@ -152,7 +166,7 @@ A $\sigalg$ $\calF \subseteq 2^{\Omega}$ is a collection of sets satisfying the 
 \end{itemize}
 \end{definition}
 
-Note we use the notation $\calB(\R^d)$ for the Borel Sigma Algebra of of $\R^d$ which we can think of this as the canonical sigma algebra for $\R^d$, it is the most compact representation of all measurable sets in $\R^d$. This notation can also be extended for subsets of $\R^d$ and in more general any topological space,.
+Note we use the notation $\calB(\R^d)$ for the Borel Sigma Algebra of $\R^d$ which we can think of this as the canonical sigma algebra for $\R^d$, it is the most compact representation of all measurable sets in $\R^d$. This notation can also be extended for subsets of $\R^d$ and in more general any topological space.
 
 \begin{definition}\label{def:random_variable}
 For a probability space $\probspace$, real-valued random variable (vector) $\rvx(\omega)$ is a function $\rvx :\Omega \rightarrow \R^d$, with the requirement that $\rvx(\omega)$ is a measurable function, meaning that the pre-image of $\rvx(\omega)$  lies within the $\sigalg$ $\calF$:
@@ -171,7 +185,7 @@ Effectively, the above formalism of the random variable allows us to assign a nu
  The random-variable formalism provides us with a more clear connection between the probability measure $\P$ and the more familiar CDF. For simplicity in some cases, we may drop the argument $\omega$ from the random variable notation (i.e $\rvx \sim \calN(\bm{0}, \mathbb{I})$). 
 
 \subsection{Lebesgue–Stieltjes Integral}
-Here we will attempt a pragmatic introduction to the Lebesgue–Stieltjes integral, in the context of a probability space. For a more technical introduction, we point the reader to advanced probability theory or measure and integration courses.
+Here we will attempt a pragmatic introduction to the Lebesgue–Stieltjes integral, in the context of a probability space. For a more technical introduction, we point the reader to advanced probability theory or measure and integration courses \citep{ethmeasure,mitmeasure,cambprob}.
 \begin{definition}\label{def:lebesgue}
 For a probability measure space $\probspace$ and a measurable function $f: \Omega \rightarrow \R $, and $A \in \calF$ the Lebesgue–Stieltjes integral
 \begin{align}
@@ -193,20 +207,20 @@ When our distribution $\P$ admits a probability density function $p(\vx)$, we ha
 \begin{align}
     \int_{\Omega} f(\vx) d\P(\vx) = \int_{\Omega} f(\vx)p(\vx) d\callambda(\vx),
 \end{align}
-where $\callambda$ is the Lesbesgue measure and we can just think of it as the characteristic measure for $\R^d$. For many purposes we can just interpret $\int_{\Omega} f(\vx)p(\vx) d\callambda(\vx)$ as the regular Reimann integral and in many cases authors \citep{williams2006gaussian} use $\int_{\Omega} f(\vx)p(\vx) d\vx$ notationally when the integral is with respect to the Lebesgue measure.
+where $\callambda$ is the Lesbesgue measure and we can just think of it as the characteristic measure for $\R^d$. For many purposes we can just interpret $\int_{\Omega} f(\vx)p(\vx) d\callambda(\vx)$ as the regular Riemann integral and in many cases authors \citep{williams2006gaussian} use $\int_{\Omega} f(\vx)p(\vx) d\vx$ notationally when the integral is with respect to the Lebesgue measure.
 
 An important take away is that whilst connecting the Lebesgue integral to the standard Riemann integral, in the case where the PDF of a distribution $\P$ is available, gives us a useful conceptual connection, it is not always something that can be done. As we will soon see, many distributions and random processes do not admit a PDF. In order to be able to compute expectations with respect to these processes, we must adopt the Lebesgue-Stieltjes integral, which is well-defined in these settings in which the standard Riemann integral is not.
 \section{Stochastic Process Formalism}
-Informally a stochastic process is a time dependant random variable $\rvx(t)$, that is its a random variable whose distribution at any point in time $P_t(\rvx(t) < r)$  is itself a function of time.
+Informally a stochastic process is a time dependent random variable $\rvx(t)$, that is its a random variable whose distribution at any point in time $P_t(\rvx(t) < r)$  is itself a function of time.
 \begin{definition}\label{def:stochproc}
-Given probability space $\probspace$ a stochastic process is a collection of random variables $\rvx(\omega, t) : \Omega \times T \rightarrow \mathbb{R}$ index by $T$ (i.e. $T=\R^{+}$ typically to represent time), which can be written as:
+Given probability space $\probspace$ a stochastic process is a collection of random variables $\rvx(\omega, t) : \Omega \times T \rightarrow \mathbb{R}$ indexed by $T$ (i.e. $T=\R^{+}$ typically to represent time), which can be written as:
 \begin{align*}
-    \{\rvx(\omega, t) : t \in T\},
+    \{\rvx(\omega, t) : t \in T\}.
 \end{align*}
 \end{definition}
 We typically adopt the notation $\rvx(t)$ since dependency on the sample space is usually dropped notationally, and more commonly in the statistics community the notation $X_t$ is used to emphasise that $T$ is an index set however we will be mostly using the function notation $\rvx(t)$ . 
 
-Stochastic processes don't necessarily have to be limited to temporal processes as the examples we have given, in fact one of the most popular stochastic processes in Machine Learning , the Gaussian process (GP) for regression was initially devised for a spatial application known as Kriging. However in this thesis we will focus on the temporal case that is $T=\R^{+}$, furthermore we will also restrict ourselves to causal processes \footnote{Causal in the engineering and physics sense . i.e. Causal Green's function.} in that $\rvx(t)$ only depends on the present and the past. In order to formalise this notion of causality we require the concept of a filtration: 
+Stochastic processes do not necessarily have to be limited to temporal processes as the examples we have given, in fact one of the most popular stochastic processes in machine learning , the Gaussian process (GP) for regression was initially devised for a spatial application known as Kriging. However in this thesis we will focus on the temporal case that is $T=\R^{+}$, furthermore we will also restrict ourselves to causal processes \footnote{Causal in the engineering and physics sense, e.g. causal Green's function.} in that $\rvx(t)$ only depends on the present and the past. In order to formalise this notion of causality we require the concept of a filtration: 
 \begin{definition}\label{def:filtration}
 A filtration $\mathfrak{F} = (\calF_{t})_{i\in T}$ on probability space $\probspace$ is a sequence of indexed sub $\sigalg$ of $\calF$:
 \begin{align*}
@@ -229,7 +243,7 @@ We will provide the definition of a causal Wiener process ($\calF_t$-adapted) si
     An $\calF_t$-adapted Wiener process (Brownian motion) is a stochastic process $\rvw(t)$ with the following properties:
     \begin{itemize}
         \item $\rvw(0) = \vzero$
-        \item  $\rvw(t) - \rvw(s) \independent \calF_s$  for $s < t$ (independant increments).
+        \item  $\rvw(t) - \rvw(s) \independent \calF_s$  for $s < t$ (independent increments).
         \item $\rvw(t) - \rvw(s) \sim \calN (t | \vzero,  (t - s) \I) $
         \item $\rvw(t)$ is continuous in $t$
     \end{itemize}
@@ -242,9 +256,9 @@ From this we can see that $\calN\left(\rvw(t_{n+1})\big| \rvw(t_{n}), (t_{n+1}- 
 \begin{align*}
     \rvw(t_{n+1}) = \rvw(t_{n}) +  \sqrt{(t_{n+1}- t_{n})}\rvz , \quad \rvz \sim \calN(\vzero, \I) 
 \end{align*}
-We can also observe from the definition that a Wiener process is also a Gaussian Process (GP) more specifically a Gaussian Markov process parametrised by mean and covariance functions:
+We can also observe from the definition that a Wiener process is also a Gaussian process (GP) more specifically a Gaussian Markov process parametrised by mean and covariance functions:
 \begin{align*}
-    \vm(t) = \vzero, \quad \vk(t, s) = \I\min(t, s)
+    \vm(t) = \vzero, \quad \vk(t, s) = \I\min(t, s).
 \end{align*}
 
 \subsection{Stochastic Integrals}
@@ -255,7 +269,7 @@ Stochastic integrals are the integrals induced by a stochastic process. Let's fi
     \int_{a}^{b} \rvx(t) dt
 \end{align}
 
-Where $\vx(\omega, t): \Omega \times T \rightarrow \R^d$ is a $\calF_t$-adapted stochastic process. These type of integrals appear in machine learning for example through Latent Force Models \cite{alvarez2009latent,alvarez2013linear} where the integrand $\rvx(t)$ is a Gaussian Process. The notation in Equation \ref{eq:stochastic_sample} whilst compact may initially seem confusing to the reader as $\rvx(t)$ is not a deterministic function and can effectively take on different values ?
+Where $\vx(\omega, t): \Omega \times T \rightarrow \R^d$ is a $\calF_t$-adapted stochastic process. These type of integrals appear in machine learning for example through latent force models \cite{alvarez2009latent,alvarez2013linear} where the integrand $\rvx(t)$ is a Gaussian process. The notation in Equation \ref{eq:stochastic_sample} whilst compact may initially seem confusing to the reader as $\rvx(t)$ is not a deterministic function and can effectively take on different values at each time step $t$?
 
 To clarify the above we can express  Equation \ref{eq:stochastic_sample} in more detail:
 
@@ -263,7 +277,7 @@ To clarify the above we can express  Equation \ref{eq:stochastic_sample} in more
     \int_{a}^{b} \rvx(\omega, t) dt \quad \forall \omega
 \end{align*}
 
-Basically we fix $\omega$ (i.e. condsider a single sampled random function) and the said resulting integral holds for all $\omega$.  Now we can define the above integral in the Riemann sense:
+Basically we fix $\omega$ (i.e. consider a single sampled random function) and the resulting integral holds for all $\omega$.  Now we can define the above integral in the Riemann sense:
 \begin{align*}
     \int_{a}^{b} \rvx(\omega, t) dt &= \lim_{ \max \Delta t \rightarrow 0} \sum_{i=1}^{n-1} \rvx(\omega, t_i^{*}) (t_{i+1} - t_i), \\
     \text{where} \;\; t_1 = a < &t_2 < \hdots < t_n = b, \;  t_i^{*} \in [ t_i, t_{i+1}]
@@ -272,18 +286,18 @@ Where the convergence of the limit is defined in the mean square sense:
 \begin{align*}
     \lim_{\max \Delta t \rightarrow 0} \E \left[ \Bigg|\Bigg|\sum_{i=1}^{n-1} \rvx(\omega, t_i^{*}) (t_{i+1} - t_i)-  \int_{a}^{b} \rvx(\omega, t) \Bigg|\Bigg|^2\right] =  0.
 \end{align*}
-Now all that is required for the above limit to exist is the following:
+Now it remains to discover when the above limit exists:
 \begin{theorem}\label{thrm:ito_simple}
   If a stochastic process $\rvx(t)$ has continuous mean and covariance functions $\vm(t) = \E[\rvx(t)],\;\; \vk(t, s) = Cov(\rvx(t), \rvx(s))$, then the limit $\int_{a}^{b} \rvx(\omega, t) dt$ exists.
 \end{theorem}
-If Theorem \ref{thrm:ito_simple} holds true then analysing the resulting stochastic process that is produced by $\int_{a}^{b} \rvx(\omega, t) dt$ can be quite simple, for example as done in \cite{alvarez2009latent} where computing expectations and co-variances of the above integral to fully characterise the resulting process was sufficient.
+If Theorem \ref{thrm:ito_simple} holds true then analysing the resulting stochastic process that is produced by $\int_{a}^{b} \rvx(\omega, t) dt$ can be quite simple, for example as done in \cite{alvarez2009latent}. There computing expectations and co-variances of the above integral to fully characterise the resulting process was sufficient.
  
 \subsubsection{Itô  - Integral}
 Things start to get more difficult if we consider integrals with respect to Brownian motion:
 \begin{align}\label{eq:brownian_integral}
-    \int_{a}^b \rvx(t) d\rvw(t)
+    \int_{a}^b \rvx(t) d\rvw(t).
 \end{align}
-First thing to note is that this takes the form of a Stieltjes integral in that it is with respect to another function $\rvw(t)$ (which in this case is a random function) rather than the domain of integration $t$. Naively defyning this integral as before is problematic since the limit is no longer well defined (unique) for this case:
+First thing to note is that this takes the form of a Stieltjes integral in that it is with respect to another function $\rvw(t)$ (which in this case is a random function) rather than the domain of integration $t$. Naively defining this integral as before is problematic since the limit is no longer well defined (unique) for this case:
 \begin{align}\label{eq:brownian_integral_bad}
     \int_{a}^b \rvx(t) d\rvw(t) = \sum_{i=0}^{n-1} \rvx(t^{*}_i)(\rvw(t_{i+1}) - \rvw(t_i))
 \end{align}
@@ -294,40 +308,40 @@ For the above limit to exist we require that the function $\rvw(\omega, t)$ has 
 it can be shown that this limit will converge in the mean square sense. The above integral is known as the Itô-integral.
 \subsection{Itô  - Process and SDEs}
 
-For the purpose of this work Itô-Processes will be our definition of Stochastic Differential equations and we will use both terms to refer to the same object.
+For the purpose of this work Itô-Processes will be our definition of stochastic differential equations (SDEs) and we will use both terms to refer to the same object.
 
 \begin{definition}
     For $\calF_t$-adapted stochastic processes $\rvb(t), \rvsigma(t)$ an Itô-process $\rvx(t)$ is defined as:
     \begin{align}\label{eq:ito_proc}
-    \rvx(t) = \rvx(0) + \int_{0}^t \rvb(s) ds + \int_0^t \rvsigma(s) d\rvw(s)
+    \rvx(t) = \rvx(0) + \int_{0}^t \rvb(s) ds + \int_0^t \rvsigma(s) d\rvw(s).
     \end{align},
 Equation \ref{eq:ito_proc} is often notationally simplified to :
     \begin{align}\label{eq:sde_gen}
-        d\rvx(t) =\rvb(t) dt + \rvsigma(t) d\rvw(t)
+        d\rvx(t) =\rvb(t) dt + \rvsigma(t) d\rvw(t).
     \end{align}
 \end{definition}
 The process $\rvb(t)$ we often refered to as the drift and $\rvsigma(t)$ as the volatility. The notation in Equation \ref{eq:sde_gen} is what we typically refer to as a stochastic differential equation since if we "divide" both sides by $dt$ we obtain:
 \begin{align*}
     \frac{d \rvx(t)}{dt} = \rvb(t) + \rvsigma(t) \rvepsilon(t),
 \end{align*}
-where $\rvepsilon(t) \sim \calN(\vzero, \delta(k-s)\I)$ is white noise and is regarded as the derivative of Brownian motion (in some sense). One must be careful with the above representation and note that it is only national since most stochastic processes are not differentiable (i.e. Brownian motion).
-Note that SDE's effectively describes the dynamical evolution of a random variable in time, and thus one may want to ask what is the density of such random variable. For Itô-Processes of the form:
+where $\rvepsilon(t) \sim \calN(\vzero, \delta(k-s)\I)$ is white noise and is regarded as the derivative of Brownian motion (in some sense). One must be careful with the above representation and note that it is only notational since most stochastic processes are not differentiable (i.e. Brownian motion).
+Note that SDE's effectively describe the dynamical evolution of a random variable in time, and thus one may want to ask what is the density of such random variable. For Itô-Processes of the form:
 \begin{align}\label{eq:parametric_ito}
      d\rvx(t) =\vb(\rvx(t), t) dt + \rvsigma(\rvx(t), t) d\rvw(t),
 \end{align}
-where $\vb : \R^d \times \R^{+} \rightarrow \R^d$ and $\rvsigma : \R^d \times \R^{+} \rightarrow \R^{d\times d}$ are deterministic functions that parametrise the drift and volatility respectively, we can define a partial differential equation (PDE) that describes the evolution of the PDF as a function of time:
+where $\vb : \R^d \times \R^{+} \rightarrow \R^d$ and $\rvsigma : \R^d \times \R^{+} \rightarrow \R^{d\times d}$ are deterministic functions that parametrise the drift and volatility respectively, we can define a partial differential equation (PDE) that describes the evolution of the PDF as a function of time \citep{sarkka2019applied}:
 \begin{definition}\label{def:fpk}
-    For an Itô-Process following the form of Equation \ref{eq:parametric_ito}, the Fokker-Plank (FPK) Equation has the form:
+    For an Itô-Process following the form of Equation \ref{eq:parametric_ito}, the Fokker-Planck (FPK) Equation has the form:
     \begin{align}\label{eq:fpk}
         \partial_{t} p(\vx, t) =-\nabla \cdot p(\vx, t)\vb(\vx(t), t) + \frac{1}{2} \sum_{ij} \partial^2_{{x_i}{x_j}}[\rvsigma(\vx(t), t)\rvsigma(\vx(t), t)^{\top}]_{ij},
     \end{align}
     where $p(\vx, t)$ is the probability density function of the solution of the the SDE equation.
 \end{definition}
-The FPK equation thus provides us with an alternate representation for the solution of SDEs via a PDE whose solution describes a PDF.
+The FPK equation thus provides us with an alternate representation for the solution of SDEs via a PDE whose solution describes a PDF. Intuitively the above results make sense given that the SDE describes the dynamic evolution of a random variable, then we should be able to describe the PDF for said random variable at a given time point and it seems natural that said PDF can be described with a differential equation. For more rigorous details for the derivation of the FPK equation please see \cite{sarkka2019applied}.
 
 \subsubsection{Itô's-Rule}
 
-At a high level Itô's-Rule is the equivalent to the change of variables rule for integration. We wont be going into much technical details explaining how to arrive to this rule but we will be restating it here used in some of our results. 
+At a high level Itô's-Rule is the equivalent to the change of variables rule for integration. We won't be going into much technical details explaining how to arrive to this rule but we will be restating it here used in some of our results. 
 
 \begin{theorem}
   (Itô's-Rule) Assume that $\rvx(t)$ is an Itô process and consider an arbitrary scalar function $f(\rvx(t), t)$ of the process. Then the Itô SDE for $f$ is given by:
@@ -339,11 +353,11 @@ At a high level Itô's-Rule is the equivalent to the change of variables rule fo
 \begin{proof}
 See \cite{oksendal2003stochastic}.
 \end{proof}
-Note that the above is very similar to standard change of variables formula with the difference that an extra quadratic term for more intuition behind this result see \cite[Chapter~4]{sarkka2019applied}.
+Note that the above is very similar to standard change of variables formula with the difference  in an extra quadratic term. For more intuition behind this result see \cite[Chapter~4]{sarkka2019applied}.
 
 \subsubsection{Euler Mayurama Discretisation}
 
-A particular tool that is useful when deriving and interpreting Itô processes is considering their time discretisations:
+A particular tool that is useful when deriving and interpreting Itô processes is considering their time discretisations.
 \begin{algorithm} \label{alg:em}
 \SetKwInOut{Input}{input}
 \Input{$[t_0, t],\quad  p(\vx(t_0)),\quad  \Delta t,\quad d\rvx(t)= \rvb(\rvx(t), t)+ \rvsigma(\vx(t), t)d \rvw(t) $}
@@ -358,7 +372,9 @@ $\rvx(t_0) \sim p(\vx(t_0))$\\
 \end{algorithm}
 The EM discretisation will be the method that we will use throughout this work to sample trajectories to compute expectations and other quantities.
 
-\section{Radon-Nikodym Derivative}
+\section{Radon-Nikodym (RN) Derivative}
+
+As hinted earlier we will require the RN-derivative in order to compute the KL divergence between two stochastic processes. Thus we will be introducing the RN-derivative in this section as well as certain properties which we will require later on.
 
 The RN-Theorem allows us to write a probability measure in terms of an integral with respect to another probability measure. 
 
@@ -376,18 +392,18 @@ A direct consequence of this result is:
     \int_A f(\vx) d\P(\vx) =  \int_{A} f(\vx)  \frac{d\P}{d\Q}(\vx)  d\Q(\vx)
 \end{align*}
 
-This change of measure above is analogous to the trick carried out when we do importance sampling. The RN-derivative is effectively the same as the importance sample weights and it in-fact reduces to a ratio of PDF's for the case when the PDF's of the respective distributions are available.
+This change of measure above is analogous to the trick carried out when we do importance sampling \citep{martino2017effective}. The RN-derivative is effectively the same as the importance sample weights and it in-fact reduces to a ratio of PDF's for the case when the PDF's of the respective distributions are available.
 \begin{figure}[t!]
     \centering
     \includegraphics[scale=0.5]{images/disint2.png}
-    \caption{ One can see that its is possible to construct a conditional measure to calculate the size of the green rectangle, however under the joint measure such measure is $0$. The disintegration Theorem provides us with the construction of such conditional measure.}
+    \caption{ One can see that its is possible to construct a conditional measure to calculate the size of the green rectangle, however under the joint measure such measure is $0$. The Disintegration Theorem provides us with the construction of such conditional measure.}
     \label{fig:disintegration}
 \end{figure}
 \subsection{Disintegration Theorem and Conditional Measures}
 
 In this section we will present the disintegration theorem in the context of probability measures. We will use this theorem to present a derivation for RN-derivative equivalent of the product rule.
 
-\begin{theorem} (Disintegration Theorem , for continuous probability measures): 
+\begin{theorem} (Disintegration Theorem, for continuous probability measures): 
 
 For a probability space $(Z, \calB(Z) ,\P)$ where $Z$ is a product space: $Z = Z_x \times Z_y$ and:
 \begin{itemize}
@@ -405,7 +421,7 @@ A direct consequence of the above instance of the disintegration theorem is the 
 \begin{align}
     \P(A_x \times A_y) = \int_{A_x}\P(A_y | \vx) d\P_x(\vx) 
 \end{align}
- We can see that in the context of probability measures the above is effectively an analogue to the product rule 
+ We can see that in the context of probability measures the above is effectively an analogue to the product rule.
 
 We now have the required ingredients to show the following:
 \begin{lemma}\label{lemma:rn_des}( RN-derivative product rule)
@@ -424,11 +440,11 @@ We apply the Radon-Nikodym Theorem to $\P(A_y | \vx)$ and then to $P_x$:
 \begin{align*}
     \P(A_x \times A_y) &=  \int_{A_x}\int_{A_y} \frac{d\P_{y|x}}{d\Q_{y|x}}(\vy) d\Q_{y|x}(\vy) d\P_{x}(\vx) \\
      &= \int_{A_x}\left(\int_{A_y} \frac{d\P_{y|x}}{d\Q_{y|x}}(\vy) d\Q_{y|x}(\vy)\right) \frac{d\P_{x}}{d\Q_{x}}(\vx)d\Q_{x}(\vx) \\
-      &= \int_{A_x}\int_{A_y}\frac{d\P_{x}}{d\Q_{x}}(\vx)\frac{d\P_{y|x}}{d\Q_{y|x}}(\vy) d\Q_{y|x}(\vy) d\Q_{x}(\vx)
+      &= \int_{A_x}\int_{A_y}\frac{d\P_{x}}{d\Q_{x}}(\vx)\frac{d\P_{y|x}}{d\Q_{y|x}}(\vy) d\Q_{y|x}(\vy) d\Q_{x}(\vx),
 \end{align*}
-Now  via the dissintegration we have that:
+Now  via the disintegration we have that:
 \begin{align*}
-  \int_{A_x \times A_y} \frac{d\P_{x}}{d\Q_{x}}(\vx)\frac{d\P_{y|x}}{d\Q_{y|x}}(\vy) d\Q(\vx,\vy) = \int_{A_x}\int_{A_y}\frac{d\P_{x}}{d\Q_{x}}(\vx)\frac{d\P_{y|x}}{d\Q_{y|x}}(\vy) d\Q_{y|x}(\vy) d\Q_{x}(\vx)
+  \int_{A_x \times A_y} \frac{d\P_{x}}{d\Q_{x}}(\vx)\frac{d\P_{y|x}}{d\Q_{y|x}}(\vy) d\Q(\vx,\vy) = \int_{A_x}\int_{A_y}\frac{d\P_{x}}{d\Q_{x}}(\vx)\frac{d\P_{y|x}}{d\Q_{y|x}}(\vy) d\Q_{y|x}(\vy) d\Q_{x}(\vx).
 \end{align*}
 Thus we conclude that:
 \begin{align*}
@@ -439,23 +455,24 @@ which via the Radon-Nikodym Theorem imlpies:
     \frac{d\P}{d\Q} (\vx,\vy) = \frac{d\P_{y|x}}{d\Q_{y|x}}(\vy)\frac{d\P_x}{d\Q_x}(\vx).
 \end{align*}
 \end{proof}
-The above result is used across a variety of different texts in stochastic processes, nonetheless it has proven difficult to find a resource for it and its derivation. We searched through a variety of graduate courses and books on measure and integration and could not find this result neither stated nor derived thus we decided it would be instructive to provide a sketch proof for it, since we will be using it multiple times.
+The above result is used across a variety of different texts in stochastic processes, nonetheless it has proven difficult to find an original source for it and its derivation. We searched through a variety of graduate courses and books on measure and integration and could not find this result neither stated nor derived thus we decided it would be instructive to provide a sketch proof for it, since we will be using it multiple times.
 
 
 \subsection{RN-Derivative of Itô-Processes}
 
 
-As we hinted earlier Itô-processes don't admit a PDF since they are note absolutely continuous with respect to the Lebesgue measure. However some Itô-processes are absolutely continuous with respect to one another and thus we are able to compute their RN-derivatives which is useful if we want to compute the KL-divergence between the two processes.  First we must introduce the following notation:
-\begin{definition} (Path Measure)
+As we hinted earlier Itô-processes don't admit a PDF since they are not absolutely continuous with respect to the Lebesgue measure. However, some Itô-processes are absolutely continuous with respect to one another and thus we are able to compute their RN-derivatives which is useful if we want to compute the KL-divergence between the two processes.  First we must introduce the following notation:
+\begin{definition} (Path Measure) \label{def:pathmesu}
     For an Itô-process of the form:
     \begin{align*}
         d\rvx(t) = \rvb(t) + \rvsigma(t) d\rvw(t)
     \end{align*}
-    defined in $[0,T]$. We call $\P$ the path measure of the above process whose outcome space $\Omega=C([0,T], \R^d)$ if the distribution $\P$ describes a weak solution to the above SDE \footnote{Weak solution is a terminology for a solution of an SDE that does not take into account an initial value problem plus there is the freedom of specifying the probability space.} to the above SDE.
+    defined in $[0,T]$. We call $\P$ the path measure of the above process whose outcome space $\Omega=C([0,T], \R^d)$ if the distribution $\P$ describes a weak solution to the above SDE \footnote{Weak solution is a terminology for a solution of an SDE that does not take into account an initial value problem plus there is the freedom of specifying the probability space.}.
 \end{definition}
 
-In short the path measure represents the probability measure associated to the stochastic process specified by the SDE. 
-
+In short the path measure represents the probability measure associated to the stochastic process specified by the SDE.  For example $\W_{\gamma}$ is the Wiener measure and represents the path measure of a Wiener process with volatility $\sqrt{\gamma}$
+ (i.e. $d\rvx(t) = \sqrt{\gamma} d \rvw(t)$). For a more formal introduction to path measures we require the notion of a \textit{path integral}, we will not be going into that level of detail for this thesis. We point the reader to \cite{sarkka2019applied, oksendal2003stochastic} for a more thorough introduction.
+ 
 Now we can go ahead and present the following Theorem \citep{sarkka2019applied}:
 \begin{theorem}\label{thrm:ito_ratio}\citep{sarkka2019applied}
 Given two Itô-processes with the same constant volatility: 
@@ -476,7 +493,7 @@ which is popularly refered to as Girsanov's theorem as it is one of the main ele
 %\chapter{Background} 
 \chapter{The Schrödinger Bridge Problem}
 
-As originally posed by Schrödinger in \citep{schrodinger1931uber, schrodinger1932theorie} the Schrödinger Bridge consists in finding a posterior stochastic evolution between two distributions that is optimally close to a Brownian motion prior in a KL sense:
+As originally posed by Schrödinger in \citep{schrodinger1931uber, schrodinger1932theorie} the Schrödinger bridge consists in finding a posterior stochastic evolution between two distributions that is optimally close to a Brownian motion prior in a KL sense:
 \begin{align} \label{eq:schrobirdge}
     \hat{\Q}= \argmin_{\Q \in \calD(\pi_0, \pi_1)} \KL\left(\Q \big|\big| \W\right),
 \end{align}
@@ -484,11 +501,11 @@ where:
 \begin{align} \label{eq:kl_sho}
     \ \KL\left(\Q \big|\big| \W\right) = \E_{\Q}\left[\ln \frac{d\Q}{d\W}\right].
 \end{align}
-To the eye of a probabilistic modeller this objective may be initially quite confusing.  Mainly because it is minimising the KL divergence between a "posterior" distribution $\Q$ and a "prior" distribution $\W$ which does not match the usual variational inference objectives that arise from minimising an Evidence Lower Bound. In order to give a sound interpretation to the objective in Equation \ref{eq:schrobirdge} we will look into the Schrödinger Bridge's formulation as a rare event and additionally comment on the maximum entropy like nature of the objective.
+To the eye of a probabilistic modeller this objective may be initially quite confusing.  Mainly because it is minimising the KL divergence between a ``posterior'' distribution $\Q$ and a ``prior'' distribution $\W$ which does not match the usual variational inference objectives that arise from minimising an evidence lower bound \citep{yang2017understanding}. In order to give a sound interpretation to the objective in Equation \ref{eq:schrobirdge} we will look into the Schrödinger Bridge's formulation as a rare event and additionally comment on the maximum entropy like nature of the objective.
 
 \section{Rare Events and Maximum Entropy }
 
-First let our sample space be the space of random functions with the unit interval as pre-image $C([0,1], \R^d)$ that is a sample  represents a function of the form $\vx : [0, 1]:  \rightarrow \R^d$.  We now take a set of i.i.d samples $\{\rvx_{i}(t)\}_{i=1}^N$ following standard Brownian motion defined on $C([0,1], \R^d)$. The empirical distribution for $\{\rvx_{i}(t)\}_{i=1}^N$ is the defined by:
+First let our sample space be the space of random functions with the unit interval as pre-image $C([0,1], \R^d)$ that is a sample  represents a function of the form $\vx : [0, 1]:  \rightarrow \R^d$.  We now take a set of i.i.d samples $\{\rvx_{i}(t)\}_{i=1}^N$ following standard Brownian motion defined on $C([0,1], \R^d)$. The empirical distribution for $\{\rvx_{i}(t)\}_{i=1}^N$ is defined by:
 \begin{align}\label{eq:empirical}
     \hat{\W}(A) = \frac{1}{N}\sum_{i=1}^N \ind\left(\rvx_i(t) \in A\right)  , \quad A \in \calB(\R^d)^{[0,1]},
 \end{align}
@@ -496,24 +513,28 @@ then we might want to ask what is the probability that the empirical distributio
 \begin{align}
     {P}\left(\hat{\W} \in \mathcal{D}(\pi_0, \pi_1) \right)
 \end{align}
-it turns out that result from the theory of large deviations (Sanov's Theorem) allows us to compute an asymptotic expression for such probability:
+it turns out that result from the theory of large deviations (Sanov's Theorem) allows us to compute an asymptotic expression for such probability \citep{leonard2012schrodinger}:
 \begin{align} \label{eq:max_ent}
     {P}\left(\hat{\W} \in \mathcal{D}(\pi_0, \pi_1) \right) \sim \exp\left(-N\inf_{\Q \in \calD(\pi_0, \pi_1)} \!\!\!\!\!\KL\left(\Q \big|\big| \W\right)\right).
 \end{align}
-For a more technically thorough introduction please check \cite{leonard2013survey}. Note that the exponent for the probability in Equation \ref{eq:max_ent} extremises the KL-divergence following the Principle of Minimum Discrimination Information by \cite{kullback1997information} which is a generalisation of Edwin Jane's Maximum Entropy Principle \citep{jaynes1957information,jaynes2003probability} to continuous distributions. Note one can observe the connection between maximising entropy and minimising KL divergence by considering the discrete setting where minimising KL divergence with respect to a uniform reference distribution is equivalent to maximising entropy. In simple words we are selecting a distribution $\hat{\Q}$ subject to the marginal constraints that is as close as possible given prior knowledge $\W$.
+For a more technically thorough introduction please check \cite{leonard2013survey}. Note that the exponent for the probability in Equation \ref{eq:max_ent} extremises the KL-divergence following the principle of minimum discrimination information by \cite{kullback1997information} which is a generalisation of Edwin Jane's maximum entropy principle \citep{jaynes1957information,jaynes2003probability} to continuous distributions. Note one can observe the connection between maximising entropy and minimising KL divergence by considering the discrete setting where minimising KL divergence with respect to a uniform reference distribution is equivalent to maximising entropy. In simple words we are selecting a distribution $\hat{\Q}$ subject to the marginal constraints that is as close as possible given prior knowledge $\W$.
+
+We can begin to see how the extremisation in the exponent of Equation \ref{eq:max_ent} may be a difficult problem numerically, since it involves two boundary value constraints which cannot both be enforced simultaneously without introducing computational overhead. For example using the approach of Lagrange multipliers will turn the problem into one of finding a saddle point, rather than a classical optimisation one for which our current tools are better suited too.
 
 \section{Dynamic Formulation}
-The Dynamic formulation of the Schrödinger follows directly from the exponent in the maximum entropy formulation.  The dynamic version of the Schrödinger bridge is written in terms of path measures that describe the stochastic dynamics defined over the unit interval.
+The Dynamic formulation of the Schrödinger bridge follows directly from the exponent in the maximum entropy formulation.  The dynamic version of the Schrödinger bridge is written in terms of path measures that describe the stochastic dynamics defined over the unit interval.
 \begin{definition}
     (Dynamic Schrödinger Problem) The dynamic Schrödinger problem is given by:
     \begin{align}
         \inf_{\Q \in \calD(\pi_0, \pi_1)} \KL\left(\Q \big|\big| \W^{\gamma}\right)
     \end{align}
-    Where $\Q \in \calD(\pi_0, \pi_1)$ is a path measure with prescribed marginals of $\pi_0, \pi_1$ at times $0, 1$ and $\W_{\gamma}$ is the Wiener measure with volatility $\gamma$. 
+    Where $\Q \in \calD(\pi_0, \pi_1)$ is a path measure with prescribed marginals of $\pi_0, \pi_1$ at times $0, 1$ and $\W_{\gamma}$ is the Wiener measure with volatility $\gamma$ (see Definition \ref{def:pathmesu}). 
 \end{definition}
 \subsection{As a Stochastic Control Problem}
 
-The two results presented below are from \cite{pavon1991free}. For Pedagogical reasons we provide a proof sketch of these two results.
+We will explore a formulation of the Schrödinger bridge problem that is characterised in terms of extremising a mean squared error styled objective with respect to the the drift that characterises the SDE describing $\Q$. This formulation will us to naturally enforce one of the boundary value constraints as an initial value , which will be helpful in the design of an iterative and alternating procedure for solving the Schrödinger bridge problem.
+
+The two results presented below are from \cite{pavon1991free}. For pedagogical reasons we provide a proof sketch of these two results.
 
 We can represent $\Q$ as the distribution which evolves according to the solution of an SDE of the form:
 \begin{align*}
@@ -524,9 +545,10 @@ We can represent $\Q$ as the distribution which evolves according to the solutio
 \begin{align}\label{eq:free_energy_1}
      \KL\left(\Q \big|\big| \W^{\gamma}\right) = \KL(\pi^{\Q}_0 || \pi_0) + \E_\Q\left[\int_0^1 \frac{1}{2\gamma}\big|\big|\rvb^{+}(t) \big|\big|^2 dt\right]
 \end{align}
+We refer to this expression (Equation \ref{eq:free_energy_1}) as the stochastic control formulation of the Schrödinger bridge problem.
 \end{lemma}
 \begin{proof}
-Via the Disintegration theorem and Theorem \ref{lemma:rn_des} we can condition on the endpoint and re-write the RN derivative as:
+Via the disintegration theorem and Theorem \ref{lemma:rn_des} we can condition on the endpoint and re-write the RN derivative as:
 \begin{align*}
     \frac{d\Q}{d\W} = \frac{\pi_0^\Q}{\pi_0} \frac{d\Q_{(0,1]}}{d\W_{(0,1]}}\left(\cdot | \rvx(0) =\vx\right)
 \end{align*}
@@ -567,7 +589,7 @@ Then using the drift based formulations defined above \cite{pavon1991free} deriv
     s.t.\;\;\; d\rvx(t) = \rvb^{+}(t) &dt + \sqrt{\gamma} \rvw^{-}(t), \;\; \rvx(1) \sim \pi_1 , \;\; \rvx(0) \sim \pi_0
 \end{align}.
 \end{itemize}
-Notice that the conditioning carried out by the Disintegration theorem allows us to remove one of the boundary constraints and integrate it as an initial value problem to the objective. This result is what inspired us the most in the design of an iterative algorithm for solving finding the Schrödinger Bridge numerically. 
+Notice that the conditioning carried out by the disintegration theorem allows us to remove one of the boundary constraints and integrate it as an initial value problem to the objective. This result is what inspired us the most in the design of an iterative algorithm for solving finding the Schrödinger bridge numerically. 
 \section{Static Formulation}
 \begin{definition}\label{def:static_bridge}
     (Static Schrödinger Problem) The static Schrödinger bridge consists in finding the joint distribution $q(\vx, \vy) \in \calD(\pi_0(\vx), \pi_1(\vy))$ which is closest to the Brownian motion prior, subject to marginal constraints, that is :
@@ -576,7 +598,7 @@ Notice that the conditioning carried out by the Disintegration theorem allows us
         s.t. \;\;\; \pi_0(\vx) = \int q(\vx,\vy) d\vy, &\;\;\pi_1(\vy) = \int q(\vx,\vy) d\vx,
     \end{align}
 \end{definition}
-we will know illustrate how this result is arrived to from the dynamic version. Most surveys and paper relating the Schrödinger include some form of the derivation that we are about to present, however they skip several steps which may make it inaccessible to a more applied community. 
+we will know illustrate how this result is arrived to from the dynamic version. Most surveys and paper relating the Schrödinger bridge include some form of the derivation that we are about to present, however they skip several steps which may make them inaccessible to a more applied community. 
 \begin{theorem}\citep{follmer1988random}
     The dynamic Schrödinger bridge is solved by :
 \begin{align}
@@ -598,16 +620,30 @@ Firstly we decompose the KL divergence over path measures $\KL\left(\Q \big|\big
 \begin{align}
     \frac{d\Q}{d\W} = \frac{q(\vx, \vy)}{p^{\W^{\gamma}}(\vx. \vy)}\frac{d\Q_{(0,1)}}{d\W_{(0,1)}}\left(\cdot | \rvx(0) =\vx, \rvx(1) =\vy\right)
 \end{align}
-Let $\Q_{(0,1)}(\cdot |  \rvx(0) =\vx, \rvx(1) =\vy) = \Q(\cdot |  \vx,\vy)$. Substituting the above decomposition back into the KL divergnece and marginalising where possible we arrive at: 
+Let $\Q_{(0,1)}(\cdot |  \rvx(0) =\vx, \rvx(1) =\vy) = \Q(\cdot |  \vx,\vy)$. Substituting the above decomposition back into the KL divergence and marginalising where possible we arrive at: 
 \begin{align} \label{eq:follmer_kl}
     \KL\left(\Q \big|\big| \W\right) =&  \KL\left(q(\vx, \vy) \big|\big| p^{\W^{\gamma}}(\vx. \vy) \right)  + \E_{\Q}\left[\frac{d\Q}{d\W^\gamma}\left(\cdot | \vx, \vy\right)\right], \nonumber \\
     =&  \KL\left(q(\vx, \vy) \big|\big| p^{\W^{\gamma}}(\vx. \vy) \right)  + \E_{q(\vx,\vy)}\left[\KL\left(\Q(\cdot |  \vx,\vy)\big|\big|\W^{\gamma}(\cdot |  \vx,\vy)\right)\right].
 \end{align}
-Now notice that the conditional $\Q_{(0,1)}(\cdot |  \rvx(0) =\vx, \rvx(1) =\vy)$ is not affected by the boundary constraints thus we can set $\Q(\cdot | \vx,\vy) = \W^\gamma\left(\cdot | \vx, \vy\right)$ making the second term 0, and leaving us with the static bridge. It then suffices to reverse the Disintegration theorem in order to build up $\Q^{*}$ from $q^{*}$ and $\Q^{*}(\cdot | \vx,\vy)$ completing the proof.
+Now notice that the conditional $\Q_{(0,1)}(\cdot |  \rvx(0) =\vx, \rvx(1) =\vy)$ is not affected by the boundary constraints thus we can set $\Q(\cdot | \vx,\vy) = \W^\gamma\left(\cdot | \vx, \vy\right)$ making the second term 0, and leaving us with the static bridge. It then suffices to reverse the disintegration theorem in order to build up $\Q^{*}$ from $q^{*}$ and $\Q^{*}(\cdot | \vx,\vy)$ completing the proof.
 \end{proof}
 
-The earliest references we found for the above result are given by \cite{follmer1988random}, where the decomposition of the KL divergence for two diffusion's (Equation \ref{eq:follmer_kl}) is provided. However we were not able to find a good reference for Lemma \ref{lemma:rn_des} and thus we have provided an instructive derivation for it.
+The earliest references we found for the above result are given by \cite{follmer1988random}, where the decomposition of the KL divergence for two diffusions (Equation \ref{eq:follmer_kl}) is provided. However we were not able to find a good reference for Lemma \ref{lemma:rn_des} and thus we have provided an instructive derivation for it.
 \subsection{As an Entropy Regularised Optimal Transport Problem}
+
+The optimal transport problem in its intuitive form concerned with the transport of a distribution into another distribution subject to distance/cost $c(\vx,\vy)$. In its discrete histogram based formulation it is refered to as the earth movers distance (EMD) \citep{levina2001earth} since it effectively moves a specific pile of earth into another. One of the early applications of EMD was in comparing grey-scale images in order for the development of a image retrieval system. 
+
+\begin{definition}
+Formally the optimal transport problem is given by the following objective:
+\begin{align*}
+\inf_{Q \in \calD(\pi_0, \pi_1)}\int  c(\vx, \vy) dQ(\vx, \vy),
+\end{align*}
+and if $Q$ is absolutely continuous wrt to the Lesbegue measure we can re-express the above as:
+\begin{align*}
+\inf_{Q \in \calD(\pi_0, \pi_1)}\int \int c(\vx, \vy) q(\vx, \vy) d\vx d\vy.
+\end{align*}
+Furthermore when $ c(\vx, \vy) = || \vx - \vy||^2$  the above resembles the square of the Wasserstein distance $\calW^2_{2}(\pi_0, \pi_1)$ .
+\end{definition}
 
 Here we will present and discuss a very well studied \citep{mikami2008optimal,leonard2012schrodinger,leonard2013survey,carlier2017convergence} connection between the static bridge and the Wasserstein distance.  Using that for the Wiener process $\W^\gamma$ prior we have :
 \begin{align}
@@ -625,7 +661,7 @@ does not depend on $q$ (due to the constraints). Substituting the above into Equ
 which is an entropy regularised optimal mass transport problem (OMT) \citep{villani2003topics} with a quadratic cost function. Furthermore as the volatility/noise of the Brownian motion prior goes to 0 ($\gamma \downarrow 0$) the above quantity converges to $\calW^2_{2}(\pi_0, \pi_1)$ (Squared Wasserstein distance in an $L_2$ metric space).
 \subsection{The Schrödinger System}
 
-Following \cite{pavon2018data} Lagrangian of Equation \ref{eq:static_bridge} is given by :
+Following \cite{pavon2018data} the Lagrangian of Equation \ref{eq:static_bridge} is given by :
 \begin{align}\label{eq:schro_lagrangian}
     \calL(q, \lambda,  \mu) &=  \KL (q(\vx,\vy)  || p^{\W^{\gamma}}(\vx,\vy))  \nonumber\\
     &+ \int \lambda(\vx)\left( \int q(\vx,\vy)d\vy -\pi_0(\vx)\right)d\vx \nonumber \\
@@ -651,7 +687,7 @@ satisfying:
     \phi_1(\vy) \int \hphi_0(\vx) p^{\W^{\gamma}}(\vy|\vx) d\vx = \pi_1(\vy), \nonumber
 \end{align}
 where we re-lable the terms with the integrals to:
-\begin{align}
+\begin{align} \label{eq:sysint}
     \phi_0(\vx) &= \int \phi_1(\vy) p^{\W^{\gamma}}(\vy|\vx) d\vy \nonumber\\ 
     \hphi_1(\vy) &= \int \hphi_0(\vx) p^{\W^{\gamma}}(\vy|\vx) d\vx. \nonumber
 \end{align}
@@ -673,7 +709,12 @@ Note that by Proposition 3.3 of \cite{pavon1991free} the optimal control signal/
 \begin{align} \label{eq:drifr_potential}
     \rvb_t^{+} = \gamma \nabla \ln \phi_t(\vx(t) )
 \end{align}
+
+Note that the Schrödinger system is an equivalent formulation of the static Schrödinger problem in terms of the potential functions. It is by no means a method or an algorithm for solving the problem. We can observe that only in very simple cases when the integrals in Equation \ref{eq:sysint} may be analytic and easy to solve for we me be able to guess a solution for the potentials in a similar way to how we formulate Ansatz for simple differential equations. 
+
 \section{Half Bridges}
+
+We keep mentioning that when we have only a single boundary constraint this is an easier problem since it becomes trivial to enforce such constraint numerically. In this section we will study in more detail such single constraint problem  and illustrate why exactly it is a more simple problem. This construction will be of use since it will constitute as part of the steps in the final algorithms for solving the full bridge problem.
 
 The half bridge problem as presented in \cite{pavon2018data} is a simpler variant of the full Schrödinger bridge with only one boundary constraint. 
 
@@ -760,7 +801,7 @@ See \cite{pavon2018data}.
 %\chapter{Algorithmic Framework} 
 \chapter{Iterative Proportional Fitting Procedure}
 
-So far we have introduced the Schrödinger bridge problem as well as its simpler half bridge variants. We have also introduced the Schrödinger system and loosely hinted at a potential iterative solution, nonetheless we have not yet presented a full solution and discussed its guarantees / properties.
+So far we have introduced the Schrödinger bridge problem as well as its simpler half bridge variants. We have also introduced the Schrödinger system and loosely hinted at a potential iterative solution, nonetheless we have not yet presented a full solution and discussed its guarantees/properties.
 
 In this chapter we will be studying an algorithmic framework known as the Iterative Proportional Fitting Procedure (IPFP) \citep{csiszar1975divergence, kullback1968probability, ruschendorf1995convergence,cramer2000probability} and describe its usage for solving the Schrödinger bridge. Furthermore we will formalise a previously made observation that connects Fortet's Iterative scheme \citep{fortet1940resolution} for solving the Schrödinger system with the more general IPFP . 
 
@@ -863,7 +904,7 @@ We can see that the  recurrence in Equation \ref{eq:recurrence} is the exact sam
 Whilst in hindsight the above observation may seem simple we regard it as a contribution nonetheless as we have not observed a formal argument made towards that connection. As we will see in the following sections this connections bridges the stream of iterative proportional fitting algorithms with Fortet's algorithm.
 
 \section{Kullback's IPFP}
-The original Iterative Proportional Fitting Procedure (IPFP) consists en estimating a normalised contingency table (discrete joint distribution) given prescribed marginals, via some form of information discrimination/maximum entropy principle. Our interest however is in the continuous variant of IPFP which dates back to Kullback \citep{kullback1968probability}.
+The original Iterative Proportional Fitting Procedure (IPFP) consists in estimating a normalised contingency table (discrete joint distribution) given prescribed marginals, via some form of information discrimination/maximum entropy principle. Our interest however is in the continuous variant of IPFP which dates back to Kullback \citep{kullback1968probability}.
 
 What we call in this section Kullback's IPFP is in fact Algorithm \ref{alg:ipfp_intro} which we have introduced via its formal connection to Fortet's algorithm.  The first complete proof for convergence to the  Schrödinger bridge Algorithm \ref{alg:ipfp_intro} was provided in \cite{ruschendorf1995convergence} using information geometric arguments from \cite{csiszar1975divergence}.
 
@@ -1073,7 +1114,7 @@ thus:
 
 \end{proof}
 
-The above observation hold true for an optimal classifier $D^{*}$ that can tell apart samples from $\pi_\theta(\vy)$ and $\pi_1(\vy)$ see \cite{mohamed2016learning} for furhter motivations. The main differences we have in each half bridge objective is the additional entropy term which helps with making our estimates spread out, whilst GANs instead have one of the terms from the JSD.  So up to a term IPFP has two GANs trained until convergence going forwards and backwards in turn.
+The above observation hold true for an optimal classifier $D^{*}$ that can tell apart samples from $\pi_\theta(\vy)$ and $\pi_1(\vy)$ see \cite{mohamed2016learning} for further motivations. The main differences we have in each half bridge objective is the additional entropy term which helps with making our estimates spread out, whilst GANs instead have one of the terms from the JSD.  So up to a term IPFP has two GANs trained until convergence going forwards and backwards in turn.
 
 Lets quickly zoom into the terms that differ between our loss and the GAN loss removing constants the terms are:
 
@@ -1081,7 +1122,7 @@ Lets quickly zoom into the terms that differ between our loss and the GAN loss r
  \E_{q_{\theta}(\vy|\vx)\pi_0(\vx)}\left[ \log q_{\theta}(\vy|\vx) \right]\quad &\text{vs} \quad  \E_{q_{\theta}(\vy)}\left[\log\left(q_{\theta}(\vy) + \pi_1(\vy)\right)\right]
 \end{align}
 
-The term $H_{\theta}(\vy|\vx) =\E_{q_{\theta}(\vy|\vx)\pi_0(\vx)}\left[ \log q_{\theta}(y|x) \right]$ is a conditoinal entropy whilst the term $\E_{q_{\theta}(\vy)}\left[\log\left(q_{\theta}(\vy) + \pi_1(\vy)\right)\right]$ is one of the terms in the Jensen Shanon divergence, both prevent the delta collapse of the reverse cross entropy, and is the main difference between GANs and a single forward (or backwards) pass of IPF on the schrodinger bridge problem.
+The term $H_{\theta}(\vy|\vx) =\E_{q_{\theta}(\vy|\vx)\pi_0(\vx)}\left[ \log q_{\theta}(y|x) \right]$ is a conditoinal entropy whilst the term $\E_{q_{\theta}(\vy)}\left[\log\left(q_{\theta}(\vy) + \pi_1(\vy)\right)\right]$ is one of the terms in the Jensen Shanon divergence, both prevent the delta collapse of the reverse cross entropy, and is the main difference between GANs and a single forward (or backwards) pass of IPF on the Schrödinger bridge problem.
 
  Note than under this parametrisation the term $H_{\theta}(\vy|\vx)$ can be obtained in closed form $\E_{\pi_1(\vy)}[\log {\sigma}_{\theta}(\vy)]$ and has the clear interpretation in that it maximises the variance / spread of our mapping.
  
@@ -1092,19 +1133,19 @@ The term $H_{\theta}(\vy|\vx) =\E_{q_{\theta}(\vy|\vx)\pi_0(\vx)}\left[ \log q_{
 %\chapter{Design and Implementation}
 \chapter{Empirical Schrödinger Bridges}
 
-Now we have finally reached the core section of this thesis, were we propose and discuss numerical implementations for the Schrodinger Bridge Problem. We call the Empirical Schrodinger Bridge, the setting of the Schrodinger bridge problem when the marginal/boundary distributions are only available via samples (i.e. their empirical distribution):
+Now we have finally reached the core section of this thesis, were we propose and discuss numerical implementations for the Schrödinger Bridge Problem. We call the Empirical Schrödinger Bridge, the setting of the Schrödinger bridge problem when the marginal/boundary distributions are only available via samples (i.e. their empirical distribution):
 \begin{align}
     \hat{\pi}_0(\vx)  = \frac{1}{N}\sum_i \delta(\vx -\vx_i) &, \quad\hat{\pi}_1(\vy)  = \frac{1}{M}\sum_j \delta(\vy -\vy_j) \nonumber\\
     \vx_i \sim \pi_0 &, \quad \vy_j \sim \pi_1
 \end{align}
 
-Note that \cite{pavon2018data} refer to this problem as the Data Driven Schrodinger Bridge. We will discuss  different algorithms derived from the g-IPFP for solving the Schrodinger Bridge under this Empirical setting. As this is a fairly new problem of interest in the applied/numerical setting there is not much accessible and validated prior work out there already thus for prior approaches will will only be reproducing and commenting on the work of \cite{pavon2018data}.
+Note that \cite{pavon2018data} refer to this problem as the Data Driven Schrödinger Bridge. We will discuss  different algorithms derived from the g-IPFP for solving the Schrödinger Bridge under this Empirical setting. As this is a fairly new problem of interest in the applied/numerical setting there is not much accessible and validated prior work out there already thus for prior approaches will will only be reproducing and commenting on the work of \cite{pavon2018data}.
 
 Our main contributions are:
 
 \begin{itemize}
-    \item The proposal of two completely new numerical algorithms for solving the empirical Schrodinger bridge problem.
-    \item The rephrasing of the Method by \cite{pavon2018data} as an un-normalised likelihood estimation problem and connection to alternative methods within the Machine Learning and applied statistics community.
+    \item The proposal of two completely new numerical algorithms for solving the empirical Schrödinger bridge problem.
+    \item The rephrasing of the Method by \cite{pavon2018data} as an un-normalised likelihood estimation problem and connection to alternative methods within the machine learning and applied statistics community.
 \end{itemize}
 
 
@@ -1139,7 +1180,7 @@ then removing the constant entropy term we arrive at:
 \end{align*}
 A similar argument follows for Equation \ref{eq:term2}
 \end{proof}
-Note that Equation \ref{eq:zero} motivates the use of other probability metrics/divergences as long as they share the same property of being minimised  when its arguments are equal. Then following Observation \ref{obs:pavon} the core escense of the method in \cite{pavon2018data} is parametrising  $\hphi_0(\vx), \;  \phi_1(\vy) $ with a parametric family of positive functions and minimise an empirical estimate of Equation \ref{eq:pavon_cros_ent}:
+Note that Equation \ref{eq:zero} motivates the use of other probability metrics/divergences as long as they share the same property of being minimised  when its arguments are equal. Then following Observation \ref{obs:pavon} the core essence of the method in \cite{pavon2018data} is parametrising  $\hphi_0(\vx), \;  \phi_1(\vy) $ with a parametric family of positive functions and minimise an empirical estimate of Equation \ref{eq:pavon_cros_ent}:
 \begin{align}
     \hat{\beta}^*_i = \argmax_{\hat{\beta} } &\frac{1}{M} \sum_s \log \hphi_0(\vx_s; \hat{\beta} )   \phi_0^{(i)}(\vx_s)
     \quad \vx_s\sim \pi_0(\vx) \nonumber \\
@@ -1208,6 +1249,8 @@ Turning the problem into estimating and fitting an un-normalised likelihood \cit
 
 \subsection{Analysis of simple Gaussian like Parametrisation}
 
+The goal of this sub section is to illustrate the challenges in parametrising the MLE based objectives proposed in \cite{pavon2018data} such that the partition function can be computed in closed form. Ultimately we were unable to come up with a flexible enough parametrisation that both had a closed form partition function and was flexible enough to solve the half bridge for multimodal distributions.
+
 Following the reparamtrisation introduced in the previous section we consider the case of parametrising the potentials with unimodal Gaussian's this allows for further analysis of the method since both the normalisation and the updates can be attained in closed form. 
 
 Firstly we put forward the following counter example that valid Gaussian like parametrisation's for the potentials cannot solve the bridge even for uni-modal Gaussian marginals:
@@ -1269,7 +1312,7 @@ Then the above system has no valid solutions (can be solved only for negative va
 
 \end{proof}
 
-In short what the above tells us is that if we wish to do a squared exponential paremetrisation for the potentials we must drop the positive definite constraint . In geometric terms if one potential is log concave then the other needs to be log convex due to how the variances combine.
+In short what the above tells us is that if we wish to do a squared exponential paremetrisation for the potentials we must drop the positive definite constraint. In geometric terms if one potential is log concave then the other needs to be log convex due to how the variances combine.
 
 We still however must enforce an integrability constraint (required to make the inner product of potentials converge):
 \begin{align*}
@@ -1284,7 +1327,7 @@ which can be enforced via a simple reparametrisation (this allows for negative l
 \mSigma_x = (\mL\mL^{\top} -\mSigma_y^{-1})^{-1}
 \end{align*}
 Where $\mL$ can be paramterised in terms of an unconstrained vector.
-\subsection{Mixture of Exponentiated Quadratics}
+\subsubsection{Mixture of Exponentiated Quadratics}
 
 
 We now wish to consider if its possible to extend the exponentiated quadratic  parametrisation of the potentials to a mixture of exponentiated quadratics. In order to achieve this parametrisation we need to reconsider the integrability constraint.
@@ -1306,9 +1349,9 @@ Where $d$ is a specific component / dimension. Thus we can enforce this constrai
 \begin{align*}
    \lambda_{k_x}^d = \exp(\theta) - \min\lambda_{k_y}^d 
 \end{align*}
-where  $\theta$ is an unconstrained parameter. Furthermore we can paramterise the orthogonal matrices $\mU_{k_x}$ in terms of unconstrained vectors using Householder reflections. Combining the aforementioned parametrisations we can enforce the integrability constraint  fully via re-parametrisations and while these parametrisations are not differentiable everywhere one can still maximise the liklelihood using the sub-gradient method \citep{shor1991development}.
+where  $\theta$ is an unconstrained parameter. Furthermore we can paramterise the orthogonal matrices $\mU_{k_x}$ in terms of unconstrained vectors using Householder reflections. Combining the aforementioned parametrisations we can enforce the integrability constraint  fully via re-parametrisations and while these parametrisations are not differentiable everywhere one can still maximise the liklelihood using the sub-gradient method \citep{shor1991development}. Unfortunate this method was unable to work for multimodal distributions and thus we decided not to pursue this path further.
 
-\section{Direct Half Bridge Drift Estimation with Gaussian Processes}
+\section{Direct Half Bridge Drift Estimation with Gaussian processes}
 
 In this approach we wish to exploit the fact that we have an expression for the path measure that globally solves for the half bridge problems.  Thus rather than parametrise the optimisation problem in the half bridge and solve that numerically, here we seek to directly approximate the measure that solves for the half bridge via a Gaussian process estimate of the drift on trajectories sampled from the optimal measure.
 
@@ -1572,7 +1615,7 @@ Note that the objectives we have just derived are in general not solvable in clo
 We will now proceed to discuss these approximations in more detail.
 \subsubsection{Numerical Optimization (Differnitable Parametrisation)}
 
-In oreder to optimise the control based variants of the half bridge objectives we need to parametrise the drift/control-sigmal as a differential function \footnote{We could alternatively parametrise the space of admissible control signals $\calB$ as a functional space (i.e. an  RKHS) in which we may be able to carry out minimisation of the half bridges in closed form, however we were unable to come up with such a space.}. Thus we parametrise the forwards and backwards drift with neural networks:
+In order to optimise the control based variants of the half bridge objectives we need to parametrise the drift/control-sigmal as a differential function \footnote{We could alternatively parametrise the space of admissible control signals $\calB$ as a functional space (i.e. an  RKHS) in which we may be able to carry out minimisation of the half bridges in closed form, however we were unable to come up with such a space.}. Thus we parametrise the forwards and backwards drift with neural networks:
 \begin{align}
     \rvb^{+}_{\Q}(t) := \rvb^{+}_{\phi}(\vx(t), t) \nonumber \\
     \rvb^{-}_{\P}(t) := \rvb^{-}_{\theta}(\vx(t), t)
@@ -1594,7 +1637,7 @@ We can sample from $\Q_{\phi}$ and $\P_{\theta}$ whilst enabling the single boun
 \end{align*}
 \end{itemize}
 
-Once we have sampled trajectories batches $\{\vx^{+}_i(t_k)\}_{i,k}^N$ and $\{\vx^{-}_j(t_l)\}_{j,l}^M$ we can proceed to estimate the path error term in the objective using the Montecarlo method:
+Once we have sampled trajectories batches $\{\vx^{+}_i(t_k)\}_{i,k}^N$ and $\{\vx^{-}_j(t_l)\}_{j,l}^M$ we can proceed to estimate the path error term in the objective using the Monte Carlo  method:
 
 
 \begin{itemize}
@@ -1611,9 +1654,9 @@ Once we have sampled trajectories batches $\{\vx^{+}_i(t_k)\}_{i,k}^N$ and $\{\v
 \end{itemize}
 \subsubsection{Cross-entropy Boundary Terms}
 
-Note that the densities inside the cross-entropy terms are $\pi_0, \pi_1$ which we only have access to via samples, thus we cannot apply the standard Montecarlo method as we cant evaluate the integrands $\pi_0, \pi_1$ at the Montecarlo samples.
+Note that the densities inside the cross-entropy terms are $\pi_0, \pi_1$ which we only have access to via samples, thus we cannot apply the standard Monte Carlo  method as we cant evaluate the integrands $\pi_0, \pi_1$ at the Monte Carlo  samples.
 
-Thus now we are required to do some form of density estimation for the boundary distributions $\pi_0, \pi_1$ so that we can compute a Montecarlo estimator for the cross entropy boundary terms. The two approximations we consider are non parametric approximations using Kernel Density Estimation and K-Nearest Neighbours.
+Thus now we are required to do some form of density estimation for the boundary distributions $\pi_0, \pi_1$ so that we can compute a Monte Carlo  estimator for the cross entropy boundary terms. The two approximations we consider are non parametric approximations using Kernel Density Estimation and K-Nearest Neighbours.
 
 We need to estimate:
 \begin{align*}
@@ -1642,7 +1685,7 @@ Where $N$ is the number of data points used in the KDE estimate. Alternatively f
 \hat{\pi}_0(\vx) \propto  \text{R}_k(\vx, \{\vx_i\})^{-d}\\
 \hat{\pi}_1(\vy) \propto \text{R}_k(\vy, \{\vy_j\})^{-d},
 \end{align*}
-where $\text{R}_k(\vx, \{\vx_i\})$ is the distance to the kth nearest neighbour of $\vx$ in $\{\vx_i\}$.  Approximating the density with a KNN basis is the core ingredients of approximating entropy's in \cite{singh2016analysis}.
+where $\text{R}_k(\vx, \{\vx_i\})$ is the distance to the kth nearest neighbour of $\vx$ in $\{\vx_i\}$ and $N$ is the number of datapoints used by the KDE approximation.  Approximating the density with a KNN basis is the core ingredients of approximating entropy's in \cite{singh2016analysis}.
 
 \subsection{Mode Collapse in Reverse KL}
 
@@ -1667,28 +1710,54 @@ Meaning that the reverse KL provides you with the truth (it is precise ), yet  i
 
 \section{Conceptual Comparison of Approaches}
 
+In this section we will briefly define and contrast some of the points of failures of each method based on conceptual observations prior to any experimentation.
+
+%TC:ignore
+\begin{table}[]
+\begin{adjustbox}{width=\columnwidth}
+\begin{tabular}{LllllF}
+\toprule
+\multirow{3}{*}{Method} & Mode                  & Auxiliary             & Misses                & Scales badly          & Explicit              \\
+                        & Collapse              & Sampling              & Distant               & in $N,M$              & Density               \\
+                        &                       &                       & Support               & and $\Delta t$        & Estimation            \\ \midrule
+\cite{pavon2018data}      & \xmark & \cmark & \cmark & \xmark & \cmark \\
+Stochastic Control      & \cmark & \xmark & \xmark & \xmark & \cmark \\
+Drift Estimation & \xmark & \xmark & \cmark & \cmark                 & \xmark  \\ \bottomrule
+\end{tabular}
+\end{adjustbox}
+\caption{Pitfalls per method. A check mark indicates the method suffers of the respective pitfall.}\label{tab:conceptual_pits}
+\end{table}
+%TC:endignore
+\begin{itemize}
+    \item \textbf{Mode Collapse}: As the name indicates this occurs when the optimisation procedure is not penalised for missing a particular mode in the boundary distributions. As a result the method is prone to missing modes and potentially unable to map in between distributions with a signficant difference in the numbers of modes.
+    \item \textbf{Auxiliary Sampling:} This is concerned with having to compute integrals with auxiliary distributions (e.g. importance sampling) as done in the method by \cite{pavon2018data}.
+    \item \textbf{Misses Distant Support:} This issue is concerned in being unable to generate samples that cover are in the support of $\pi_1$ when evolving from $\pi_0$ (and vice-versa). This problem is basically due to the reference process/prior not being able to transport samples from one boundary to areas where there are mass in the other boundary. As a result this wont give any initial signal to the IPFP algorithm and in lay terms it wont kick off the feedback-loop that refines the constraints in turn.
+    \item \textbf{Scales Badly in $N,M$ and $\Delta t$:} By this we mean that the method scales badly in the number of data-points as most non parametric kernel methods do. Note this is not a particularly major issue since there are techniques to counter-act and improve said issue. 
+    \item \textbf{Explicit Density Estimation:} This applies to methods that require to solve an explicit density estimation method at each g-IPFP iteration. Whilst this it not a major downside. Howerver \cite{pavon2018data} mentions that density estimation in high dimensions is both difficult and inaccurate , resulting in poor g-IPFP iterations.
+\end{itemize}
+Note that we believe that Mode Collapse, and Auxiliary Sampling are the most impact-full issues when numerically solving the empirical bridge. In the case of mode collapse we could not find any successful heuristics to improve this issue, and for Auxiliary sampling based approaches as in \cite{pavon2018data} it becomes very difficult to scale them to high dimensions in particular one needs to design an approach that is aware of where the mass in the integrand resides, such as \cite{osborne2012active}.  For missing the support of the boundary distributions one can re-scale the data (i.e. standardise) such that it is a a scale where vanilla Brownian motion can cover the support of the boundaries when going from one to the other, alternatively increasing the value of $\gamma$ will also achieve this. See Table \ref{tab:conceptual_pits} for a comparison between the studied methods in this thesis.
 %\chapter{Evaluation} 
 \chapter{Experiments}
 
-In this section we will be exploring to which extent our methods for the Empirical Schrodinger bridge work on toy 1D and 2D datasets. We limit ourselves to toy data which we can visually evaluate , due to the early nature of the approaches and problems we first wish to gain a practical understanding of the problems and its limitations before jumping to real world data. 
+In this section we will be exploring to which extent our methods for the Empirical Schrödinger bridge work on toy 1D and 2D datasets. We limit ourselves to toy data which we can visually evaluate , due to the early nature of the approaches and problems we first wish to gain a practical understanding of the problems and its limitations before jumping to real world data. 
 
 The comparisons between the methods are in this stage preliminary and are by no extent thorough. We chose to focus on 2 1D toy examples for which all methods works to compare them in a more quantitative fashion.
-
+\begin{figure}[t]
+    \centering
+    \includegraphics[scale=0.42,trim={4.3cm 0.2cm 1.5cm 0}, clip]{images/Pavon/Forward_unimodal_working_pavon_relu_nn500.png}\\\vspace{-0.2cm}
+    \includegraphics[scale=0.42,trim={4.3cm 0 1.5cm 1.5cm}, clip]{images/Pavon/Backward_unimodal_working_pavon_relu_nn500.png} 
+    \caption{Schrodinger Bridge results on unimodal Gaussian 1d data. Have included the potentials since it  were helpful to see how they cancel each other out. }
+    \label{fig:driftpavon}
+\end{figure}
 \section{Method by \cite{pavon2018data}}
 
-We initially were unable to get the method \cite{pavon2018data} to work. We later discovered that setting larger values of $\gamma$ in $\W^{\gamma}$ were required to obtain good results. Further down we learned another heuristic to solve this problem which was to standardise the data, effectively the issue was a matter of not being able to cover the support of the boundary distributions when sampling from the transition density of $\W^{\gamma}$. Thus we set $\gamma=1000$ in all the following experiments unless mentioned otherwise, we determined this value to be stable enough for us to explore the method. Furthermore we used $400$ montecarlo samples for each of the expectations approximated and a single hidden layer neural network with ReLu activation's with $500$ hidden units across all experiments. Each example was trained for an outer loop of $250$ epochs with $150$ inner epochs for the MLE sub iterations.
+We initially were unable to get the method \cite{pavon2018data} to work since the fit of the method kept co lapsing to delta distributions for the marginals. We later discovered that setting larger values of $\gamma$ in $\W^{\gamma}$ were required to obtain good results. Further down we learned another heuristic to solve this problem which was to standardise the data, effectively the issue was a matter of not being able to cover the support of the boundary distributions when sampling from the transition density of $\W^{\gamma}$. Thus we set $\gamma=1000$ in all the following experiments unless mentioned otherwise, we determined this value to be stable enough for us to explore the method. Furthermore we used $400$ Monte Carlo  samples for each of the expectations approximated and a single hidden layer neural network \citep{lecun2015deep} with ReLu activation's with $500$ hidden units is used to parametrised the potentials across all experiments. Each example was trained for an outer loop of $250$ epochs with $150$ inner epochs for the MLE sub iterations. We initialise the weights of the neural networks using the Glorot initialisation \citep{glorot2010understanding} and we used the \cite{duchi2011adaptive} optimiser.
 
 \subsection{Unimodal Experiments}
 
 In this section we consider transitioning from two normal distributions with different means and variances, we also illustrate how the method fails for small values of $\gamma$ and correctly diagnose a cause suggest some heuristics to overcome this issue. 
 \subsubsection{Different Means, Same Variances}
-\begin{figure}
-    \centering
-    \includegraphics[scale=0.45,trim={4.3cm 0.2cm 1.5cm 0}, clip]{images/Pavon/Forward_unimodal_working_pavon_relu_nn500.png}\\\vspace{-0.2cm}
-    \includegraphics[scale=0.45,trim={4.3cm 0 1.5cm 1.5cm}, clip]{images/Pavon/Backward_unimodal_working_pavon_relu_nn500.png} 
-    \caption{Schrodinger Bridge results on unimodal Gaussian 1d data. Have included the potentials since it  were helpful to see how they cancel each other out. }
-    \label{fig:driftpavon}
-\end{figure}
+
 In this section we explored the following generative process for the marginals:
 \begin{align*}
 \color{blue}{\pi_0(x)} &\color{blue}{= \calN(x; 5,  1)} \\
@@ -1697,8 +1766,8 @@ In this section we explored the following generative process for the marginals:
 \subsubsection{Different Means and Variances}
 \begin{figure}
     \centering
-    \includegraphics[scale=0.45,trim={4.3cm 0.2cm 1.5cm 0}, clip]{images/Pavon/Forward_bigvar_test_working.png}\\\vspace{-0.2cm}
-    \includegraphics[scale=0.45,trim={4.3cm 0 1.5cm 1.5cm}, clip]{images/Pavon/Backward_bigvar_test_working.png} 
+    \includegraphics[scale=0.42,trim={4.3cm 0.2cm 1.5cm 0}, clip]{images/Pavon/Forward_bigvar_test_working.png}\\\vspace{-0.2cm}
+    \includegraphics[scale=0.42,trim={4.3cm 0 1.5cm 1.5cm}, clip]{images/Pavon/Backward_bigvar_test_working.png} 
     \caption{Schrodinger Bridge results on unimodal Gaussian 1d data. }
     \label{fig:small_to_big}
 \end{figure}
@@ -1716,8 +1785,8 @@ Results can be found in Figure \ref{fig:small_to_big} where we can observe a goo
 \end{figure}
 \begin{figure}[t]
     \centering
-    \includegraphics[scale=0.45,trim={4.3cm 0.2cm 1.5cm 0}, clip]{images/Pavon/Forward_unimodal_test_working_convex.png} \\\vspace{-0.2cm}
-    \includegraphics[scale=0.45,trim={4.3cm 0 1.5cm 1.5cm}, clip]{images/Pavon/Backward_unimodal_test_working_convex.png} 
+    \includegraphics[scale=0.42,trim={4.3cm 0.2cm 1.5cm 0}, clip]{images/Pavon/Forward_unimodal_test_working_convex.png} \\\vspace{-0.2cm}
+    \includegraphics[scale=0.42,trim={4.3cm 0 1.5cm 1.5cm}, clip]{images/Pavon/Backward_unimodal_test_working_convex.png} 
     \caption{Schrodinger Bridge results on unimodal Gaussian 1d data.. }
     \label{fig:small_delta_collapse}
 \end{figure}
@@ -1751,18 +1820,19 @@ Using Proposition 3.3 of \cite{pavon1991free} we extract the optimal control sig
 \begin{align*} 
     \rvb_t^{+} = \gamma \nabla \ln \phi^*_t(\vx(t) ),
 \end{align*}
-we then generate trajectories using the EM method in order to visualise samples from the fitted path measure. Results can be seen in Figure \ref{eq:drifr_potential}, whilst the trajectories successfully split and manage to match the modes they dont match the variances of the fitted potentials from Figure \ref{fig:pavon_bimodal}. This suggests that whilst the method from \cite{pavon2018data} may seem to solve the static bridge and provide some reasonable approximation for the potentials in the Schrodinger system, we are not able to recover a good estimate of the drift from these fitted potentials. This may be due to the inaccuracies arising from the importance sampling used in the method generating an overal poor estimate of the logarithmic derivative. However we do note that the method by \cite{pavon1991free} does seem to provide reasonable estimates to the solution of the FPK equation and thus one can still interpolate the fitted distribution at different times.
+we then generate trajectories using the EM method in order to visualise samples from the fitted path measure. Results can be seen in Figure \ref{eq:drifr_potential}, whilst the trajectories successfully split and manage to match the modes they dont match the variances of the fitted potentials from Figure \ref{fig:pavon_bimodal}. This suggests that whilst the method from \cite{pavon2018data} may seem to solve the static bridge and provide some reasonable approximation for the potentials in the Schrödinger system, we are not able to recover a good estimate of the drift from these fitted potentials. This may be due to the inaccuracies arising from the importance sampling used in the method generating an overal poor estimate of the logarithmic derivative. However we do note that the method by \cite{pavon1991free} does seem to provide reasonable estimates to the solution of the FPK equation and thus one can still interpolate the fitted distribution at different times.
 
-\section{GP Approach}
+\section{Direct Drift Estimation}
 
-We found this approach to be much less brittle than the method by \cite{pavon2018data} when it came to distributions whose modes were far from the origin. However it still suffers the similar phenomena that it cannot fit  distributions that are beyond a radius of that is too far from the origin. Nonetheless we were empirically able to fit distributions whose means exceeded 4 with a value of $\gamma=1$. All experiments in this section were performed with $\gamma=1$ and in some cases we adapted the examples from previous sections to have smaller means in order to accommodate for the issue regarding relative support of the distributions that we mentioned earlier.
+We found this approach to be much less brittle than the method by \cite{pavon2018data} when it came to distributions whose modes were far from the origin. However it still suffers the similar phenomena that it cannot fit  distributions that are beyond a radius of that is too far from the origin. Nonetheless we were empirically able to fit distributions whose means exceeded 4 with a value of $\gamma=1$. All experiments in this section were performed with $\gamma=1$ and in some cases we adapted the examples from previous sections to have smaller means in order to accommodate for the issue regarding relative support of the distributions that we mentioned earlier. An important detail is that we did not optimise the hyperparameters of the fitted GP, this was mostly due to time constraints.
+
 \subsection{1D Toy Experiments }
 \subsubsection{Unimodal Experiments}
 Given the success of this method in more complex tasks we omit the simple experiment of mapping in between different mean but shared variance Gaussian distributions.
 
 \begin{figure}
     \centering
-    \includegraphics[scale=0.5,trim={4.3cm 1cm 2.5cm 0}, clip]{images/GP/gp_bigvar_trajectories.png}
+    \includegraphics[scale=0.4,trim={4.3cm 1cm 2.5cm 0}, clip]{images/GP/gp_bigvar_trajectories.png}
     \caption{ Fitted SB trajectories.  }
     \label{fig:bigvar200trajectroies}
 \end{figure}
@@ -1781,6 +1851,9 @@ We generate this dataset following:
 We can observe from Figure \ref{fig:bigvar200trajectroies} that the trajectories match the correct evolution of the means and the variances. Inspecting Figure \ref{fig:bigvar200boundaries} we can observe a minor struggle in matching the $0.1$ variance for which our approach seems to estimate a slightly higher variance. Nonetheless we can obsere a good fit.
 
 \subsubsection{Multimodal Experiments}
+
+We experiment with mapping in between uni-modal and multimodal distributions. We empirically find that this is the only method that can robustly cope with more than 2-modes.
+
 \textbf{Unimodal to Bimodal}\\
 
 We follow the generative following generative process for generating the toy data:
@@ -1790,20 +1863,20 @@ We follow the generative following generative process for generating the toy dat
 \end{align*}
 \begin{figure}
     \centering
-    \includegraphics[scale=0.5,trim={4.3cm 1cm 2.5cm 0}, clip]{images/GP/gp_final_bimodal_trajectories.png}
+    \includegraphics[scale=0.4,trim={3.5cm 1cm 2.5cm 0}, clip]{images/GP/gp_final_bimodal_trajectories.png}
     \caption{ Fitted SB trajectories.  }
     \label{fig:bimodfinal200trajectroies}
 \end{figure}
 \begin{figure}
     \centering
-    \includegraphics[scale=0.3,trim={4.3cm 1cm 2.5cm 0}, clip]{images/GP/gp_2_mode_final_boundaires.png}
+    \includegraphics[scale=0.3,trim={4cm 1cm 2.5cm 0}, clip]{images/GP/gp_2_mode_final_boundaires.png}
     \caption{ Fitted SB marginals.  }
     \label{fig:bimodfinal200boundaries}
 \end{figure}
 \textbf{Unimodal to Trimodal}\\
 \begin{figure}[t]
     \centering
-    \includegraphics[scale=0.5,trim={4.3cm 1cm 2.5cm 0}, clip]{images/GP/gp_3_mode_200_trimodal_boundaires_trajectories.png}
+    \includegraphics[scale=0.4,trim={4.3cm 1cm 2.5cm 0}, clip]{images/GP/gp_3_mode_200_trimodal_boundaires_trajectories.png}
     \caption{ Fitted SB trajectories for unimodal to trimodal data.  }
     \label{fig:3mode1d200trajectroies}
 \end{figure}
@@ -1824,10 +1897,14 @@ We can observe from Figures \ref{fig:3mode1d200trajectroies}, \ref{fig:3mode1d20
 Given the success of this method in going beyond splitting two modes, we decided to experiment further and go into 2-dimensions. Due to time constraints we choose not to push the experiments further with the method in \cite{pavon2018data}, furthermore we were unable to get this mode to split beyond 2 modes. 
 
 \subsubsection{Trimodal Experiment}
-In this section we consider the 2D extension of the trimodal experiment we have already performed just for the purposes of a sanity check in 2D. 
+In this section we consider the 2D extension of the trimodal experiment we have already performed just for the purposes of a sanity check in 2D.   We use the following distributions to generate our toy examples:
+\begin{align*}
+    \color{blue}{\pi_0(\vx)} &\color{blue}{= \calN\Bigg(\vx; -{0.1\choose0.1},  0.19^2\, \I \Bigg)} \\
+    \color{red}{\pi_1(\vy)} \color{red}{= \frac{1}{3}\calN\Bigg(\!\!\vy; -{3.3\choose0.1}, 0.11^2\!\!\Bigg)}&\color{red}{ + \frac{1}{3}\calN\Bigg(\!\!\vy; {3.5\choose3.5}, 0.11 ^2\!\!\Bigg)}\!+\color{red}{ \frac{1}{3}\calN\Bigg(\!\!\vy; {0.7\choose0.7}, 0.11 ^2\!\!\Bigg)}
+\end{align*}
 \begin{figure}
     \centering
-    \includegraphics[scale=0.45,trim={5.3cm 1cm 2.5cm 0}, clip]{images/GP/2d_3mode_GP_means_3.3_3.6_0.7_std_0.1_200.png}
+    \includegraphics[scale=0.4,trim={5.3cm 1cm 2.5cm 0}, clip]{images/GP/2d_3mode_GP_means_3.3_3.6_0.7_std_0.1_200.png}
     \caption{ Fitted SB trajectories for unimodal to trimodal data.  }
     \label{fig:3mode2d200trajectroies2d}
 \end{figure}
@@ -1850,7 +1927,7 @@ In \ref{fig:3mode2d200} we can observe that the marginal constraints are enforce
 
 \begin{figure}
     \centering
-    \includegraphics[scale=0.45,trim={5.3cm 1cm 2.5cm 0}, clip]{images/GP/gp_circles_trajectories_200_big.png}
+    \includegraphics[scale=0.4,trim={5.3cm 1cm 2.5cm 0}, clip]{images/GP/gp_circles_trajectories_200_big.png}
     \caption{ Fitted SB trajectories for unimodal to circles data.  We can observe the nice and clear concentric circles trajectories arising }
     \label{fig:circ2d200trajectroies2d}
 \end{figure}
@@ -1868,8 +1945,8 @@ In \ref{fig:3mode2d200} we can observe that the marginal constraints are enforce
 \end{figure}
 We  used the Circles Dataset \citep{pedregosa2011scikit} which consists of two concentric circles. In this task we consider mapping from a standardised unimodal Gaussian to the Circles data.
 \begin{align*}
-     \color{blue}{\pi_0(x)} &\color{blue}{= \calN(x; 0,  1)} \\
-    \color{red}{\hat{\pi}_1(y)} &\color{red}{= \text{GenerateCircles(factor=0.3, radius=3.5, noise=0.03)}}
+     \color{blue}{\pi_0(\vx)} &\color{blue}{= \calN(\vx; \vzero,  \mathbb{I}_2)} \\
+    \color{red}{\hat{\pi}_1(\vy)} &\color{red}{= \text{GenerateCircles(factor=0.3, radius=3.5, noise=0.03)}}
 \end{align*}
 The radius and factor (distance between circles) were picked such that the data was still within a close proximity to the origin whilst making the circles distinct.
 
@@ -1880,7 +1957,7 @@ We can see from Figure \ref{fig:circ2d200trajectroies2d} that some very structur
 
 \begin{figure}
     \centering
-    \includegraphics[scale=0.45,trim={5.3cm 1cm 2.5cm 0}, clip]{images/GP/moons_2d_gp_trajectories_short_200.png}
+    \includegraphics[scale=0.4,trim={5.3cm 1cm 2.5cm 0}, clip]{images/GP/moons_2d_gp_trajectories_short_200.png}
     \caption{ Fitted SB trajectories for unimodal to moons data.  }
     \label{fig:moon2d200trajectroies2d}
 \end{figure}
@@ -1896,22 +1973,184 @@ We can see from Figure \ref{fig:circ2d200trajectroies2d} that some very structur
     \caption{ Fitted SB Boundary distribution histograms.}
     \label{fig:moon2d20hist2d}
 \end{figure}
-We use the moons dataset from \ref{fig:moon2d200scatter2d}, generated by the following procedure:
+We use the moons dataset from \cite{pedregosa2011scikit}, generated by the following procedure:
 \begin{align*}
-     \color{blue}{\pi_0(x)} &\color{blue}{= \calN(x; 0,  1)} \\
-    \color{red}{\hat{\pi}_1(y)} &\color{red}{= \text{GenerateMoons(scale\_x=1.8, scale\_y=3.8, noise=0.03)}}.
+     \color{blue}{\pi_0(\vx)} &\color{blue}{= \calN(\vx; \vzero,  \mathbb{I}_2)} \\
+    \color{red}{\hat{\pi}_1(\vy)} &\color{red}{= \text{GenerateMoons(scale\_x=1.8, scale\_y=3.8, noise=0.03)}}.
 \end{align*}
 Just like with the circles dataset the scales where picked to give a nice visual scale and a clear separation between the moons. We did this in order to make the task as simple as possible given that we were still in an early/exploratory stage.
 
 
 \section{Stochastic Control Approach}
+
+Throughout this section we experiment we use neural networks \citep{lecun2015deep} and experiment with 3 different types of activation's : Tanh, Hard Tanh, ReLu.  We varied layer widths and depths in order  to obtain good results in the specific experiments without a careful regard for overfitting since as mentioned earlier we are merely exploring the capacities and faults of the approaches. Across all experiments we initialise the weights of the neural networks using the Glorot initialisation \citep{glorot2010understanding} and we used the \cite{duchi2011adaptive} optimiser. Due to the KNN based approach to computing cross entropy being unstable/difficult to optimise in practice we settled with using the KDE based approach across all experiments.
+
 \subsection{Unimodal Experiments}
+For the unimodal experiments we focus on mapping between Normal distributions with different means and variances.
 \subsubsection{Small to Big Variance}
-\subsubsection{Mode Collapse}
+
+data was generated using:
+\begin{align*}
+\color{blue}{\pi_0(x)} &\color{blue}{= \calN(x; 0,  3)} \\
+    \color{red}{\pi_1(y)} &\color{red}{= \calN(y; 6, 0.1^2)} 
+\end{align*}
+\begin{figure}
+    \centering
+    \includegraphics[scale=0.4,trim={4.3cm 1cm 2.5cm 0}, clip]{images/Control/big_var_marginals_best_tanh_trajectories.png}
+    \caption{ Fitted SB  trajectories using tanh activation, single layer and 200 hidden units}
+    \label{fig:trajectoriesbigvarnn}
+\end{figure}
+\begin{figure}
+    \centering
+    \includegraphics[scale=0.4,trim={4.3cm 1cm 2.5cm 0}, clip]{images/Control/big_variance_tanh_marginals.png}
+    \caption{ Fitted SB  boundary distributions using tanh activation, single layer and 200 hidden units}
+    \label{fig:boundsbigvarnn}
+\end{figure}
+
+For these particular experiments we found very little differences among the trajectories learned by different activations.
 \subsection{Multimodal Experiments}
+In this section we followed the generative process:
+\begin{align*}
+     \color{blue}{\pi_0(x)} &\color{blue}{= \calN(x; 0,  1)} \\
+    \color{red}{\pi_1(y)} &\color{red}{= \frac{1}{2}\calN(y; 20, 0.6 ^2)}\color{red}{ + \frac{1}{2}\calN(y; -20, 0.6 ^2) }.
+\end{align*}
+Furthermore we parametrised the drifts with 3 hidden layers each of 20 hidden units. With the exception of the final experiment and best performing model for which we used 2 hidden layers each of 200 units. In general we found that increasing the number of units and layers made the optimisation process more unstable and typically required reducing the initial step size for the optimiser.
 \subsubsection{ReLu}
+\begin{figure}
+    \centering
+    \includegraphics[scale=0.4,trim={4.3cm 1cm 2.5cm 0}, clip]{images/Control/bimod_final_relu_trajectories.png}
+    \caption{ Fitted SB  trajectories using ReLu activation, 3 hidden layers of 20 hidden units each}
+    \label{fig:trajectoriesbimodrelunn}
+\end{figure}
+\begin{figure}
+    \centering
+    \includegraphics[scale=0.4,trim={4.3cm 1cm 2.5cm 0}, clip]{images/Control/bimod_final_relu_boundaires.png}
+    \caption{ Fitted SB  boundary distributions using ReLu activation, 3 hidden layers of 20 hidden units each}
+    \label{fig:boundsbimodrelunn}
+\end{figure}
+\begin{figure}
+    \centering
+    \includegraphics[scale=0.7,trim={0cm 0cm 0cm 0}, clip]{images/Control/almost_perfect_bimodal_relu.PNG}
+    \caption{ Additional bimodal experiment - Fitted SB  trajectories using ReLu activation, 3 hidden layers of 20 hidden units each}
+    \label{fig:trajectoriesbimodrelunn_}
+\end{figure}
+
+For these experiments we use the rectified linear-unit (ReLu) \citep{glorot2011deep}. We show results of a further experiment with larger means to illustrate the shape of the trajectories induced by this activation. As can be seen in Figures \ref{fig:trajectoriesbimodrelunn} and \ref{fig:trajectoriesbimodrelunn_} the learned trajectories are more curved (almost parabolic like) than the trajectories induced by tanh based activations. Furthermore we can also observe  that whilst on the right track to matching the means however it fails to match the variance of the bimodal marginals. One positive aspect we can observe is that the curves do have a dual like nature.
+
 \subsubsection{Tanh}
+
+Here we use the hyperbolic-tangent (Tanh) as the activation function. We also experimented with similar smooth activations and obtained similar results.
+\begin{figure}
+    \centering
+    \includegraphics[scale=0.4,trim={4.3cm 1cm 2.5cm 0}, clip]{images/Control/bimodal_marginals_best_tanh_trajectories.png}
+    \caption{ Fitted SB  trajectories using tanh activation, 3 hidden layers of 20 hidden units each}
+    \label{fig:trajectoriesbimodtanhnn}
+\end{figure}
+\begin{figure}
+    \centering
+    \includegraphics[scale=0.4,trim={4.3cm 1cm 2.5cm 0}, clip]{images/Control/bimodal_marginals_best_tanh.png}
+    \caption{ Fitted SB  boundary distributions using tanh activation, 3 hidden layers of 20 hidden units each}
+    \label{fig:boundsbimodtanhnn}
+\end{figure}
+We can observe from Figure's \ref{fig:trajectoriesbimodtanhnn} and \ref{fig:boundsbimodtanhnn} that the method roughly matches the means plus there is a clear dual nature between the trajectories. However we can see that a strange spike forms where the two modes try to merge, this spike has a much sharper variance than the actual marginal and seems to some sort of pathology/difficulty that the tanh (and sigmoid and hard-tanh) based activations seem to experience when merging modes. We found that increasing the number of hidden units improved this effect however we could not remove it completely. 
+
+
+
 \subsubsection{Hard Tanh}
+
+The hard tanh activation is given by:
+\begin{align*}
+    \sigma(x) = \max(-1, \min(1, x)),
+\end{align*}
+and it is a piecewise analogue of the tanh function just like the step function is to the logistic sigmoid. We found this function to be the most stable when optimising and thus we were able to obtain better results with both deeper and wider networks than with the other activations which became unstable as depth and width were increased.
+\begin{figure}
+    \centering
+    \includegraphics[scale=0.4,trim={4cm 1cm 2.5cm 0}, clip]{images/Control/hard_tanh_200_200__succesfl_bimodal_trajectories.png}
+    \caption{ Fitted SB  trajectories using hard-tanh activation, 2 hidden layers and 200 hidden units per layer}
+    \label{fig:trajectoriesbimodtanhnnhard}
+\end{figure}
+\begin{figure}
+    \centering
+    \includegraphics[scale=0.4,trim={4.3cm 1cm 2.5cm 0}, clip]{images/Control/hard_tanh_200_200_succesfl_bimodal_boundaires.png}
+    \caption{ Fitted SB  boundary distributions using hard-tanh activation, 2 hidden layers and 200 hidden units per layer}
+    \label{fig:boundsbimodtanhnnhard}
+\end{figure}
+As we can see from Figures \ref{fig:trajectoriesbimodtanhnnhard} and \ref{fig:boundsbimodtanhnnhard} the trajectories and results are similar to when using a tanh activation function, however the spike caused when the trajectories merge was less prominent, we believe that increasing the parameters of the network led to this improvement. Unfortunately we were unable to improve on this issue further.  We explored several other activations and it seemed hard-tanh gave the best results when it came to splitting.
+
+An interesting empirical observation we found is that increasing the depth of the network helped with being able to split modes (which requires learning a piecewise drift) , however increasing the width helped with being  able to learn mappings from distributions with very different  variances. It is possible that learning drifts that are dual to each other, close to Brownian motion (close to 0) and match the boundary distributions is a very challenging tasks and thus reaches the maximum capacity of the neural network architectures we explored.
+\subsubsection{Mode Collapse}
+\begin{figure}[t]
+    \centering
+    \includegraphics[scale=0.4,trim={4.3cm 1cm 2.5cm 0}, clip]{images/Control/mode_colapse_final_relu_trajectories.png}
+    \caption{ Mode collapse example, using tanh activation, 3 hidden layers 20 hidden units each.}
+    \label{fig:trajectoriesmodecop}
+\end{figure}
+As mentioned earlier, due to minimising the reverse KL numerically this method is in theory prone to mode collapse. We found that in practice mode collapse did indeed happen quite often , specially when the marginals where not symmetrically positioned relative to each other. 
+\section{Comparison of Methods}
+
+
+
+\begin{table}[]
+\begin{adjustbox}{width=\columnwidth}
+\begin{tabular}{LlllllF}
+\toprule
+\multirow{3}{*}{Method} & 2 Mode                & 3 Mode                & Non                   & Small                 & Works                 & Distant            \\
+                        & Split                 & Split                 & Gaussian              & variance              & at $\gamma=1$         & $\pi_0,\pi_1$              \\
+                        &                       &                       & $\pi_0,\pi_1$            &                       &                       &             \\ \midrule
+\cite{pavon2018data}     &\cmark &\xmark & \_                    &\xmark &\xmark &\xmark \\
+Stochastic Control      &\mmark &\xmark & \_                    &\xmark &\cmark &\cmark \\
+ Drift Estimation &\cmark &\cmark &\cmark &\xmark &\cmark &\xmark \\ \bottomrule
+\end{tabular}
+\end{adjustbox}
+\caption{Scenarios/capacities that each algorithm is able to overcome. The check mark here indicates the method can overcome this task/challenge whilst a cross indicates it is not able to do so. The exclamation mark indicates in some cases it was able to solve this milestone. The underscores indicates a lack of experiments for the relevant milestone-method pair.} \label{fig:comp_exp}
+\end{table}
+
+
+First we give a summary of our findings , highlighting the empirical capacities of the 3 approaches we trialed. A summary of the results can be found in Figure \ref{fig:comp_exp}
+. The main practical milestones we consider when exploring / evaluating the methods are:
+
+\begin{itemize}
+    \item \textbf{ 2 Mode:} Being able to split into 2 modes and merge into 1.
+    \item \textbf{ 3 Mode:} Being able to split into 3 modes and merge into one.
+    \item \textbf{None Gaussian $\bm{\pi_0,\pi_1}$:} Being able to handle non Gaussian boundary distributions such as the moons and circles datasets. 
+    \item \textbf{Small Variance:} Being able to match a boundary distribution that has a numerically small variance (e.g. tending towards a point mass).  
+    \item \textbf{Works at $\bm{\gamma=1}$:} Does the method work for a volatility of $\gamma=1$ . We consider it working it it handles at least of a radius of 4 from the origins. By a radius of 4 we mean that the mode that is most distant to the origin has a magnitude of 4. The only method that failed this milestone was the method by \cite{pavon2018data} since the method effectively only worked for $\gamma=1$ when the support of the data was within the unit cube.
+    \item \textbf{Distant $\bm{\pi_0, \pi_1}$:} This is effectively the same milestone as above however we do not limit the radius to 3. It asks the questions of how well do the models work when the distributions are very far apart from each other. We found that the method by \cite{pavon2018data} and our direct drift estimation approach did not work well in this scenario and required either increasing $\gamma$ or standardising the data.
+\end{itemize}
+
+Inspecting the summary of findings reported Figure \ref{fig:comp_exp} we can observe that the most robust method is the direct drift estimation approach using GP's.  We do acknowledge that the conclusions drawn in this section require to carry out more comparative experiments with a sound hypothesis test set a priori. 
+
+\subsubsection{Comparative Results}
+
+
+\begin{table}[]
+%TC:ignore
+\begin{adjustbox}{width=\columnwidth}
+\begin{tabular}{LcccccccC}
+\toprule
+\multirow{2}{*}{Method} & \multicolumn{4}{c}{Unimodal}                              & \multicolumn{4}{c}{Bimodal}                               \\
+                        & \multicolumn{2}{c}{$\pi_0$} & \multicolumn{2}{c}{$\pi_1$} & \multicolumn{2}{c}{$\pi_0$} & \multicolumn{2}{c}{$\pi_1$} \\
+                        & $D_{200}$    & $p$-value    & $D_{200}$   & $p$-value     & $D_{200}$   & $p$-value     & $D_{200}$    & $p$-value    \\ \midrule
+Pavon et. al. (2018)    & $0.150$      & $0.221$      & $0.195$     & $0.001$       & $0.115$     & $0.142$       & $\bm{0.110}$      & $0.178$      \\
+Direct Drift            & $\bm{0.070}$      & $0.713$      & \bm{$0.190}$     & $0.001$       & $\bm{0.110}$     & $0.178$       & $0.125$      & $0.088$      \\
+Stochastic Control      & $\bm{0.070}$      & $0.713$      & $0.805$     & $< 10^{-3}$  & $0.360$     & $< 10^{-3}$  & $0.500$      & $10^{-3}$   \\ \bottomrule
+\end{tabular}
+\end{adjustbox}
+%TC:endignore
+\caption{Kolmogorov-Smirnov test results on learned boundary distribution. The significance level is set at $\alpha=0.05$. All methods use $\gamma=1$ with the exception of the method in \cite{pavon2018data} for which we had to use $\gamma=100$ for the Unimodal experiment.} \label{tab:final}
+\end{table}
+
+In order to carry out a more quantitative comparison of the methods , we select two of the toy datasets for which all methods seem to be able to fit:
+\begin{align*}
+\color{blue}{\pi_0(x)} &\color{blue}{= \calN(x; 0,  1)} \\
+    \color{red}{\pi_1(y)} &\color{red}{= \calN(y; 4, 0.1^2)} ,
+\end{align*}
+and
+\begin{align*}
+     \color{blue}{\pi_0(x)} &\color{blue}{= \calN(x; 0,  1)} \\
+    \color{red}{\pi_1(y)} &\color{red}{= \frac{1}{2}\calN(y; 1.8, 0.6 ^2)}\color{red}{ + \frac{1}{2}\calN(y; -1.9, 0.6 ^2) }.
+\end{align*}
+We then carry out a Kolmogorov-Smirnov \citep{kolmogorov1933sulla} test where the null hypothesis is that the learned marginals from our methods are equal. We set the significance level to its usual setting  $\alpha=0.05$, meaning that if we observe a $p$-value $\leq 0.05$ we reject the null hypothesis that the 2 distributions are equal. We present results on Table \ref{tab:final} displaying both the Kolmogorov test statistic as a goodness of fit error measure (the lower the better) across methods and the estimated $p$-value for the test. We can see that we reject the null-hypothesis 3 times for the stochastic control based method meaning that it had the lowest performance across all methods. We can also observe that overall the Direct Drift method and the method by \cite{pavon2018data} are fairly on-par for these 2 datasets.
 %\chapter{Summary and Conclusions} 
 \chapter{Discussion}
 
