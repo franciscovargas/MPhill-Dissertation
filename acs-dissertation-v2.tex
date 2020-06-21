@@ -540,7 +540,7 @@ For a more technically thorough introduction please check \cite{leonard2013surve
 We can begin to see how the extremisation in the exponent of Equation \ref{eq:max_ent} may be a difficult problem numerically, since it involves two boundary value constraints which cannot both be enforced simultaneously without introducing computational overhead. For example, using the approach of Lagrange multipliers will turn the problem into one of finding a saddle point, rather than a classical optimisation one for which our current tools are better suited too.
 
 \section{Dynamic Formulation}
-The Dynamic formulation of the Schrödinger bridge follows directly from the exponent in the maximum entropy formulation.  The dynamic version of the Schrödinger bridge is written in terms of path measures that describe the stochastic dynamics defined over the unit interval.
+The dynamic formulation of the Schrödinger bridge follows directly from the exponent in the maximum entropy formulation.  The dynamic version of the Schrödinger bridge is written in terms of path measures that describe the stochastic dynamics defined over the unit interval.
 \begin{definition}
     (Dynamic Schrödinger Problem) The dynamic Schrödinger problem is given by:
     \begin{align}
@@ -825,7 +825,7 @@ In this chapter we will be studying an algorithmic framework known as the Iterat
 
 \section{Fortet's Algorithm}
 
-Let us start by introducing Fortet's algorithm, which is maybe the oldest algorithm with a proof of convergence \cite{fortet1940resolution} for solving the Schrödinger system.
+Let us start by introducing Fortet's algorithm, which is maybe the oldest algorithm with a proof of convergence \citep{fortet1940resolution} for solving the Schrödinger system.
 
 \begin{algorithm} \label{alg:fortet}
 \SetKwInOut{Input}{input}
@@ -931,8 +931,8 @@ What we call in this section Kullback's IPFP is in fact Algorithm \ref{alg:ipfp_
 \begin{figure}[t!]
     \centering
     \includegraphics[]{images/g-IPFP_ready.PNG}
-    \caption{Illustration of the iterative proportional fitting procedure, inspired and adapted from Figure 1 in \cite{bernton2019schr}. The red line represents valid Itô-process posteriors with the terminal constraint $\P \in \calD(\cdot, \pi_1)$ and the blue represents valid Itô-process posteriors with the initial constraint $\Q \in \calD( \pi_0, \cdot)$. The illustration shows the alternation between the forward and backward steps, until the joint bridge solution is reached where both constraints are met. Note the sheet represents the space of all valid Itô-processes in the interval $[0,1]$. By valid we mean Itô-processes driven by the prior of the form $d\rvx(t) = \rvb_t + \gamma d\rvw(t)$}.
-    \label{fig:info_pro}.
+    \caption{Illustration of the iterative proportional fitting procedure, inspired and adapted from Figure 1 in \cite{bernton2019schr}. The red line represents valid Itô-process posteriors with the terminal constraint $\P \in \calD(\cdot, \pi_1)$ and the blue represents valid Itô-process posteriors with the initial constraint $\Q \in \calD( \pi_0, \cdot)$. The illustration shows the alternation between the forward and backward steps, until the joint bridge solution is reached where both constraints are met. Note the sheet represents the space of all valid Itô-processes in the interval $[0,1]$. By valid we mean Itô-processes driven by the prior of the form $d\rvx(t) = \rvb_t + \gamma d\rvw(t)$.}
+    \label{fig:info_pro}
 \end{figure}
 
 We call generalised iterative proportional fitting procedure (g-IPFP) the extension of the continuous IPFP initially proposed by Kullback to a more general setting over path measures, as presented in \cite{cramer2000probability, bernton2019schr}. The method is identical to the regular IPFP only that it re-states the problem in terms of probability measures.
@@ -951,7 +951,7 @@ $i=0$ \\
 \caption{g-IPFP \citep{cramer2000probability} }
 \end{algorithm}
 
-Using Theorems \ref{thrm:half_bridge_forward},\ref{thrm:half_bridge_backward}, steps 6 and 7 of Algorithm \ref{alg:gipfp} can be expressed in ``closed form'' in terms of known quantities:
+Using Theorems \ref{thrm:half_bridge_forward}, \ref{thrm:half_bridge_backward}, steps 6 and 7 of Algorithm \ref{alg:gipfp} can be expressed in ``closed form'' in terms of known quantities:
 \begin{align}
     {\P}^{*}_i\left( A_{[0,1)} \times A_1\right) =  \int_{ A_{[0,1)} \times A_1}  \frac{d \pi_1}{ d p_1^{\Q^{*}_{i-1}}} d\Q^{*}_{i-1},
 \end{align}
@@ -1168,7 +1168,7 @@ Our core contributions in this chapter are:
 
 \section{Maximum Likelihood Approach \citep{pavon2018data}}
 
-The Approach proposed in \cite{pavon2018data} is an adaptation of Fortet's algorithm (Algorithm \ref{alg:fortet}) to the empirical setting and is based on the following unstated observation:
+The approach proposed in \cite{pavon2018data} is an adaptation of Fortet's algorithm (Algorithm \ref{alg:fortet}) to the empirical setting and is based on the following unstated observation:
 \begin{observation}\label{obs:pavon}
 Steps 3 and 5 of Algorithm \ref{alg:fortet}:
 \begin{align}
@@ -1670,7 +1670,7 @@ Our experiments can be grouped into the following tasks:
     \item \textbf{Non-Gaussian Distributions Tests:} Here we explore the tasks for mapping from a unimodal Gaussian to a complex non-Gaussian distribution, such as the moons and circles datasets \cite{pedregosa2011scikit}. Due to time constraints, we only explored this test with the direct drift estimation approach.
 \end{itemize}
 
-Finally, we select two toy datasets (one unimoda to unimodal and one unimodal to bimodal) which all methods managed to fit visually and construct a hypothesis test in order to compare the methods against each other in a more statistically sound framework. 
+Finally, we select two toy datasets (one unimodal to unimodal and one unimodal to bimodal) which all methods managed to fit visually and construct a hypothesis test in order to compare the methods against each other in a more statistically sound framework. 
 \begin{figure}[t]
     \centering
     \includegraphics[scale=0.4,trim={2.3cm 0.2cm 1.5cm 0}, clip]{images/Pavon/Forward_unimodal_working_pavon_relu_nn500.png}\\\vspace{-0.2cm}
@@ -1733,7 +1733,7 @@ Results can be found in Figure \ref{fig:small_to_big}, where we can observe a go
 \subsubsection{Delta Collapse}
 In this section we explore how the method in \cite{pavon2018data} fails for small values of $\gamma$. In this case we use the different means, same variance dataset and set $\gamma=1$. We observed similar behaviour up to $\gamma=10$ and it was not until $\gamma=100$ that results became stable. In order to save time and avoid having to tweak $\gamma$ per experiment we choose an overly conservative value of $\gamma=1000$ which we used for all experiments in this section.
 
-As shown in Figure \ref{fig:small_delta_collapse}, the learnt marginal distributions have effectively collapsed into a Dirac delta function.  We believe this happens due to the transition probability not being able to hit points in the support of $\pi_0$ when mapping from $\pi_1$ (and vice-versa). The empirical proof backing this is the fact that this only happens for low values of $\gamma$ and that standardising the data or considering toy examples whose modes lie in the unit cube fixes this issue. We note that in \cite{pavon2018data} they use a value of $\gamma=2$ and furthermore the only 2 examples they have are distributions centered very closely to $0$, all with means $<3$, which is where we observe the cutoff to happen empirically. 
+As shown in Figure \ref{fig:small_delta_collapse}, the learned marginal distributions have effectively collapsed into a Dirac delta function.  We believe this happens due to the transition probability not being able to hit points in the support of $\pi_0$ when mapping from $\pi_1$ (and vice-versa). The empirical proof backing this is the fact that this only happens for low values of $\gamma$ and that standardising the data or considering toy examples whose modes lie in the unit cube fixes this issue. We note that in \cite{pavon2018data} they use a value of $\gamma=2$ and furthermore the only 2 examples they have are distributions centered very closely to $0$, all with means $<3$, which is where we observe the cutoff to happen empirically. 
 \subsection{Multimodal Experiments}
 \begin{figure}[t]
     \centering
@@ -1757,7 +1757,7 @@ Using Proposition 3.3 of \cite{pavon1991free}, we extract the optimal control si
 \begin{figure}
     \centering
     \includegraphics[scale=0.4,trim={2.3cm 1cm 2.5cm 0}, clip]{images/GP/SB_gp_bigvar_epochs_samp_200.png}
-    \caption{Loss per epoch for fitted unimodal SB using the DDE method.}
+    \caption{Loss per epoch for fitted unimodal Schrödinger (SB) using the DDE method.}
     \label{fig:epochsbigvargp}
 \end{figure}
 We then generate trajectories using the EM method in order to visualise samples from the fitted path measure. Results can be seen in Figure \ref{fig:pavon_bimodal_drift}. Whilst the trajectories successfully split and manage to match the modes, they do not match the variances of the fitted potentials from Figure \ref{fig:pavon_bimodal}. This suggests that although the method from \cite{pavon2018data} may seem to solve the static bridge and provide some reasonable approximation for the potentials in the Schrödinger system, we are not able to recover a good estimate of the drift from these fitted potentials. This may be due to the inaccuracies arising from the importance sampling used in the method generating an overall poor estimate of the logarithmic derivative. We do note that the method by \cite{pavon2018data} does seem to provide reasonable estimates to the solution of the FPK equation and thus one can still interpolate the fitted distribution at different times.
@@ -1830,7 +1830,7 @@ We generate the 1D toy dataset following the following distribution:
 \begin{figure}
     \centering
     \includegraphics[scale=0.3,trim={2.3cm 1cm 2.5cm 0}, clip]{images/GP/gp_3_mode_200_boundaires.png}
-    \caption{ Fitted SB trajectories for unimodal to trimodal data.  }
+    \caption{ Fitted SB trajectories for unimodal to trimodal data using DDE.  }
     \label{fig:3mode1d200boundaries}
 \end{figure}
 We can observe from Figures \ref{fig:3mode1d200trajectroies}, \ref{fig:3mode1d200boundaries} that the boundaries distributions are matched  nicely both in variance and mean. Furthermore, the trajectories look sound: they have some reminiscence of Brownian motion, follow nice simple paths, and look dual to each other. We can also observe that for the two modes that are close to each other there are two outliers in low probability areas.
@@ -1855,7 +1855,7 @@ In this section we consider the 2D extension of the trimodal experiment.   We us
 \begin{figure}
     \centering
     \includegraphics[scale=0.4,trim={5.3cm 1cm 2.5cm 0}, clip]{images/GP/2d_3mode_GP_means_3.3_3.6_0.7_std_0.1_200.png}
-    \caption{ Fitted SB trajectories using the DDE method for unimodal to trimodal data using DDE.  }
+    \caption{ Fitted SB trajectories using the DDE method for unimodal to trimodal data.  }
     \label{fig:3mode2d200trajectroies2d}
 \end{figure}
 From Figure \ref{fig:3mode2d200trajectroies2d}  we can see how the trajectories successfully split and merge into 3 modes.
@@ -1900,7 +1900,7 @@ We  used the circles dataset \citep{pedregosa2011scikit} which consists of two c
 \end{align*}
 The radius and factor (distance between circles) were picked so the data was still within a close proximity to the origin, whilst making the circles distinct.
 
-We can see from Figure \ref{fig:circ2d200trajectroies2d} that some very structured inner circle like trajectories are formed going forwards and backwards with a dual like pattern. Furthermore from Figures \ref{fig:circ2d200scatter2d}, \ref{fig:circ2d20hist2d} we can observe a good fit in terms of structure, however the fits of our method are  bit more dispersed they seem to have higher variance. We noticed this can be improved partially with using more training data and tweaking the GP hyper-parameters, further experiments should be carried out to diagnose and solve this issue. 
+We can see from Figure \ref{fig:circ2d200trajectroies2d} that some very structured inner circle-like trajectories are formed going forward and backward with a dual like pattern. Furthermore, from Figures \ref{fig:circ2d200scatter2d}, \ref{fig:circ2d20hist2d} we can observe a good fit in terms of structure, but the fits of our method are slightly more dispersed, with higher variance. We noticed this can be improved partially by using more training data and tweaking the GP hyper-parameters. Further experiments should be carried out to diagnose and solve this issue. 
 
 
 \subsubsection{Moons Dataset}
@@ -1961,14 +1961,14 @@ data was generated using:
     \label{fig:boundsbigvarnn}
 \end{figure}
 
-For these particular experiments we found very little differences among the trajectories learned by different activations. Results can be found in Figures \ref{fig:boundsbigvarnn} and \ref{fig:trajectoriesbigvarnn}, from which we can see a good fit for the marginal with low variance, but a not so good fit for the high variance distribution where the variance seems to be matched but the mode is not.
+For these particular experiments we found very little differences among the trajectories learned by different activations. Results can be found in Figures \ref{fig:boundsbigvarnn} and \ref{fig:trajectoriesbigvarnn}, from which we can see a good fit for the marginal with low variance, but a worse fit for the high variance distribution where the variance seems to be matched but the mode is not.
 \subsection{Multimodal Experiments}
 In this section we followed the generative process:
 \begin{align*}
      \color{blue}{\pi_0(x)} &\color{blue}{= \calN(x; 0,  1)} \\
     \color{red}{\pi_1(y)} &\color{red}{= \frac{1}{2}\calN(y; 20, 0.6 ^2)}\color{red}{ + \frac{1}{2}\calN(y; -20, 0.6 ^2) }.
 \end{align*}
-Furthermore we parametrised the drifts with 3 hidden layers each of 20 hidden units. With the exception of the final experiment and best performing model for which we used 2 hidden layers each of 200 units. In general we found that increasing the number of units and layers made the optimisation process more unstable and typically required reducing the initial step size for the optimiser. As mentioned earlier we carry out these experiments to see how the stochastic control based approach can handle mode collapse.
+We parametrised the drifts with 3 hidden layers, each having 20 hidden units, with the exception of the final experiment and best performing model for which we used 2 hidden layers, each with 200 units. In general, we found that increasing the number of units and layers made the optimisation process more unstable and typically required reducing the initial step size for the optimiser. These experiments are used for investigating how the stochastic control based approach can handle mode collapse.
 \subsubsection{ReLu}
 \begin{figure}
     \centering
@@ -1979,17 +1979,17 @@ Furthermore we parametrised the drifts with 3 hidden layers each of 20 hidden un
 \begin{figure}
     \centering
     \includegraphics[scale=0.4,trim={2.3cm 1cm 2.5cm 0}, clip]{images/Control/bimod_final_relu_boundaires.png}
-    \caption{ Fitted SB  boundary distributions using the SC method with ReLu activations, 3 hidden layers of 20 hidden units each}
+    \caption{ Fitted SB  boundary distributions using the SC method with ReLu activations, 3 hidden layers of 20 hidden units each.}
     \label{fig:boundsbimodrelunn}
 \end{figure}
 \begin{figure}
     \centering
     \includegraphics[scale=0.7,trim={0cm 0cm 0cm 0}, clip]{images/Control/almost_perfect_bimodal_relu.PNG}
-    \caption{ Additional bimodal experiment - Fitted SB  trajectories using the SC method with ReLu activations, 3 hidden layers of 20 hidden units each}
+    \caption{ Additional bimodal experiment - Fitted SB  trajectories using the SC method with ReLu activations, 3 hidden layers of 20 hidden units each.}
     \label{fig:trajectoriesbimodrelunn_}
 \end{figure}
 
-For these experiments we use the rectified linear-unit (ReLu) \citep{glorot2011deep}. We show results of a further experiment with larger means to illustrate the shape of the trajectories induced by this activation. As can be seen in Figures \ref{fig:trajectoriesbimodrelunn} and \ref{fig:trajectoriesbimodrelunn_} the learned trajectories are more curved (almost parabolic like) than the trajectories induced by tanh based activations. Furthermore we can also observe  that whilst on the right track to matching the means it fails to match the variance of the bimodal marginals. One positive aspect we can observe is that the curves do have a dual like nature.
+For these experiments, we use the rectified linear-unit (ReLu) \citep{glorot2011deep}. We show results of a further experiment with larger means to illustrate the shape of the trajectories induced by this activation. As shown in Figures \ref{fig:trajectoriesbimodrelunn} and \ref{fig:trajectoriesbimodrelunn_}, the learned trajectories are more curved (almost parabolic like) than the trajectories induced by tanh based activations. We also observe  that whilst being on the right track to matching the means, it fails to match the variance of the bimodal marginals. One positive aspect is that the curves do have a dual like nature.
 
 \subsubsection{Tanh}
 
@@ -1997,16 +1997,16 @@ Here we use the hyperbolic-tangent (Tanh) as the activation function. We also ex
 \begin{figure}
     \centering
     \includegraphics[scale=0.4,trim={2.3cm 1cm 2.5cm 0}, clip]{images/Control/bimodal_marginals_best_tanh_trajectories.png}
-    \caption{ Fitted SB  trajectories using the SC method with tanh activations, 3 hidden layers of 20 hidden units each}
+    \caption{ Fitted SB  trajectories using the SC method with tanh activations, 3 hidden layers of 20 hidden units each.}
     \label{fig:trajectoriesbimodtanhnn}
 \end{figure}
 \begin{figure}
     \centering
     \includegraphics[scale=0.4,trim={2.3cm 1cm 2.5cm 0}, clip]{images/Control/bimodal_marginals_best_tanh.png}
-    \caption{ Fitted SB  boundary distributions using the SC method with tanh activations, 3 hidden layers of 20 hidden units each}
+    \caption{ Fitted SB  boundary distributions using the SC method with tanh activations, 3 hidden layers of 20 hidden units each.}
     \label{fig:boundsbimodtanhnn}
 \end{figure}
-We can observe from Figure's \ref{fig:trajectoriesbimodtanhnn} and \ref{fig:boundsbimodtanhnn} that the method roughly matches the means plus there is a clear dual nature between the trajectories. However we can see that a strange spike forms where the two modes try to merge, this spike has a much sharper variance than the actual marginal and seems the an issue specific the tanh (and sigmoid and hard-tanh) based activations seem to experience when merging modes. We found that increasing the number of hidden units improved this effect however we could not remove it completely. 
+We can observe from Figure's \ref{fig:trajectoriesbimodtanhnn} and \ref{fig:boundsbimodtanhnn} that the method roughly matches the means and there is a clear dual nature between the trajectories. However, we can see that a strange spike forms where the two modes try to merge. This spike has a much sharper variance than the actual marginal and seems to be an issue the tanh (and sigmoid and hard-tanh) based activations experience when merging modes. We found that increasing the number of hidden units improved this effect, however it did not remove it completely. 
 
 
 
@@ -2016,22 +2016,23 @@ The hard tanh activation is given by:
 \begin{align*}
     \sigma(x) = \max(-1, \min(1, x)),
 \end{align*}
-and it is a piecewise analogue of the tanh function just like the step function is to the logistic sigmoid. We found this function to be the most stable when optimising and thus we were able to obtain better results with both deeper and wider networks than with the other activations which became unstable as depth and width were increased.
+and it is a piecewise analogue of the tanh function, similar to what the step function is to the logistic sigmoid. We found this function to be the most stable when optimising and thus, were able to obtain better results with both deeper and wider networks than with the other activations which became unstable as depth and width were increased.
 \begin{figure}
     \centering
-    \includegraphics[scale=0.4,trim={4cm 1cm 2.5cm 0}, clip]{images/Control/hard_tanh_200_200__succesfl_bimodal_trajectories.png}
-    \caption{ Fitted SB  trajectories using hard-tanh activation, 2 hidden layers and 200 hidden units per layer}
+    \includegraphics[scale=0.4,trim={2.3cm 1cm 2.5cm 0}, clip]{images/Control/hard_tanh_200_200__succesfl_bimodal_trajectories.png}
+    \caption{ Fitted SB  trajectories using hard-tanh activation, 2 hidden layers and 200 hidden units per layer.}
     \label{fig:trajectoriesbimodtanhnnhard}
 \end{figure}
 \begin{figure}
     \centering
     \includegraphics[scale=0.4,trim={2.3cm 1cm 2.5cm 0}, clip]{images/Control/hard_tanh_200_200_succesfl_bimodal_boundaires.png}
-    \caption{ Fitted SB  boundary distributions using the SC method with hard-tanh activations, 2 hidden layers and 200 hidden units per layer}
+    \caption{ Fitted SB  boundary distributions using the SC method with hard-tanh activations, 2 hidden layers and 200 hidden units per layer.}
     \label{fig:boundsbimodtanhnnhard}
 \end{figure}
-As we can see from Figures \ref{fig:trajectoriesbimodtanhnnhard} and \ref{fig:boundsbimodtanhnnhard} the trajectories and results are similar to when using a tanh activation function, however the spike caused when the trajectories merge was less prominent, we believe that increasing the parameters of the network led to this improvement. Unfortunately we were unable to improve on this issue further.  We explored several other activations. Overall hard-tanh gave the best results when it came to splitting.
 
-An interesting empirical observation we found is that increasing the depth of the network helped with being able to split modes (which requires learning a piecewise drift) , however increasing the width helped with being  able to learn mappings from distributions with very different  variances. It is possible that learning drifts that are dual to each other, close to Brownian motion (close to 0) and match the boundary distributions is a very challenging task and thus reaches the maximum capacity of the neural network architectures we explored.
+As we can see from Figures \ref{fig:trajectoriesbimodtanhnnhard} and \ref{fig:boundsbimodtanhnnhard} the trajectories and results are similar to when using a tanh activation function, however the spike caused when the trajectories merge was less prominent. We believe that increasing the parameters of the network led to this improvement. Unfortunately, we were unable to improve on this issue further.  We explored several other activations. Overall, hard-tanh gave the best results when it came to splitting.
+
+An interesting empirical observation is that increasing the depth of the network helped with being able to split modes (which requires learning a piecewise drift), while increasing the width helped with being  able to learn mappings from distributions with very different  variances. It is possible that learning drifts that are dual to each other, close to Brownian motion (close to 0) and match the boundary distributions is a very challenging task and thus reaches the maximum capacity of the neural network architectures we explored.
 \subsubsection{Mode Collapse}
 \begin{figure}[t]
     \centering
@@ -2039,7 +2040,7 @@ An interesting empirical observation we found is that increasing the depth of th
     \caption{ Mode collapse example, using the SC method with tanh activations, 3 hidden layers 20 hidden units each.}
     \label{fig:trajectoriesmodecop}
 \end{figure}
-As mentioned earlier, due to minimising the reverse KL numerically this method is in theory prone to mode collapse. We found that in practice mode collapse did happen quite often , specially when the marginals where not symmetrically positioned relative to each other. 
+As mentioned earlier, due to minimising the reverse KL numerically, this method is in theory prone to mode collapse. We found that in practice mode collapse did happen fairly often, especially when the marginals were not symmetrically positioned relative to each other. 
 \section{Comparison of Methods}
 
 
@@ -2061,19 +2062,18 @@ Stochastic Control      &\mmark &\xmark & \_                    &\xmark &\cmark 
 \end{table}
 
 
-First we give a summary of our findings , highlighting the empirical capacities of the 3 approaches we trialed. A summary of the results can be found in Figure \ref{fig:comp_exp}
-. The main practical milestones we consider when exploring / evaluating the methods are:
+First we give a summary of our findings, highlighting the empirical capacities of the 3 approaches we trialed. A summary of the results can be found in Figure \ref{fig:comp_exp}. The main practical milestones we consider when evaluating the methods are:
 
 \begin{itemize}
     \item \textbf{ 2 Mode:} Being able to split into 2 modes and merge into 1.
     \item \textbf{ 3 Mode:} Being able to split into 3 modes and merge into one.
-    \item \textbf{None Gaussian $\bm{\pi_0,\pi_1}$:} Being able to handle non Gaussian boundary distributions such as the moons and circles datasets. 
+    \item \textbf{Non-Gaussian $\bm{\pi_0,\pi_1}$:} Being able to handle non-Gaussian boundary distributions such as the moons and circles datasets. 
     \item \textbf{Small Variance:} Being able to match a boundary distribution that has a numerically small variance (e.g. tending towards a point mass).  
-    \item \textbf{Works at $\bm{\gamma=1}$:} Does the method work for a volatility of $\gamma=1$. We consider it working it it handles at least of a radius of 4 from the origins. By a radius of 4 we mean that the mode that is most distant to the origin has a magnitude of 4. The only method that failed this milestone was the method by \cite{pavon2018data} since the method effectively only worked for $\gamma=1$ when the support of the data was within the unit cube.
-    \item \textbf{Distant $\bm{\pi_0, \pi_1}$:} This is effectively the same milestone as above however we do not limit the radius to 3. It tests how well do the models work when the distributions are very far apart from each other. We found that the method by \cite{pavon2018data} and our direct drift estimation approach did not work well in this scenario and required either increasing $\gamma$ or standardising the data.
+    \item \textbf{Works at $\bm{\gamma=1}$:} Does the method work for a volatility of $\gamma=1$. We consider it working if it handles at least  a radius of 4 from the between the two distributions. By a radius of 4 we mean that the mode that is most distant to the unimodal distribution has a magnitude of 4. The only method that failed this milestone was the method by \cite{pavon2018data} since the method effectively only worked for $\gamma=1$ when the support of the data was within the unit cube.
+    \item \textbf{Distant $\bm{\pi_0, \pi_1}$:} This is effectively the same milestone as above, however we do not limit the radius to 3. It tests how well the models work when the distributions are very far apart from each other. We found that the method by \cite{pavon2018data} and our direct drift estimation approach did not work well in this scenario and required either increasing $\gamma$ or standardising the data.
 \end{itemize}
 
-Inspecting the summary of findings reported Table \ref{fig:comp_exp} we can observe that the most robust method is the direct drift estimation approach using GP's.  We do acknowledge that the conclusions drawn in Table \ref{fig:comp_exp} require to carry out more comparative experiments with a sound hypothesis test set a priori. 
+Inspecting the summary of findings reported Table \ref{fig:comp_exp}, we can observe that the most robust method is the direct drift estimation approach using GPs.  We do acknowledge that the conclusions drawn in Table \ref{fig:comp_exp} require to carry out more comparative experiments with a sound hypothesis test set a priori. 
 
 \subsubsection{Comparative Results}
 
@@ -2095,7 +2095,7 @@ Stochastic Control      & $\bm{0.070}$      & $0.713$      & $0.805$     & $< 10
 \caption{Kolmogorov-Smirnov test results on learned boundary distribution. The significance level is set at $\alpha=0.05$. All methods use $\gamma=1$ with the exception of the method in \cite{pavon2018data} for which we had to use $\gamma=100$ for the Unimodal experiment.} \label{tab:final}
 \end{table}
 
-In order to carry out a more quantitative comparison of the methods , we select two of the toy datasets for which all methods seem to be able to fit:
+In order to carry out a more quantitative comparison of the methods, we select two of the toy datasets that all methods seem to be able to fit:
 \begin{align*}
 \color{blue}{\pi_0(x)} &\color{blue}{= \calN(x; 0,  1)} \\
     \color{red}{\pi_1(y)} &\color{red}{= \calN(y; 4, 0.1^2)} ,
@@ -2105,15 +2105,15 @@ and
      \color{blue}{\pi_0(x)} &\color{blue}{= \calN(x; 0,  1)} \\
     \color{red}{\pi_1(y)} &\color{red}{= \frac{1}{2}\calN(y; 1.8, 0.6 ^2)}\color{red}{ + \frac{1}{2}\calN(y; -1.9, 0.6 ^2) }.
 \end{align*}
-We then carry out a Kolmogorov-Smirnov \citep{kolmogorov1933sulla} test where the null hypothesis is that the learned marginals from our methods are equal. We set the significance level to its usual setting  $\alpha=0.05$, meaning that if we observe a $p$-value $\leq 0.05$ we reject the null hypothesis that the 2 distributions are equal. We present results on Table \ref{tab:final} displaying both the Kolmogorov test statistic as a goodness of fit measure (the lower the better) across methods and the estimated $p$-value for the test. We can see that we reject the null-hypothesis 3 times for the stochastic control based method meaning that it had the lowest performance across all methods. We can also observe that overall the Direct Drift method and the method by \cite{pavon2018data} are fairly on-par for these 2 datasets.
+We then carry out a Kolmogorov-Smirnov \citep{kolmogorov1933sulla} test where the null hypothesis is that the learned marginals from our methods are equal. We set the significance level to its usual setting  $\alpha=0.05$, meaning that if we observe a $p$-value $\leq 0.05$, we reject the null hypothesis that the 2 distributions are equal. We present results in Table \ref{tab:final}, displaying both the Kolmogorov test statistic as a goodness of fit measure (the lower the better) across methods and the estimated $p$-value for the test. We can see that we reject the null-hypothesis 3 times for the stochastic control based method meaning that it had the lowest performance across all methods. We can also observe that overall the Direct Drift method and the method by \cite{pavon2018data} are fairly on-par for these 2 datasets.
 %\chapter{Summary and Conclusions} 
 \chapter{Discussion}
 
 In this work we have provided an extensive, yet accessible background  to the Schrödinger bridge problem, in which we have provided proofs for select known results whose original resource we could not find. We have highlighted some of its known connections to the more popular Wasserstein distance and thus we have suggested its potential application in machine learning as a way of comparing distributions. Furthermore, we explored the connection between IPFP and generative adversarial networks, motivating the potential application of using Schrödinger bridges for the task of domain adaptation.
 
-We have learned and illustrated how challenging it is to develop a numerical algorithm for solving the Schrödinger bridge. Part of this challenge comes from having to deal with more than one boundary condition. This is where the g-IPFP framework comes in, allowing us to alternate sub-problems (half bridges) with only one boundary condition until convergence. However, in practice, empirically solving these half bridges turned out to be challenging, since they presented harder variants of typical challenges that arise in machine learning such as: numerical integration, and density estimation.
+We have learned and illustrated how challenging it is to develop a numerical algorithm for solving the Schrödinger bridge. Part of this challenge comes from having to deal with more than one boundary condition. This is where the g-IPFP framework comes in, allowing us to alternate sub-problems (half bridges) with only one boundary condition until convergence. However, in practice, empirically solving these half bridges turned out to be challenging, since they presented harder variants of typical challenges that arise in machine learning such as: numerical integration and density estimation.
 
-Moreover, we proposed two methods for solving the empirical setting of the Schrödinger bridge and explored them through simple 1D and 2D simulations which allowed us to visually and extensively evaluate the properties of the proposed methods.  We compared against the recently proposed method by \cite{pavon2018data} and showed competitive performance across two toy datasets, whilst being more robust to values of $\gamma$ than the method of \citep{pavon2018data}.
+We proposed two methods for solving the empirical setting of the Schrödinger bridge and explored them through simple 1D and 2D simulations which allowed us to visually and extensively evaluate the properties of the proposed methods.  We compared against the recently proposed method by \cite{pavon2018data} and showed competitive performance across two toy datasets, whilst being more robust to values of $\gamma$ than the method of \citep{pavon2018data}.
 
 At the core of the direct drift estimation approach, we have successfully transformed a complex mathematical problem arising from the physical sciences into a classical machine learning task (regression).
 
@@ -2134,7 +2134,7 @@ The key contributions of this thesis are:
 Whilst we introduced and evaluated to a great extent the first successful machine learning based approach for solving the Schrödinger bridge, there are still areas of exploration left to pursue further:
 
 \begin{itemize}
-    \item Since our best performing method is based on Gaussian processes, they will not scale well to large datasets. \cite{ruttor2013approximate} propose a sparse expectation maximisation based algorithm for inferring the drift of SDEs which we did not implement or explore. This could also make the method scalable enough for optimising the GP hyperparameters which was something we were unable to do due to speed limitations. Note this would also allow for porting the method to a GPU.
+    \item Since our best performing method is based on Gaussian processes, they will not scale well to large datasets. \cite{ruttor2013approximate} propose a sparse expectation maximisation based algorithm for inferring the drift of SDEs which we did not implement or explore. This could potentially make the DDE method scalable enough for optimising the GP hyperparameters which was something we were unable to do due to speed limitations. Note this would also allow for porting the method to a GPU.
     \item We found that the method by \cite{ruttor2013approximate} had difficulties in learning drifts whose end point distribution was very sharp (low variance). This needs to be explored further, it is possible that optimising the hyperparameters may fix this this issue.  
     \item Explore the learning of the drift using a method that is not based on Gaussian processes.
     \item Some of the unimodal examples admit closed form solutions for the full bridge. We should use this as a ground truth and compute the relative path error to the closed form drift in order to evaluate the methods.
@@ -2149,7 +2149,7 @@ Whilst we introduced and evaluated to a great extent the first successful machin
 
 \chapter{Analysis of simple Gaussian like Parametrisation}\label{app:bad_gauss}
 
-The goal of this sub section is to illustrate the challenges in parametrising the MLE based objectives proposed in \cite{pavon2018data} such that the partition function can be computed in closed form. Ultimately we were unable to come up with a flexible enough parametrisation that both had a closed form partition function and was flexible enough to solve the half bridge for multimodal distributions.
+The goal of this subsection is to illustrate the challenges in parametrising the MLE based objectives proposed in \cite{pavon2018data} such that the partition function can be computed in closed form. Ultimately we were unable to come up with a flexible enough parametrisation that both had a closed form partition function and was flexible enough to solve the half bridge for multimodal distributions.
 
 \section{Unimodal Gaussian Like Parametrisation}
 
@@ -2232,7 +2232,7 @@ Where $\mL$ can be parametrised in terms of an unconstrained vector.
 \section{Mixture of Exponentiated Quadratics}
 
 
-We now wish to consider if its possible to extend the exponentiated quadratic  parametrisation of the potentials to a mixture of exponentiated quadratics. In order to achieve this parametrisation we need to reconsider the integrability constraint.
+We now wish to consider if it is possible to extend the exponentiated quadratic  parametrisation of the potentials to a mixture of exponentiated quadratics. In order to achieve this parametrisation we need to reconsider the integrability constraint.
 
 \begin{align}
 \hphi_0( \vx ; \beta) =  \sum_{k_x} \pi_{k_x} \calN(\vx | \vmu_{k_x}, \mSigma_{k_x}) \\
