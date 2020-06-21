@@ -99,9 +99,10 @@
 \setcounter{page}{0}
 \pagestyle{plain}
 \tableofcontents
+%TC:ignore
 \listoffigures
 \listoftables
-
+%TC:endignore
 \onehalfspacing
 
 %% START OF MAIN TEXT 
@@ -121,13 +122,13 @@
  \begin{align*}
      \pi_1(\vy) \neq \int p(\vx, 0, \vy , 1) \pi_1(\vx) d\vx,
  \end{align*}
- where $p(\vx, 0, \vy , 1) = p(\vy_1| \vx_0)$ represents the transition density under the Brownian motion, that is, the probability of transitioning from $\vx$ at time $0$ to $\vy$ at time $1$. We can model this event as the particles at time $0$ were transported to time $1$ in an unlikely manner (a rare event). Out of the many unlikely ways in which this event could have happened, the Schrödinger bridge answers the question of which one is the most likely. This question turns out to be equivalent to finding a drift-augmented Brownian motion that satisfies the observed distributions and is as close to Brownian motion as possible in an information theoretic sense.
+ where $p(\vx, 0, \vy , 1) = p(\vy_1| \vx_0)$ represents the transition density under the Brownian motion, that is, the probability of transitioning from $\vx$ at time $0$ to $\vy$ at time $1$. We can model this event as the particles at time $0$ were transported to time $1$ in an unlikely manner (a rare event). Out of the many unlikely ways in which this event could have happened, the Schrödinger bridge answers the question of which one is the most likely. This question turns out to be equivalent to finding a drift-augmented Brownian motion that satisfies the observed distributions and is as close to Brownian motion as possible in an information-theoretic sense.
  
- Rephrasing this in a more machine learning setting, the Schrödinger bridge is concerned with finding the most likely stochastic process that evolves a distribution $\pi_0(\vx)$ to another distribution $\pi_1(\vy)$, and is in line with a pre-specified Brownian motion prior.
+ Rephrasing this in a more machine-learning setting, the Schrödinger bridge is concerned with finding the most likely stochastic process that evolves a distribution $\pi_0(\vx)$ to another distribution $\pi_1(\vy)$, and is in line with a pre-specified Brownian-motion prior.
  
- From an application viewpoint, the Schrödinger bridge provides us with a theoretically grounded mechanism for mapping between two distributions. When those distributions are only available through samples, we effectively have a classical, unsupervised domain-adaptation problem, as illustrated in Figure \ref{fig:intuitive_bridge}. Furthermore, the Schrödinger bridge also provides us with the probability of this stochastic evolution, thus allowing us to compare two data sets/distributions which can be useful for hypothesis testing \citep{gretton2012kernel,ramdas2017wasserstein} and semantic similarity \citep{vargas2019model}.
+ From an application viewpoint, the Schrödinger bridge provides us with a theoretically-grounded mechanism for mapping between two distributions. When those distributions are only available through samples, we effectively have a classical, unsupervised domain-adaptation problem, as illustrated in Figure \ref{fig:intuitive_bridge}. Furthermore, the Schrödinger bridge also provides us with the probability of this stochastic evolution, thus allowing us to compare two data sets/distributions which can be useful for hypothesis testing \citep{gretton2012kernel,ramdas2017wasserstein} and semantic similarity \citep{vargas2019model}.
  
- In this project will be exploring machine learning based approaches to estimating the Schrödinger bridge between two distributions that are available through samples.
+ In this project, we will be exploring machine-learning-based approaches to estimating the Schrödinger bridge between two distributions that are available through samples.
 \begin{figure}
     \centering
     \includegraphics[scale=0.7]{images/charicaturistic_bridge.PNG}
@@ -140,9 +141,9 @@
 
 % \setcounter{page}{1}
 
-The goal of this chapter is to introduce mathematical notation, concepts and lemmas that we will use throughout this thesis. Whilst many of these lemmas are omitted as steps or taken for granted in the stochastic process literature, we found that some of them were not directly accessible when searched for and not taught in graduate-level measure and probability theory courses \citep{ethmeasure,mitmeasure,cambprob}. Therefore, it will be useful to the community to restate and re-derive some of these results, in order to make the theory behind Schrödinger bridges more accessible to the computational sciences.
+The goal of this chapter is to introduce mathematical notation, concepts and lemmas that we will use throughout this thesis. Whilst many of these lemmas are omitted as steps or taken for granted in the stochastic process literature, we found that some of them were not directly accessible when searched for and not taught in graduate-level measure- and probability-theory courses \citep{ethmeasure,mitmeasure,cambprob}. Therefore, it will be useful to the community to restate and rederive some of these results, in order to make the theory behind Schrödinger bridges more accessible to the computational sciences.
 
-Due to limitations of the Riemann integral, we will be briefly covering a measure-theoretic introduction to probability in order to have the background required to introduce the  Lebesgue–Stieltjes integral which we will be using to express some of the expectations in this thesis. Furthermore we will also be providing a sketch proof of standard results for decompositions of the Radon-Nikodym which we will employ in decomposing the Kullback–Leibler  (KL) divergence. 
+Due to limitations of the Riemann integral, we will be briefly covering a measure-theoretic introduction to probability in order to have the background required to introduce the  Lebesgue–Stieltjes integral, which we will be using to express some of the expectations in this thesis. Furthermore, we will also be providing a sketch proof of standard results for decompositions of the Radon-Nikodym which we will employ in decomposing the Kullback–Leibler (KL) divergence. 
 
 \section{Probability Space Formalism}
 
@@ -152,10 +153,10 @@ For many of the technical derivations in the methodology we will study, a basic 
 A probability space is defined as a 3-element tuple $\probspace$, where:
 \begin{itemize}
     \item $\Omega$ is the sample space, i.e. the set of possible outcomes. For example, for a coin toss $\Omega=\{\text{Head}, \text{Tails}\}$. 
-    \item The $\sigalg$ $\mathcal{F} \subseteq 2^{\Omega}$ which represents the set of events we may want to consider. Continuing the coin toss example, we may have $\Omega=\{\emptyset, \text{Head}, \text{Tails},\{\text{Head}, \text{Tails}\}\}$.
-    \item A probability measure $\P:\calF \rightarrow [0,1]$, which is a function which assigns a number in $[0,1]$ to any event (set) in the $\sigalg$ $\calF$. The function $\P$ has the following requirements:
+    \item The $\sigalg$ $\mathcal{F} \subseteq 2^{\Omega}$ represents the set of events we may want to consider. Continuing the coin toss example, we may have $\Omega=\{\emptyset, \text{Head}, \text{Tails},\{\text{Head}, \text{Tails}\}\}$.
+    \item A probability measure $\P:\calF \rightarrow [0,1]$ is a function which assigns a number in $[0,1]$ to any event (set) in the $\sigalg$ $\calF$. The function $\P$ has the following requirements:
     \begin{itemize}
-        \item $\sigma$-additive (also called countable additive), which means that if  $\bigcup_{i=0}^\infty  A_i\in \calF$ and $A_j \cap A_j = \emptyset, \; i \neq j$then $\P\left(\bigcup_{i=0}^\infty A_i\right) =\sum_{i=0}^\infty \P(A_i) $.
+        \item $\sigma$-additive (also called countable additive), which means that if  $\bigcup_{i=0}^\infty  A_i\in \calF$ and $A_j \cap A_j = \emptyset, \; i \neq j$, then $\P\left(\bigcup_{i=0}^\infty A_i\right) =\sum_{i=0}^\infty \P(A_i) $.
         \item $\P(\Omega)=1$, which we can read as the sample space summing up to (integrating) to 1.  Without this condition $\P$ would be a regular measure ($\sigma$-additive).
     \end{itemize}
 \end{itemize}
@@ -166,11 +167,11 @@ A $\sigalg$ $\calF \subseteq 2^{\Omega}$ is a collection of sets satisfying the 
 \begin{itemize}
     \item $\calF$ contains $\Omega$: $\Omega \in \calF$.
     \item $\calF$ is closed under complements: if $A\in\calF$, then $\Omega \setminus A \in \calF$.
-    \item $\calF$ is closed under countable union:  if $A_i \in \calF$ then $\bigcup_i A_i \in \calF$.
+    \item $\calF$ is closed under countable union:  if $A_i \in \calF \ \forall i$, then $\bigcup_i A_i \in \calF$.
 \end{itemize}
 \end{definition}
 
-Note we use the notation $\calB(\R^d)$ for the Borel Sigma Algebra of $\R^d$ which we can think of this as the canonical sigma algebra for $\R^d$, it is the most compact representation of all measurable sets in $\R^d$. This notation can also be extended for subsets of $\R^d$ and more generaly to any topological space.
+Note we use the notation $\calB(\R^d)$ for the Borel $\sigma$-algebra of $\R^d$, which we can think of as the canonical $\sigma$-algebra for $\R^d$ --- it is the most compact representation of all measurable sets in $\R^d$. This notation can also be extended for subsets of $\R^d$ and more generaly to any topological space.
 
 \begin{definition}\label{def:random_variable}
 For a probability space $\probspace$, a real-valued random variable (vector) $\rvx(\omega)$ is a function $\rvx :\Omega \rightarrow \R^d$, requiring that $\rvx(\omega)$ is a measurable function, meaning that the pre-image of $\rvx(\omega)$  lies within the $\sigalg$ $\calF$:
@@ -189,9 +190,9 @@ Effectively, the above formalism of the random variable allows us to assign a nu
  The random-variable formalism provides us with a more clear connection between the probability measure $\P$ and the more familiar CDF. For simplicity in some cases, we may drop the argument $\omega$ from the random variable notation (i.e $\rvx \sim \calN(\bm{0}, \mathbb{I})$). 
 
 \subsection{Lebesgue–Stieltjes Integral}
-Here we offer a pragmatic introduction to the Lebesgue–Stieltjes integral in the context of a probability space. For a more technical introduction, we point the reader to advanced probability theory or measure and integration courses \citep{ethmeasure,mitmeasure,cambprob}.
+Here we offer a pragmatic introduction to the Lebesgue–Stieltjes integral, in the context of a probability space. For a more technical introduction, we point the reader to advanced probability theory or measure and integration courses \citep{ethmeasure,mitmeasure,cambprob}.
 \begin{definition}\label{def:lebesgue}
-For a probability measure space $\probspace$, a measurable function $f: \Omega \rightarrow \R $ and $A \in \calF$, the Lebesgue–Stieltjes integral:
+For a probability measure space $\probspace$, a measurable function $f: \Omega \rightarrow \R $ and $A \in \calF$, the Lebesgue–Stieltjes integral
 \begin{align}
     \int_{A} f(\vx) d\P(\vx)
 \end{align}
@@ -207,26 +208,26 @@ Let $\ind(\rvx \in A)$ be the indicator function for set $A$, then
     \E_{\P}[\ind(\rvx \in A)] = \int_{\Omega} \ind(\rvx \in A) d\P(\vx) = \int_{A} d\P(\vx) = \P(A).
 \end{align}
 The above result is a useful example, since it shows how a distribution (probability measure) is defined in terms of the integral. This is effectively  the definition of a cumulative density function.
-When our distribution $\P$ admits a probability density function $p(\vx)$, we have the following:
+When our distribution $\P$ admits a probability density function (PDF) $p(\vx)$, we have the following:
 \begin{align}
     \int_{\Omega} f(\vx) d\P(\vx) = \int_{\Omega} f(\vx)p(\vx) d\callambda(\vx),
 \end{align}
-where $\callambda$ is the Lesbesgue measure and we can think of it as the characteristic measure for $\R^d$. For many purposes, we can interpret $\int_{\Omega} f(\vx)p(\vx) d\callambda(\vx)$ as the regular Riemann integral and in many cases authors \citep{williams2006gaussian} use $\int_{\Omega} f(\vx)p(\vx) d\vx$ notationally when the integral is with respect to the Lebesgue measure.
+where $\callambda$ is the Lesbesgue measure, and we can think of it as the characteristic measure for $\R^d$. For many purposes, we can interpret $\int_{\Omega} f(\vx)p(\vx) d\callambda(\vx)$ as the regular Riemann integral and in many cases authors \citep{williams2006gaussian} use $\int_{\Omega} f(\vx)p(\vx) d\vx$ notationally when the integral is with respect to the Lebesgue measure.
 
-An important take away is that whilst connecting the Lebesgue integral to the standard Riemann integral, in the case where the PDF of a distribution $\P$ is available, gives us a useful conceptual connection, it is not always something that can be done. As we will soon see, many distributions and random processes do not admit a PDF. In order to be able to compute expectations with respect to these processes, we must adopt the Lebesgue-Stieltjes integral, which is well-defined in these settings where the standard Riemann integral is not.
+An important takeaway is that, whilst connecting the Lebesgue integral to the standard Riemann integral, in the case where the PDF of a distribution $\P$ is available, gives us a useful conceptual connection, it is not always something that can be done. As we will soon see, many distributions and random processes do not admit a PDF. In order to be able to compute expectations with respect to these processes, we must adopt the Lebesgue-Stieltjes integral, which is well-defined in these settings, while the standard Riemann integral is not.
 
 
 \section{Stochastic Process Formalism}
-Informally, a stochastic process is a time dependent random variable $\rvx(t)$, in other words, it is a random variable whose distribution at any point in time $P_t(\rvx(t) < r)$  is itself a function of time.
+Informally, a stochastic process is a time-dependent random variable $\rvx(t)$, in other words, it is a random variable whose distribution at any point in time $P_t(\rvx(t) < r)$  is itself a function of time.
 \begin{definition}\label{def:stochproc}
-Given probability space $\probspace$, a stochastic process is a collection of random variables $\rvx(\omega, t) : \Omega \times T \rightarrow \mathbb{R}$ indexed by $T$ (i.e. $T=\R^{+}$ typically to represent time), which can be written as:
+Given probability space $\probspace$, a stochastic process is a collection of random variables $\rvx(\omega, t) : \Omega \times T \rightarrow \mathbb{R}$ indexed by $T$ ($T=\R^{+}$ typically to represent time), which can be written as
 \begin{align*}
     \{\rvx(\omega, t) : t \in T\}.
 \end{align*}
 \end{definition}
-We typically adopt the notation $\rvx(t)$ since dependency on the sample space is usually dropped notationally, and more commonly in the statistics community the notation $X_t$ is used to emphasise that $T$ is an index set, however we will be mostly using the function notation $\rvx(t)$. 
+We typically adopt the notation $\rvx(t)$, since dependency on the sample space is usually dropped notationally. More commonly in the statistics community, the notation $X_t$ is used to emphasise that $T$ is an index set, however we will be mostly using the function notation $\rvx(t)$. 
 
-Stochastic processes do not necessarily have to be limited to temporal processes as the examples we have given. In fact, one of the most popular stochastic processes in machine learning, the Gaussian process (GP) for regression was initially devised for a spatial application known as Kriging. In this thesis we will focus on the temporal case where $T=\R^{+}$. Furthermore, we will also restrict ourselves to causal processes \footnote{Causal in the engineering and physics sense, e.g. causal Green's function.} in that $\rvx(t)$ only depends on the present and the past. In order to formalise this notion of causality we require the concept of a filtration: 
+Stochastic processes do not necessarily have to be limited to temporal processes like the examples we have given so far. In fact, one of the most popular stochastic processes in machine learning, the Gaussian process (GP) for regression was initially devised for a spatial application known as Kriging. In this thesis, we will focus on the temporal case where $T=\R^{+}$. Furthermore, we will also restrict ourselves to causal processes\footnote{Causal in the engineering and physics sense, e.g. causal Green's function.} in that $\rvx(t)$ only depends on the present and the past. In order to formalise this notion of causality, we require the concept of a filtration: 
 \begin{definition}\label{def:filtration}
 A filtration $\mathfrak{F} = (\calF_{t})_{i\in T}$ on probability space $\probspace$ is a sequence of indexed sub-$\sigalg$ of $\calF$:
 \begin{align*}
@@ -234,7 +235,7 @@ A filtration $\mathfrak{F} = (\calF_{t})_{i\in T}$ on probability space $\probsp
 \end{align*}
 we then call the space $\filtprobspace$ an $\mathfrak{F}$-filtered probability space.
 \end{definition}
-At a high level, the construction in Definition \ref{def:filtration} simply creates an indexed sequence of events $(\calF_{t})_{i\in T}$ which now allows us to define processes that only depend on the past and present:
+At a high level, the construction in Definition \ref{def:filtration} simply creates an indexed sequence of events $(\calF_{t})_{i\in T}$, which now allows us to define processes that only depend on the past and present:
 \begin{definition}\label{def:adapted}
     A stochastic process $\rvx$ is $\calF_t$-adapted  if $\rvx(t)$ is $\calF_t$-measurable:
     \begin{align*}
@@ -245,51 +246,51 @@ As mentioned before, this definition is a formal way of stating that our stochas
 
 \subsection{Wiener Process}
 
-We will provide the definition of a causal Wiener process ($\calF_t$-adapted) since it is the type of processes that we will be working with. More generally, Wiener processes do not have to be $\calF_t$-adapted.
+We will provide the definition of a causal Wiener process ($\calF_t$-adapted), since it is the type of processes that we will be working with. More generally, Wiener processes do not have to be $\calF_t$-adapted.
 \begin{definition}
     An $\calF_t$-adapted Wiener process (Brownian motion) is a stochastic process $\rvw(t)$ with the following properties:
     \begin{itemize}
-        \item $\rvw(0) = \vzero$
-        \item  $\rvw(t) - \rvw(s) \independent \calF_s$  for $s < t$ (independent increments).
-        \item $\rvw(t) - \rvw(s) \sim \calN (t | \vzero,  (t - s) \I) $
-        \item $\rvw(t)$ is continuous in $t$
+        \item $\rvw(0) = \vzero$,
+        \item  $\rvw(t) - \rvw(s) \independent \calF_s$  for $s < t$ (independent increments),
+        \item $\rvw(t) - \rvw(s) \sim \calN (t | \vzero,  (t - s) \I) $,
+        \item $\rvw(t)$ is continuous in $t$.
     \end{itemize}
 \end{definition}
-A simpler way of looking at the above definition is by examining what the joint PDF for a set of observations $\rvw(t_1), ...., \rvw(t_n)$ under this process is:
+A simpler way of looking at the above definition is by examining what the joint PDF for a set of observations $\rvw(t_1), ..., \rvw(t_n)$ under this process is:
 \begin{align*}
-    p(\rvw(t_1), ...., \rvw(t_n)) = \prod_{i=1}^{n-1} \calN\left(\rvw(t_{n+1})\big| \rvw(t_{n}), (t_{n+1}- t_{n})\I \right)
+    p(\rvw(t_1), ..., \rvw(t_n)) = \prod_{i=1}^{n-1} \calN\left(\rvw(t_{n+1})\big| \rvw(t_{n}), (t_{n+1}- t_{n})\I \right).
 \end{align*}
-From here, we can see that $\calN\left(\rvw(t_{n+1})\big| \rvw(t_{n}), (t_{n+1}- t_{n})\I \right)$ shows us that the transition probability is given by a random increment  centered at  $\rvw(t_{n})$ i.e.:
+From here, we can see that $\calN\left(\rvw(t_{n+1})\big| \rvw(t_{n}), (t_{n+1}- t_{n})\I \right)$ shows us that the transition probability is given by a random increment, centered at  $\rvw(t_{n})$, i.e.
 \begin{align*}
-    \rvw(t_{n+1}) = \rvw(t_{n}) +  \sqrt{(t_{n+1}- t_{n})}\rvz , \quad \rvz \sim \calN(\vzero, \I) 
+    \rvw(t_{n+1}) = \rvw(t_{n}) +  \sqrt{(t_{n+1}- t_{n})}\rvz , \quad \rvz \sim \calN(\vzero, \I) .
 \end{align*}
-We can also observe from the definition that a Wiener process is also a Gaussian process (GP), more specifically a Gaussian Markov process parametrised by mean and covariance functions:
+We can also observe from the definition that a Wiener process is also a Gaussian process, more specifically a Gaussian-Markov process parametrised by mean and covariance functions
 \begin{align*}
     \vm(t) = \vzero, \quad \vk(t, s) = \I\min(t, s).
 \end{align*}
 
 \subsection{Stochastic Integrals}
 
-Stochastic integrals are the integrals induced by a stochastic process. Let's first consider the simplest type of stochastic integral, that is :
+Stochastic integrals are the integrals induced by a stochastic process. Let's first consider the simplest type of stochastic integral, that is
 
 \begin{align} \label{eq:stochastic_sample}
     \int_{a}^{b} \rvx(t) dt,
 \end{align}
 
-where $\vx(\omega, t): \Omega \times T \rightarrow \R^d$ is a $\calF_t$-adapted stochastic process. This type of integrals appear in machine learning for example through latent force models \cite{alvarez2009latent,alvarez2013linear} where the integrand $\rvx(t)$ is a Gaussian process. The notation in Equation \ref{eq:stochastic_sample}, whilst compact, may initially seem confusing to the reader as $\rvx(t)$ is not a deterministic function and can effectively take on different values at each time step $t$.
+where $\vx(\omega, t): \Omega \times T \rightarrow \R^d$ is a $\calF_t$-adapted stochastic process. This type of integral appears in machine learning, for example through latent-force models \citep{alvarez2009latent,alvarez2013linear}, where the integrand $\rvx(t)$ is a Gaussian process. The notation in Equation \ref{eq:stochastic_sample}, whilst compact, may initially seem confusing to the reader, as $\rvx(t)$ is not a deterministic function and can effectively take on different values at and for each time step $t$.
 
 To clarify the above, we can express  Equation \ref{eq:stochastic_sample} in more detail:
 
 \begin{align*}
-    \int_{a}^{b} \rvx(\omega, t) dt \quad, \forall \omega
+    \int_{a}^{b} \rvx(\omega, t) dt, \quad \forall \omega.
 \end{align*}
 
-We basically fix $\omega$ (i.e. consider a single sampled random function) and the resulting integral holds for all $\omega$.  Now we can define the above integral as a Riemann sum:
+We basically fix $\omega$ (i.e. consider a single-sampled random function) and the resulting integral holds for all $\omega$.  Now we can define the above integral as a Riemann sum:
 \begin{align*}
     \int_{a}^{b} \rvx(\omega, t) dt &= \lim_{ \max \Delta t \rightarrow 0} \sum_{i=1}^{n-1} \rvx(\omega, t_i^{*}) (t_{i+1} - t_i), \\
-    \text{where} \;\; t_1 = a < &t_2 < \hdots < t_n = b, \;  t_i^{*} \in [ t_i, t_{i+1}],
+    \text{where} \;\; t_1 = a < &t_2 < \hdots < t_n = b, \;  t_i^{*} \in [ t_i, t_{i+1}]
 \end{align*}
-where the convergence of the limit is defined in the mean square sense:
+and the convergence of the limit is defined in the mean-square sense:
 \begin{align*}
     \lim_{\max \Delta t \rightarrow 0} \E \left[ \Bigg|\Bigg|\sum_{i=1}^{n-1} \rvx(\omega, t_i^{*}) (t_{i+1} - t_i)-  \int_{a}^{b} \rvx(\omega, t) \Bigg|\Bigg|^2\right] =  0.
 \end{align*}
@@ -297,61 +298,61 @@ Now it remains to discover when the above limit exists:
 \begin{theorem}\label{thrm:ito_simple}
   If a stochastic process $\rvx(t)$ has continuous mean and covariance functions $\vm(t) = \E[\rvx(t)],\;\; \vk(t, s) = Cov(\rvx(t), \rvx(s))$, then the limit $\int_{a}^{b} \rvx(\omega, t) dt$ exists.
 \end{theorem}
-If Theorem \ref{thrm:ito_simple} holds true, then analysing the resulting stochastic process produced by $\int_{a}^{b} \rvx(\omega, t) dt$ can be quite simple. For example, in \cite{alvarez2009latent} it was sufficient to compute expectations and co-variances of the above integral to fully characterise the resulting process.
+If Theorem \ref{thrm:ito_simple} holds true, then analysing the resulting stochastic process produced by $\int_{a}^{b} \rvx(\omega, t) dt$ can be quite simple. For example, in \cite{alvarez2009latent}, it was sufficient to compute expectations and covariances of the above integral to fully characterise the resulting process.
  
-\subsubsection{Itô  - Integral}
+\subsubsection{Itô Integral}
 Things start to get more difficult if we consider integrals with respect to Brownian motion:
 \begin{align}\label{eq:brownian_integral}
     \int_{a}^b \rvx(t) d\rvw(t).
 \end{align}
-First thing to note is that this takes the form of a Stieltjes integral being with respect to another function $\rvw(t)$ (which in this case is a random function) rather than the domain of integration $t$. Naively defining this integral as before is problematic since the limit is no longer well defined (unique) for this case:
+First thing to note is that this takes the form of a Stieltjes integral with respect to another function $\rvw(t)$ (which in this case is a random function), rather than the domain of integration $t$. Naively defining this integral as before is problematic, since the limit is no longer well-defined (unique) for this case:
 \begin{align}\label{eq:brownian_integral_bad}
-    \int_{a}^b \rvx(t) d\rvw(t) = \sum_{i=0}^{n-1} \rvx(t^{*}_i)(\rvw(t_{i+1}) - \rvw(t_i))
+    \int_{a}^b \rvx(t) d\rvw(t) = \sum_{i=0}^{n-1} \rvx(t^{*}_i)(\rvw(t_{i+1}) - \rvw(t_i)).
 \end{align}
-For the above limit to exist, we require that the function $\rvw(\omega, t)$ has a bounded total variation in $t$ which does not happen since Brownian motion paths do not have bounded total variation. However if we fix the choice $t_i^{*} = t_i$:
+For the above limit to exist, we require that the function $\rvw(\omega, t)$ has a bounded total variation in $t$, which does not happen, since Brownian-motion paths do not have bounded total variation. However, if we fix the choice $t_i^{*} = t_i$, so that
 \begin{align}\label{eq:ito_integral}
     \int_{a}^b \rvx(t) d\rvw(t) = \sum_{i=0}^{n-1} \rvx(t_i)(\rvw(t_{i+1}) - \rvw(t_i)),
 \end{align}
-it can be shown that this limit will converge in the mean square sense. The above integral is known as the Itô-integral.
-\subsection{Itô  - Process and SDEs}
+it can be shown that this limit will converge in the mean-square sense. The above integral is known as the Itô integral.
+\subsection{Itô Processes and SDEs}
 
-For the purpose of this work, Itô-Processes will be our definition of stochastic differential equations (SDEs) and we will use both terms to refer to the same object.
+For the purpose of this work, Itô processes will be our definition of stochastic differential equations (SDEs) and we will use both terms to refer to the same object.
 
 \begin{definition}
-    For $\calF_t$-adapted stochastic processes $\rvb(t), \rvsigma(t)$ an Itô-process $\rvx(t)$ is defined as:
+    For $\calF_t$-adapted stochastic processes $\rvb(t)$ and  $\rvsigma(t)$, an Itô process $\rvx(t)$ is defined as
     \begin{align}\label{eq:ito_proc}
     \rvx(t) = \rvx(0) + \int_{0}^t \rvb(s) ds + \int_0^t \rvsigma(s) d\rvw(s).
     \end{align}
-Equation \ref{eq:ito_proc} is often notationally simplified to :
+Equation \ref{eq:ito_proc} is often notationally simplified to
     \begin{align}\label{eq:sde_gen}
         d\rvx(t) =\rvb(t) dt + \rvsigma(t) d\rvw(t).
     \end{align}
 \end{definition}
-The process $\rvb(t)$ is often referred to as the drift and $\rvsigma(t)$ as the volatility. The notation in Equation \ref{eq:sde_gen} is what we typically refer to as a stochastic differential equation since if we ``divide'' both sides by $dt$ we obtain:
+The process $\rvb(t)$ is often referred to as the drift, and $\rvsigma(t)$ as the volatility. The notation in Equation \ref{eq:sde_gen} is what we typically refer to as a stochastic differential equation, since if we ``divide'' both sides by $dt$ we obtain
 \begin{align*}
     \frac{d \rvx(t)}{dt} = \rvb(t) + \rvsigma(t) \rvepsilon(t),
 \end{align*}
-where $\rvepsilon(t) \sim \calN(\vzero, \delta(k-s)\I)$ is white noise and is regarded as the derivative of Brownian motion (in some sense). One must be careful with the above representation and note that it is only notational, since most stochastic processes are not differentiable (e.g. Brownian motion).
-Note that SDEs effectively describe the dynamical evolution of a random variable in time, and thus one may want to ask what is the density of such random variable. For Itô-Processes of the form:
+where $\rvepsilon(t) \sim \calN(\vzero, \delta(k-s)\I)$ is white noise, and is regarded as the derivative of Brownian motion (in some sense). One must be careful with the above representation and note that it is only notational, since most stochastic processes are not differentiable (e.g. Brownian motion).
+Note that SDEs effectively describe the dynamical evolution of a random variable in time, and thus, one may want to ask what is the density of such random variable. For Itô processes of the form
 \begin{align}\label{eq:parametric_ito}
      d\rvx(t) =\vb(\rvx(t), t) dt + \rvsigma(\rvx(t), t) d\rvw(t),
 \end{align}
-where $\vb : \R^d \times \R^{+} \rightarrow \R^d$ and $\rvsigma : \R^d \times \R^{+} \rightarrow \R^{d\times d}$ are deterministic functions that parametrise the drift and volatility respectively, we can define a partial differential equation (PDE) that describes the evolution of the PDF as a function of time \citep{sarkka2019applied}:
+where $\vb : \R^d \times \R^{+} \rightarrow \R^d$ and $\rvsigma : \R^d \times \R^{+} \rightarrow \R^{d\times d}$ are deterministic functions that parametrise the drift and volatility respectively, we can define a partial differential equation (PDE), that describes the evolution of the PDF as a function of time \citep{sarkka2019applied}:
 \begin{definition}\label{def:fpk}
-    For an Itô-Process following the form of Equation \ref{eq:parametric_ito}, the Fokker-Planck (FPK) Equation has the form:
+    For an Itô process following the form of Equation \ref{eq:parametric_ito}, the Fokker-Planck (FPK) equation has the form
     \begin{align}\label{eq:fpk}
         \partial_{t} p(\vx, t) =-\nabla \cdot p(\vx, t)\vb(\vx(t), t) + \frac{1}{2} \sum_{ij} \partial^2_{{x_i}{x_j}}[\rvsigma(\vx(t), t)\rvsigma(\vx(t), t)^{\top}]_{ij},
     \end{align}
     where $p(\vx, t)$ is the probability density function of the solution of the SDE equation.
 \end{definition}
-The FPK equation thus provides us with an alternative representation for the solution of SDEs via a PDE whose solution describes a PDF. Intuitively, the above results make sense: given that the SDE describes the dynamic evolution of a random variable, then we should be able to describe the PDF for said random variable at a given time point and it seems natural that said PDF can be described with a differential equation. For more rigorous details for the derivation of the FPK equation see \cite{sarkka2019applied}.
+The FPK equation thus provides us with an alternative representation for the solution of SDEs, via a PDE whose solution describes a PDF. Intuitively, the above results make sense: given that the SDE describes the dynamic evolution of a random variable, then we should be able to describe the PDF for said random variable at a given point in time, and it seems natural that said PDF can be described with a differential equation. For more rigorous details of the derivation of the FPK equation see \cite{sarkka2019applied}.
 
-\subsubsection{Itô's-Rule}
+\subsubsection{Itô's Rule}
 
-At a high level, Itô's-Rule is the equivalent to the change of variables rule for integration. We will not be going into much technical detail explaining how to arrive to this rule but we will be restating it here since it is used in some of our results. 
+At a high level, Itô's rule is the equivalent to the change-of-variables rule for integration. We will not be going into much technical detail explaining how to arrive to this rule, but we will be restating it here since it is used in some of our results. 
 
 \begin{theorem}
-  (Itô's-Rule) Assume that $\rvx(t)$ is an Itô process and consider an arbitrary scalar function $f(\rvx(t), t)$ of the process. Then the Itô SDE for $f$ is given by:
+  (Itô's rule) Assume that $\rvx(t)$ is an Itô process and consider an arbitrary scalar function $f(\rvx(t), t)$ of the process. Then, the Itô SDE for $f$ is given by
   \begin{align}\label{eq:ito_rule}
       df = \partial_t f dt + \sum_i \partial_{{x_i}} f dx_i + \frac{1}{2}\sum_{ij} \partial^2_{{x_i}{x_j}} f dx_i dx_j,
   \end{align}
@@ -360,11 +361,11 @@ At a high level, Itô's-Rule is the equivalent to the change of variables rule f
 \begin{proof}
 See \cite{oksendal2003stochastic}.
 \end{proof}
-Note that the above is very similar to the standard change of variables formula apart from an extra quadratic term. For more intuition behind this result see \citet[Chapter~4]{sarkka2019applied}.
+Note that the above is very similar to the standard change-of-variables formula, apart from an extra quadratic term. For more intuition behind this result, see \citet[Chapter~4]{sarkka2019applied}.
 
-\subsubsection{Euler Mayurama Discretisation}
+\subsubsection{Euler-Mayurama Discretisation}
 
-A particular tool useful when deriving and interpreting Itô processes is considering their time discretisations.
+A particular tool, useful when deriving and interpreting Itô processes, is considering their time discretisations.
 \begin{algorithm} \label{alg:em}
 \SetKwInOut{Input}{input}
 \Input{$[t_0, t],\quad  p(\vx(t_0)),\quad  \Delta t,\quad d\rvx(t)= \rvb(\rvx(t), t)+ \rvsigma(\vx(t), t)d \rvw(t) $}
@@ -377,13 +378,13 @@ $\rvx(t_0) \sim p(\vx(t_0))$\\
 \Return{$\{\rvx(t_{k}) \}_k $}
 \caption{Euler-Mayurama (EM) Discretisation }
 \end{algorithm}
-The EM discretisation will be the method that we will use throughout this work to sample trajectories to compute expectations and other quantities.
+The Euler-Mayurama (EM) discretisation will be the method we use throughout this work to sample trajectories, in order to compute expectations and other quantities.
 
-\section{Radon-Nikodym (RN) Derivative}
+\section{Radon-Nikodym Derivative}
 
-As hinted earlier, we will require the RN-derivative in order to compute the KL divergence between two stochastic processes. Thus we will be introducing the RN-derivative in this section as well as certain properties which we will require later on.
+As hinted earlier, we will require the Radon-Nikodym (RN) derivative in order to compute the KL divergence between two stochastic processes. Thus we will be introducing the RN derivative in this section as well as certain properties which we will require later on.
 
-The RN-Theorem allows us to write a probability measure in terms of an integral with respect to another probability measure. 
+The RN theorem allows us to write a probability measure in terms of an integral with respect to another probability measure. 
 
 \begin{theorem}
 (Radon-Nikodym Theorem)
@@ -1904,6 +1905,12 @@ We can see from Figure \ref{fig:circ2d200trajectroies2d} that some very structur
 
 
 \subsubsection{Moons Dataset}
+We use the moons dataset from \cite{pedregosa2011scikit}, generated by the following procedure:
+\begin{align*}
+     \color{blue}{\pi_0(\vx)} &\color{blue}{= \calN(\vx; \vzero,  \mathbb{I}_2)} \\
+    \color{red}{\hat{\pi}_1(\vy)} &\color{red}{= \text{GenerateMoons(scale\_x=1.8, scale\_y=3.8, noise=0.03)}}.
+\end{align*}
+Similar to the circles dataset, the scales were picked to give a nice visual scale and a clear separation between the moons. This was done in order to make the task as simple as possible given that we were still in an exploratory stage.
 
 \begin{figure}
     \centering
@@ -2073,7 +2080,7 @@ First we give a summary of our findings, highlighting the empirical capacities o
     \item \textbf{Distant $\bm{\pi_0, \pi_1}$:} This is effectively the same milestone as above, however we do not limit the radius to 3. It tests how well the models work when the distributions are very far apart from each other. We found that the method by \cite{pavon2018data} and our direct drift estimation approach did not work well in this scenario and required either increasing $\gamma$ or standardising the data.
 \end{itemize}
 
-Inspecting the summary of findings reported Table \ref{fig:comp_exp}, we can observe that the most robust method is the direct drift estimation approach using GPs.  We do acknowledge that the conclusions drawn in Table \ref{fig:comp_exp} require to carry out more comparative experiments with a sound hypothesis test set a priori. 
+Inspecting the summary of findings reported Table \ref{fig:comp_exp}, we can observe that the most robust method is the direct drift estimation approach using GPs. We will now carry out a comparative experiments with a sound hypothesis test set a priori. 
 
 \subsubsection{Comparative Results}
 
@@ -2134,7 +2141,7 @@ The key contributions of this thesis are:
 Whilst we introduced and evaluated to a great extent the first successful machine learning based approach for solving the Schrödinger bridge, there are still areas of exploration left to pursue further:
 
 \begin{itemize}
-    \item Since our best performing method is based on Gaussian processes, they will not scale well to large datasets. \cite{ruttor2013approximate} propose a sparse expectation maximisation based algorithm for inferring the drift of SDEs which we did not implement or explore. This could potentially make the DDE method scalable enough for optimising the GP hyperparameters which was something we were unable to do due to speed limitations. Note this would also allow for porting the method to a GPU.
+    \item Since our best performing method is based on Gaussian processes, they will not scale well to large datasets. \cite{ruttor2013approximate} propose a sparse expectation maximisation based algorithm for inferring the drift of SDEs which we did not implement or explore. This could potentially make the DDE method scalable enough for optimising the GP hyperparameters which was something we were unable to do due to speed limitations.
     \item We found that the method by \cite{ruttor2013approximate} had difficulties in learning drifts whose end point distribution was very sharp (low variance). This needs to be explored further, it is possible that optimising the hyperparameters may fix this this issue.  
     \item Explore the learning of the drift using a method that is not based on Gaussian processes.
     \item Some of the unimodal examples admit closed form solutions for the full bridge. We should use this as a ground truth and compute the relative path error to the closed form drift in order to evaluate the methods.
@@ -2149,13 +2156,13 @@ Whilst we introduced and evaluated to a great extent the first successful machin
 
 \chapter{Analysis of simple Gaussian like Parametrisation}\label{app:bad_gauss}
 
-The goal of this subsection is to illustrate the challenges in parametrising the MLE based objectives proposed in \cite{pavon2018data} such that the partition function can be computed in closed form. Ultimately we were unable to come up with a flexible enough parametrisation that both had a closed form partition function and was flexible enough to solve the half bridge for multimodal distributions.
+The goal of this subsection is to illustrate the challenges in parametrising the MLE based objectives proposed in \cite{pavon2018data}, such that the partition function can be computed in closed form. Ultimately, we were unable to come up with a parametrisation flexible enough that had a closed form partition function and was flexible enough to solve the half bridge for multimodal distributions.
 
 \section{Unimodal Gaussian Like Parametrisation}
 
-Following the reparametrisation introduced in the Section \ref{sec:unormfit} we consider the case of parametrising the potentials with unimodal Gaussian's this allows for further analysis of the method since both the normalisation and the updates can be attained in closed form. 
+Following the reparametrisation introduced in Section \ref{sec:unormfit}, we consider the case of parametrising the potentials with unimodal Gaussians. This allows for further analysis of the method, since both the normalisation and the updates can be attained in closed form. 
 
-Firstly we put forward the following counter example that valid Gaussian like parametrisation's for the potentials cannot solve the bridge even for uni-modal Gaussian marginals:
+Firstly, we put forward the following counter example that valid Gaussian like parametrisations for the potentials cannot solve the bridge even for unimodal Gaussian marginals:
 \begin{proposition}
 If we parametrise the potentials as:
 \begin{align}
@@ -2214,25 +2221,25 @@ Then the above system has no valid solutions (can be solved only for negative va
 
 \end{proof}
 
-In short what the above tells us is that if we wish to do a squared exponential paremetrisation for the potentials we must drop the positive definite constraint. In geometric terms if one potential is log concave then the other needs to be log convex due to how the variances combine.
+What the above tells us is that if we wish to do a squared exponential paremetrisation for the potentials, we must drop the positive definite constraint. In geometric terms, if one potential is log concave then the other needs to be log convex due to how the variances combine.
 
-We still however must enforce an integrability constraint (required to make the inner product of potentials converge):
+We still must enforce an integrability constraint (required to make the inner product of potentials converge):
 \begin{align*}
-\left(\mSigma_x^{-1} +\mSigma_y^{-1}\right)^{-1} = \mL\mL^{\top}
+\left(\mSigma_x^{-1} +\mSigma_y^{-1}\right)^{-1} = \mL\mL^{\top},
 \end{align*}
 which implies:
 \begin{align*}
-\mSigma_x^{-1} +\mSigma_y^{-1} = \mL\mL^{\top}
+\mSigma_x^{-1} +\mSigma_y^{-1} = \mL\mL^{\top},
 \end{align*}
 which can be enforced via a simple reparametrisation (this allows for negative lengthscales):
 \begin{align*}
-\mSigma_x = (\mL\mL^{\top} -\mSigma_y^{-1})^{-1}
+\mSigma_x = (\mL\mL^{\top} -\mSigma_y^{-1})^{-1},
 \end{align*}
-Where $\mL$ can be parametrised in terms of an unconstrained vector.
+where $\mL$ can be parametrised in terms of an unconstrained vector.
 \section{Mixture of Exponentiated Quadratics}
 
 
-We now wish to consider if it is possible to extend the exponentiated quadratic  parametrisation of the potentials to a mixture of exponentiated quadratics. In order to achieve this parametrisation we need to reconsider the integrability constraint.
+We now consider if it is possible to extend the exponentiated quadratic  parametrisation of the potentials to a mixture of exponentiated quadratics. In order to achieve this parametrisation, we need to reconsider the integrability constraint.
 
 \begin{align}
 \hphi_0( \vx ; \beta) =  \sum_{k_x} \pi_{k_x} \calN(\vx | \vmu_{k_x}, \mSigma_{k_x}) \\
@@ -2240,18 +2247,18 @@ We now wish to consider if it is possible to extend the exponentiated quadratic 
 \end{align}
 Considering  the integrability constraint then becomes $\forall k_x$:
 \begin{align*}
-   \bigwedge_{k_y} \left(\mSigma_{k_x} +\mSigma_{k_y} \succ 0\right) 
+   \bigwedge_{k_y} \left(\mSigma_{k_x} +\mSigma_{k_y} \succ 0\right), 
 \end{align*}
 
-Which using the eigen-decompositions $\mSigma_{k_x}=\mU_{k_x} \mD_{k_x} \mU^{\top}_{k_x}$,  $\mSigma_{k_y}=\mU_{k_y} \mD_{k_y} \mU^{\top}_{k_y}$ can be re-expressed as : 
+which using the eigen-decompositions $\mSigma_{k_x}=\mU_{k_x} \mD_{k_x} \mU^{\top}_{k_x}$,  $\mSigma_{k_y}=\mU_{k_y} \mD_{k_y} \mU^{\top}_{k_y}$ can be re-expressed as : 
 \begin{align*}
-  \lambda_{k_x}^d + \min\lambda_{k_y}^d \geq 0 
+  \lambda_{k_x}^d + \min\lambda_{k_y}^d \geq 0,
 \end{align*}
-Where $d$ is a specific component / dimension. Thus we can enforce this constraint via the reparametrisation:
+where $d$ is a specific component / dimension. Thus, we can enforce this constraint via the reparametrisation:
 \begin{align*}
-   \lambda_{k_x}^d = \exp(\theta) - \min\lambda_{k_y}^d 
+   \lambda_{k_x}^d = \exp(\theta) - \min\lambda_{k_y}^d ,
 \end{align*}
-where  $\theta$ is unconstrained. Furthermore we can parametrise the orthogonal matrices $\mU_{k_x}$ in terms of unconstrained vectors using Householder reflections. Combining the aforementioned parametrisations we can enforce the integrability constraint fully via reparametrisations and while these parametrisations are not differentiable everywhere one can still maximise the liklelihood using the sub-gradient method \citep{shor1991development}. Unfortunately this method was unable to work for multimodal distributions and thus we decided not to pursue this path further.
+where  $\theta$ is unconstrained. Furthermore, we can parametrise the orthogonal matrices $\mU_{k_x}$ in terms of unconstrained vectors using Householder reflections. Combining the aforementioned parametrisations, we can enforce the integrability constraint fully via reparametrisations and while these parametrisations are not differentiable everywhere, one can still maximise the liklelihood using the sub-gradient method \citep{shor1991development}. Unfortunately, this method was unable to work for multimodal distributions and thus we decided not to pursue this path further.
 
 
 \bibliographystyle{icml} 
