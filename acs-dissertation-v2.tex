@@ -403,12 +403,12 @@ This change of measure above is analogous to the trick carried out when we do im
 \begin{figure}[t!]
     \centering
     \includegraphics[scale=0.3]{images/disint2.png}
-    \caption{ This diagram shows that it is possible to construct a conditional measure to calculate the size of the green rectangle, however under the joint measure such measure is $0$. The Disintegration Theorem provides us with the construction of such conditional measure.}
+    \caption{ This diagram shows that it is possible to construct a conditional measure to calculate the size of the green rectangle (whose height tends to 0), however under the joint measure such volume evaluates to $0$. The Disintegration Theorem provides us with the construction of such conditional measure.}
     \label{fig:disintegration}
 \end{figure}
 \subsection{Disintegration Theorem and Conditional Measures}
 
-In this section we will present the disintegration theorem in the context of probability measures, which serves as the extension of the product rule to measures that do no admit the traditional product rule. The product rule is an essential rule in machine learning: for example, it is used in factorising the posterior in Bayesian inference, and to carry out inference in graphical models \citep{koller2009probabilistic}. We will use this theorem to present a derivation for RN-derivative equivalent of the product rule.
+In this section we will present the disintegration theorem in the context of probability measures, which serves as the extension of the product rule to measures that do not admit the traditional product rule. The product rule is an essential rule in machine learning: for example, it is used in factorising the posterior in Bayesian inference, and to carry out inference in graphical models \citep{koller2009probabilistic}. We will use this theorem to present a derivation for RN-derivative equivalent of the product rule.
 
 \begin{theorem} (Disintegration Theorem, for continuous probability measures): 
 
@@ -478,7 +478,7 @@ As we hinted earlier Itô-processes do not admit a PDF since they are not absolu
 \end{definition}
 
 In short the path measure represents the probability measure associated to the stochastic process specified by the SDE.  For example, $\W_{\gamma}$ is the Wiener measure and represents the path measure of a Wiener process with volatility $\sqrt{\gamma}$
- (i.e. $d\rvx(t) = \sqrt{\gamma} d \rvw(t)$). For a more formal introduction to path measures we require the notion of a \textit{path integral}, we will not be going into that level of detail for this thesis. We point the reader to \cite{sarkka2019applied, oksendal2003stochastic} for a more thorough introduction.
+ (i.e. $d\rvx(t) = \sqrt{\gamma} d \rvw(t)$). For a more formal introduction to path measures we require the notion of a \textit{path integral}. We point the reader to \cite{sarkka2019applied, oksendal2003stochastic} for a more thorough introduction.
  
 Now we can go ahead and present the following Theorem \citep{sarkka2019applied}:
 \begin{theorem}\label{thrm:ito_ratio}\citep{sarkka2019applied}
@@ -556,7 +556,7 @@ The two results presented below are from \cite{pavon1991free}. For pedagogical r
 
 We can represent $\Q$ as the distribution which evolves according to the solution of an SDE of the form:
 \begin{align*}
-    d\rvx(t) = \rvb^{+}(t) dt + \sqrt{\gamma} \rvw(t)
+    d\rvx(t) = \rvb^{+}(t) dt + \sqrt{\gamma} \rvw^+(t)
 \end{align*}
 \begin{lemma}\citep{pavon1991free}
     The KL Divergence between $\Q$ and $\W_{\gamma}$ can be decomposed as:
@@ -570,7 +570,7 @@ Via the disintegration theorem and Theorem \ref{lemma:rn_des} we can condition o
 \begin{align*}
     \frac{d\Q}{d\W^{ \gamma}} = \frac{p_0^\Q}{p_0^{ \W^{\gamma}}} \frac{d\Q_{(0,1]}}{d\W_{(0,1]}^{\gamma}}\left(\cdot | \rvx(0) =\vx\right),
 \end{align*}
-where the disintegration $\Q_{(0,1]}\left(\cdot | \rvx(0) = \vx \right)$ is a solution $d\rvx(t) = \rvb_t^+ dt + \sqrt{\gamma} \rvw(t), \; \rvx(0) \sim p_0^\Q$ then by Theorem \ref{thrm:ito_ratio} we can express the RN-derivative in terms of  drift $\rvb_t^+$:
+where the disintegration $\Q_{(0,1]}\left(\cdot | \rvx(0) = \vx \right)$ is a solution $d\rvx(t) = \rvb_t^+ dt + \sqrt{\gamma} \rvw^+(t), \; \rvx(0) \sim p_0^\Q$ then by Theorem \ref{thrm:ito_ratio} we can express the RN-derivative in terms of  drift $\rvb_t^+$:
 \begin{align*}
     \frac{d\Q}{d\W^{\gamma}} = \frac{p_0^\Q}{p_0^{ \W^{\gamma}}}\exp\left(\int_0^1\frac{1}{2\gamma} \big|\big|\rvb^+(t)\big|\big|^2 dt\right),
 \end{align*}
@@ -599,7 +599,7 @@ Then using the drift based formulations defined above, \cite{pavon1991free} deri
 \item Forward Objective: 
 \begin{align} \label{eq:controlled_bridge_forward}
     \min_{\Q \in \calD(\pi_0, \pi_1)} \KL\big(\Q \big|\big| \W^{\gamma}\big)& = \min_{\rvb^{+} \in \calB }  \E_\Q\left[\int_0^1 \frac{1}{2\gamma}\big|\big|\rvb^{+}(t) \big|\big|^2 dt\right], \nonumber \\
-    s.t.\;\;\; d\rvx(t) = \rvb^{+}(t) &dt + \sqrt{\gamma} \rvw(t), \;\; \rvx(0) \sim \pi_0, \;\; \rvx(1) \sim \pi_1.
+    s.t.\;\;\; d\rvx(t) = \rvb^{+}(t) &dt + \sqrt{\gamma} \rvw^{+}(t), \;\; \rvx(0) \sim \pi_0, \;\; \rvx(1) \sim \pi_1.
 \end{align}
 \item Backward Objective
 \begin{align} \label{eq:controlled_bridge_backward}
@@ -1014,7 +1014,7 @@ Using our notation, the GAN fitting procedure \citep{goodfellow2014generative} t
 
 \begin{itemize}
     \item (Discriminator loss) Estimating the surrogate to later be fitted by model $p_{\theta}(\vy)$:
- $$ {\beta}^{*} = \argmin_{\phi} \alpha \E_{\pi_1(\vy)}[-\log D_{\beta}(\vy)] + (1-\alpha)\E_{p_{\theta}(\vy)}[-\log (1-D_{\beta}(\vy))].$$ 
+ $$ {\beta}^{*} = \argmin_{\beta} \left(\alpha \E_{\pi_1(\vy)}[-\log D_{\beta}(\vy)] + (1-\alpha)\E_{p_{\theta}(\vy)}[-\log (1-D_{\beta}(\vy))]\right).$$ 
  \item (Generative loss) Fitting model $p_{\theta}(\vy)$ on the estimated surrogate:
  $$\theta^{*} = \argmin_{\theta}-\E_{p_{\theta}(\vy)}\left[\log(D_{\hat{\beta}}(\vy))\right].$$ 
 \end{itemize}
@@ -1051,14 +1051,14 @@ d\vx d\vy.
 Following our selected parametrisation, when we pass the first iteration the product rule yields $q^{i-1}(\vx , \vy)= q^{i-1}_{\theta}(\vy|\vx)\pi_0(\vx)$, which results in:
 \begin{align*}
 \argmin_\theta&- \int p_{\phi}(\vx|\vy) \pi_1(\vy) \log  q^{i-1}_{\theta}(\vx|\vy)dxdy - \int p_{\phi}(\vx|\vy) \pi_1(\vy) \log  \pi_0(\vx) d\vx d\vy \\
-&+\int p_{\phi}(\vx|\vy) \pi_1(\vy) \log p_{\phi]}(\vx|\vy)d\vx d\vy.
+&+\int p_{\phi}(\vx|\vy) \pi_1(\vy) \log p_{\phi}(\vx|\vy)d\vx d\vy.
 \end{align*}
 Simplifying further:
 \begin{align*}
 \argmin_\phi- \E_{p_{\phi}(\vx|\vy)\pi_1(\vy)}\left[  \log  q^{i-1}_{\theta}(\vy|\vx)\right] -  \E_{p_{\phi}(\vx)}\left[ \log  \pi_0(\vx) \right] - H\left(p_{\phi}(\vx|\vy)\pi_1(\vy)\right).
 \end{align*}
 
-Sampling from $p_{\phi}(\vx|\vy)\pi_1(y)$ can be achieved via  ancestral sampling and we can parametrise $p_{\phi}(\vx|\vy)=\calN(\vx | \mu_{\phi}(\vy), \sigma^2_\phi(\vy))$ following \cite{kingma2013auto} such that it is easy to sample $\vx$ conditioned on $\vy$. Under the discussed parametrisations, expectations are taken with respect to the empirical distribution via ancestral sampling and thus we do not require any importance sampling. However we have introduced some bias by parametrising $p_{\phi}(\vx|\vy)$ with a class of distributions.
+Sampling from $p_{\phi}(\vx|\vy)\pi_1(y)$ can be achieved via  ancestral sampling and we can parametrise $p_{\phi}(\vx|\vy)=\calN(\vx | \mu_{\phi}(\vy), \sigma^2_\phi(\vy))$ following \cite{kingma2013auto} such that it is easy to sample $\vx$ conditioned on $\vy$. Under the discussed parametrisations, expectations are taken with respect to the empirical distribution via ancestral sampling and thus we do not require any importance sampling. However, we have introduced some bias by parametrising $p_{\phi}(\vx|\vy)$ with a class of distributions.
 
 Backward step:
 \begin{align*}
@@ -1155,7 +1155,7 @@ We have reached the core section of this thesis, where we propose and discuss nu
     \vx_i \sim \pi_0 &, \quad \vy_j \sim \pi_1.
 \end{align}
 
-Note that \cite{pavon2018data} refer to this problem as the data driven Schrödinger bridge. We will discuss different algorithms derived from the g-IPFP for solving the Schrödinger bridge under this empirical setting. As this is a fairly new problem of interest in the applied/numerical setting, there is not much accessible and validated prior work available. Thus, for prior approaches we will only be reproducing and commenting on the work of \cite{pavon2018data}. Note that we do not explore the method by \cite{bernton2019schr} mostly due to time constraints, their manuscript is not self contained, since it uses many non-standard concepts and notations which are defined in previous papers by the same authors.
+Note that \cite{pavon2018data} refer to this problem as the data driven Schrödinger bridge. We will discuss different algorithms derived from the g-IPFP framework for solving the Schrödinger bridge under this empirical setting. As this is a fairly new problem of interest in the applied/numerical setting, there is not much accessible and validated prior work available. Thus, for prior approaches we will only be reproducing and commenting on the work of \cite{pavon2018data}. Note that we do not explore the method by \cite{bernton2019schr}, we reserve this for further work.
 
 Our core contributions in this chapter are:
 
@@ -1196,7 +1196,7 @@ By removing the constant entropy term we arrive at:
 \end{align*}
 A similar argument follows for Equation \ref{eq:term2}
 \end{proof}
-Note that Equation \ref{eq:zero} motivates the use of other probability metrics/divergences as long as they share the same property of being minimised  when their arguments are equal. Following Observation \ref{obs:pavon}, the core essence of the method in \cite{pavon2018data} is parametrising  $\hphi_0(\vx), \;  \phi_1(\vy) $ with a parametric family of positive functions and minimise an empirical estimate of Equation \ref{eq:pavon_cros_ent}:
+Note that Equation \ref{eq:zero} motivates the use of other probability metrics/divergences as long as they share the same property of being minimised  when their arguments are equal. Following Observation \ref{obs:pavon}, the essence of the method in \cite{pavon2018data} is parametrising  $\hphi_0(\vx), \;  \phi_1(\vy) $ with a parametric family of positive functions and minimise an empirical estimate of Equation \ref{eq:pavon_cros_ent}:
 \begin{align}
     \hat{\beta}^*_i = \argmax_{\hat{\beta} } &\frac{1}{M} \sum_s \log \hphi_0(\vx_s; \hat{\beta} )   \phi_0^{(i)}(\vx_s)
     \quad \vx_s\sim \pi_0(\vx), \nonumber \\
@@ -1216,135 +1216,132 @@ Furthermore, via the method of Lagrange multipliers, \cite{pavon2018data} show t
 and
 \begin{align}
     {\beta}^*_i = \argmax_{{\beta} } &\frac{1}{N} \sum_s \log \phi_1(\vy_s; {\beta} )   \hphi_1^{(i)}(\vy_s)- \int \phi_1(\vy; {\beta} )   \hphi_1^{(i)}(\vy) d\vy ,
-    \quad \vy_s\sim \pi_1(\vy) ,\nonumber 
+    \quad \vy_s\sim \pi_1(\vy). \nonumber 
 \end{align}
 Now all that is left to numerically carry out this approximate variant of Fortet's algorithm is to estimate the propagation terms $ \phi_0^{(i)}(\vx_s), \hphi_1^{(i)}(\vy_s)$ and compute the constraint term $\int \phi_1(\vy; {\beta} )   \hphi_1^{(i)}(\vy) d\vy, \, \int \hphi_0(\vx; \hat{\beta} )   \phi_0^{(i)}(\vx) d\vx$, which depend on a non-trivial multidimensional integral.
 
 
 \subsection{Importance Sampling Approach by \citet{pavon2018data} }
 
-Estimating the terms $ \phi_0^{(i)}(\vx_s), \hphi_1^{(i)}(\vy_s)$, can be done without much trouble as they are effectively expectations with respect to the prior which we can sample from either directly in the case of Brownian motion or via the EM discretisation for more complex Itô-process prios. Furthermore in \cite{pavon1991free} they only estimate the term $\hphi_1^{(i)}(\vy_s)$:
+Estimating the terms $ \phi_0^{(i)}(\vx_s), \hphi_1^{(i)}(\vy_s)$, can be done without much trouble as they are expectations with respect to the prior which we can sample from, either directly in the case of Brownian motion, or via the EM discretisation for more complex Itô-process priors. \cite{pavon2018data} only estimate the term $\hphi_0^{(i)}(\vx_s)$,
 
 \begin{align}\label{eq:pavon_transition_mc}
-    \phi_1^{(i)}(\vx_s) &= \int P(\vy| \vx_s) \phi_1^{(i)}(\vy; \beta) d\vy, \nonumber \\
+    \phi_0^{(i)}(\vx_s) &= \int P(\vy| \vx_s) \phi_1^{(i)}(\vy; \beta) d\vy, \nonumber \\
     &\approx \frac{1}{\tilde{M}} \sum_l \phi_1^{(i)}(\tilde{\vy}_{ls}; \beta) \quad \tilde{\vy}_{ls} \sim   P(\vy| \vx_s),
 \end{align}
 
-as we require only one of the propagations in order to compute the normalising constraints  $\int \phi_1(\vy; {\beta} )   \hphi_1^{(i)}(\vy) d\vy , \, \int \hphi_0(\vx; \hat{\beta} )   \phi_0^{(i)}(\vx) d\vx $.
+as we require only one of the propagations in order to compute the normalising constraints  $\int \phi_1(\vy; {\beta} )   \hphi_1^{(i)}(\vy) d\vy , \, \int \hphi_0(\vx; \hat{\beta} )   \phi_0^{(i)}(\vx) d\vx $ since both integrals are equal to each other.
 
-\cite{pavon2018data} Note that the integrals arising from the constraint can be decomposed in the following convenient order:
+\cite{pavon2018data} note that the integrals arising from the constraint can be decomposed in the following convenient order:
 \begin{align}
 \int \hphi_0(\vx; \hat{\beta} )   \phi_0^{(i)}(\vx) d\vx &=\nonumber\\
 & = \int  \hphi_0(\vx; \hat{\beta} ) \int P(\vy| \vx_s) \phi_1^{(i)}(\vx; \beta) d\vy d\vx, \\
     \int \phi_1(\vy; {\beta} )   \hphi_1^{(i)}(\vy) d\vy &=\nonumber\\
     &=\int  \hphi_0(\vx; \hat{\beta} ) \int P(\vy| \vx_s) \phi_1^{(i)}(\vx; \beta) d\vy d\vx.
 \end{align}
-Now all that is required is estimating the outer integrals with respect to $d\vx$ as we have already provided a Monte-Carlo estimate for the $d\vy$ integral in Equation \ref{eq:pavon_transition_mc}. In order to estimate the outer integrals  \cite{pavon2018data} propose to use a method of importance sampling:
+Now all that is required is estimating the outer integrals with respect to $d\vx$, as we have already provided a Monte-Carlo estimate for the $d\vy$ integral in Equation \ref{eq:pavon_transition_mc}. In order to estimate the outer integrals,  \cite{pavon2018data} propose to use importance sampling:
 \begin{align}
     \int&  \hphi_0(\vx; \hat{\beta} ) \int P(\vy| \vx_s) \phi_1^{(i)}(\vx; \beta) d\vy d\vx = \nonumber \\
     & = \int \tilde{\pi}_0(\vx) \frac{\hphi_0(\vx; \hat{\beta} ) \int P(\vy| \vx_s) \phi_1^{(i)}(\vx; \beta) d\vy}{\tilde{\pi}_0(\vx)} d\vx, \nonumber \\ 
      &\approx  \frac{1}{\tilde{M}\tilde{N}}\sum_{lk} \frac{\hphi_0(\vx_k; \hat{\beta} )\phi_1^{(i)}(\tilde{\vy}_{lk}; \beta) }{\tilde{\pi}_0(\vx_k)} ,  \quad \vy_{lk} \sim   P(\vy| \vx_k), \, \vx_k\sim\tilde{\pi}_0(\vx),
 \end{align}
-where the authors of \cite{pavon2018data} recommend  setting  $\tilde{\pi}_0(\vx)$ to a density estimator of $\pi_0(\vx)$ since the integrand  $\hphi_0(\vx; \hat{\beta} )\phi_0^{(i)}(\vx)$ will converge  to a density estimator for  $\pi_0(\vx)$ as we iterate Fortet's algorithm. However in the early iterations of Fortet's algorithm there is no particular advantage in using  this heuristic to initialise the importance sampler. Furthermore this naive importance sampling scheme does not take into account sampling in areas where the integrand has mass (i.e. near its modes for example). Finally due to the curse of dimensionality vanilla importance samplers will not scale to high dimensions.
+where the authors of \cite{pavon2018data} recommend  setting  $\tilde{\pi}_0(\vx)$ to a density estimator of $\pi_0(\vx)$, since the integrand  $\hphi_0(\vx; \hat{\beta} )\phi_0^{(i)}(\vx)$ will converge  to a density estimator for $\pi_0(\vx)$ as we iterate Fortet's algorithm. However, in the early iterations of Fortet's algorithm there is no particular advantage in using this heuristic to initialise the importance sampler. Furthermore, this naive importance sampling scheme does not focus on sampling in areas where the integrand has mass (i.e. near its modes for example). Finally, due to the curse of dimensionality, vanilla importance samplers will not scale to high dimensions.
 
 \subsection{Alternative Formulation as an Unnormalised Likelihood Problem}\label{sec:unormfit}
-
-Rather than enforcing the integrate to one constraint via a method of Lagrange multipliers we can enforce it via the following reparametrisation:
+Rather than enforcing the normalization constraint via a method of Lagrange multipliers, we can enforce it via the following reparametrisation:
 \begin{align}
     \hat{\beta}^*_i = \argmax_{\hat{\beta} } &\frac{1}{M} \sum_s \log \frac{\hphi_0(\vx_s; \hat{\beta} )   \phi_0^{(i)}(\vx_s)}{ \int \hphi_0(\vx; \hat{\beta} )   \phi_0^{(i)}(\vx) d\vx}
-    \quad \vx_s\sim \pi_0(\vx). \nonumber 
+    \quad \vx_s\sim \pi_0(\vx), \nonumber 
 \end{align}
 and
 \begin{align}
     {\beta}^*_i = \argmax_{{\beta} } &\frac{1}{N} \sum_s \log\frac{ \phi_1(\vy_s; {\beta} )   \hphi_1^{(i)}(\vy_s)}{ \int \phi_1(\vy; {\beta} )   \hphi_1^{(i)}(\vy) d\vy }
-    \quad \vy_s\sim \pi_1(\vy) .\nonumber 
+    \quad \vy_s\sim \pi_1(\vy), \nonumber 
 \end{align}
+turning the problem into estimating and fitting an unnormalised likelihood \citep{gutmann2010noise}. This formulation opens the door to alternate estimation techniques to maximum likelihood such as noise contrastive estimation \citep{gutmann2010noise}. 
+\\~\\
+A natural follow-up that arises from this setup is to parametrise the potentials with Gaussian distributions and mixture of Gaussian distributions. This parametrisation would lead to closed form expressions for the partition function and intuitively mixtures of Gaussians seem flexible enough to fit arbitrary distributions. However, we found that these parametrisations are not flexible enough to fit most distributions. This can be explained by looking at how Fortet's algorithm requires one potential to be the reciprocal of the other times the marginal, which in many cases can lead to having one potential being log-concave whilst the other is log-convex. This does not hold true for Gaussian potentials. Further details can be found in Appendix \ref{app:bad_gauss}.
+\\~\\\\~\\\\~\\
 
-Turning the problem into estimating and fitting an un-normalised likelihood \citep{gutmann2010noise}. This formulation opens up the door to alternate estimation techniques to maximum likelihood such as Noise Contrastive Estimation \cite{gutmann2010noise}.
+\section{Direct Half Bridge Drift Estimation with Gaussian Processes}
 
-
-A natural followup that arises from this setup is: parametrising the potentials with Gaussian distributions and mixture of Gaussian distributions. This parametrisation would lead to closed form expressions for the partition function and intuitively mixtures of Gaussians seem flexible enough to fit arbitrary distributions. However we found that these parametrisations are not flexible enough to fit most distributions. This can be motivated by looking at how Fortet's algorithm requires one potential to be the reciprocal of the other times the marginal, which in many cases can lead to having one potential being log-concave whilst the other is log-convex, which does not apply to Gaussian potentials. Further details can be found in Appendix \ref{app:bad_gauss}.
-
-
-\section{Direct Half Bridge Drift Estimation with Gaussian processes}
-
-In this approach we wish to exploit the ``closed form'' expressions for  the half bridge problems.  Thus rather than parametrise the measures in the half bridge and solve the optimisation numerically, we seek to directly approximate the measure that extremises the half bridge objective. This is done using Gaussian processes to estimate the drift on trajectories sampled from the optimal half bridge measure.
+We will now present a novel approach to approximately solving the empirical Schrödinger bridge problem by exploiting the ``closed form'' expressions of the half bridge problem.  Thus, rather than parametrising the measures in the half bridge and solving the optimisation numerically, we seek to directly approximate the measure that extremises the half bridge objective. We do this by using Gaussian processes \citep{williams2006gaussian} to estimate the drift of the trajectories sampled from the optimal half bridge measure.
 
 We start from the following observation which in short tells us how to sample from the optimal half bridge distribution:
 \begin{observation}
-Given that we can parametrise a measure $\Q$ with its drift as the weak solution to the following SDE:
+Given that we can parametrise a measure $\Q$ with its drift as the solution to the following SDE:
 \begin{align*}
-    d\rvx^{\pm}(t) =  \pm \rvb^{\pm}(t) + \sqrt{\gamma} d \rvw^{\pm}(t) 
+    d\rvx^{\pm}&(t) =  \pm \rvb^{\pm}(t) + \sqrt{\gamma} d \rvw^{\pm}(t) ,\\
+ &\rvx(0) \sim p_0^\Q,\:\rvx(1) \sim p_1^\Q.
 \end{align*}
 Then we can sample from the solution to the following half bridges:
 \begin{align*}
    \P^{*-} = \arginf_{\P \in \calD(\cdot,\pi_1)}\KL(\P || \Q) \\ 
    \P^{*+} = \arginf_{\P \in \calD(\pi_0,\cdot )}\KL(\P || \Q)
 \end{align*}
-via simulating trajectories (e.g. via EM) using the following SDEs respectively:
+via simulating trajectories (e.g. using the EM method) following the SDEs:
 \begin{align*}
      d\rvx^{-}(t) &=  - \rvb^{-}(t) + \sqrt{\gamma} d \rvw^{-}(t) , \quad  \rvx(1) \sim \pi_1, \\
      d\rvx^{+}(t) &=  \rvb^{+}(t) + \sqrt{\gamma} d \rvw^{+}(t) , \quad  \rvx(0) \sim \pi_0.
 \end{align*}
 That is paths sampled from the above SDEs will be distributed according to $\P^{*-}$ and $\P^{*+}$ respectively.
 \end{observation}
-\begin{proof}(Sketch.) This is nothing but enforcing the constraints via the product rule (disintegration theorem) and then matching the remainder of the unconstrained interval with the reference distribution $\Q$ following Theorems \ref{thrm:half_bridge_forward} and \ref{thrm:half_bridge_backward}.
+\begin{proof}(Sketch.)
+w.l.o.g. The disintegration $\Q( \cdot| \rvx(0) )$ follows the dynamics $d\rvx^{+}(t) =  \rvb^{+}(t) + \sqrt{\gamma} d \rvw^{+}(t)$. Since the optimal half bridge's disintegration is given by $\P^+( \cdot| \rvx(0) ) =\Q( \cdot| \rvx(0) )$, its dynamics (in the $(0,1]$ interval) follow  $d\rvx^{+}(t) =  \rvb^{+}(t) + \sqrt{\gamma} d \rvw^{+}(t)$. What is left is to attach the constraint via $\rvx(0) \sim \pi_0(\rvx(0))$. 
+
+This is simply enforcing the constraints via the product rule (disintegration theorem) and then matching the remainder of the unconstrained interval with the disintegration for the reference distribution $\Q$ following Theorems \ref{thrm:half_bridge_forward} and \ref{thrm:half_bridge_backward}.
 \end{proof}
-Intuitively we are performing a surgery styled operation by cutting and pasting over the dynamics on the shortened (unconstrained) time interval and attaching the constraint to it at the corresponding boundary.
+Intuitively, we are performing a surgery style operation by cutting and pasting the dynamics of the shortened (unconstrained) time interval and attaching the constraint to it at the corresponding boundary.
 \subsection{Fitting the Drift from Samples}
 
-Once we have sampled trajectories from the half bridge solution ($\{\vx^{+}_i(t_k)\}_{i,k}^N$ or  $\{\vx^{-}_j(t_l)\}_{j,l}^M$ ) we  apply the methodology from \citep{ruttor2013approximate, batz2018approximate} in order to infer the optimal half bridge drifts.
+Once we have sampled trajectories from the half bridge solution ($\left\{ \big(\vx^{+}_n(t_k) \big)_{k=0}^T \right\}_{n=0}^{N}$ or  $\left\{\big(\vx^{-}_m(t_l)\big)_{l=0}^T\right\}_{m=0}^{M}$ ) we  apply the methodology from \citep{ruttor2013approximate, batz2018approximate} in order to infer the optimal half bridge drifts. Note that the method by \cite{ruttor2013approximate} is specified for inferring the drift from a single sampled trajectory, we adapt this method to work for multiple sampled trajectories.
 
+Using the Euler-Mayurama discretisations, we know that the transition probabilities follow a Gaussian distribution.
 
-
-Via the Euler-Mayurama discretisations we have that the transition probabilites follow a Gaussian distribution:
-
-For the backwards samples, we wish to infer the forwards drift:
+For the backward samples, we wish to infer the forward drift:
 \begin{align*}
-    p&\left(\{\vx^{-}_j(t_l)\}_{l}^M \Big| \vb^{+}_{\P_{i}}(\cdot, \cdot)\right) \propto\\
-    &\prod_l \exp \left( -\frac{1}{2\Delta t} ||\vx^{-}_j(t_l) - \vx^{-}_j(t_l - \Delta t) -  \Delta t\vb^{+}_{\P_{i}}\left(\vx^{-}_j(t_l - \Delta t), t_l - \Delta t\right) ||^2 \right), 
+    p&\left( \big(\vx^{+}_n(t_k)\big)_{k=0}^T  \Big| \vb^{+}_{\P_{i}}(\cdot, \cdot)\right) \propto\\
+    &\prod_{k=0}^T \exp \left( -\frac{1}{2\Delta t} ||\vx^{+}_n(t_k) - \vx^{+}_n(t_k - \Delta t) -  \Delta t\vb^{+}_{\P_{i}}\left(\vx^{-}_n(t_l - \Delta t), t_k - \Delta t\right) ||^2 \right), 
 \end{align*}
-and conversely for forwards samples, we wish to infer the backwards drift:
+and conversely for forward samples, we wish to infer the backward drift:
 \begin{align*}
-    p&\left(\{\vx^{-}_j(t_l)\}_{l}^M \Big| \vb^{-}_{\Q_{i}}(\cdot, \cdot)\right) \propto\\
-    &\prod_l \exp \left( -\frac{1}{2\Delta t} ||\vx^{-}_j(t_l - \Delta t)  - \vx^{-}_j(t_l)  +  \Delta t\vb^{-}_{\Q_{i}}\left(\vx^{-}_j(t_l - \Delta t), t_l - \Delta t\right) ||^2 \right), 
+    p&\left(\big(\vx^{-}_m(t_l)\big)_{l=0}^T \Big| \vb^{-}_{\Q_{i}}(\cdot, \cdot)\right) \propto\\
+    &\prod_{l=0}^T \exp \left( -\frac{1}{2\Delta t} ||\vx^{-}_m(t_l - \Delta t)  - \vx^{-}_m(t_l)  +  \Delta t\vb^{-}_{\Q_{i}}\left(\vx^{-}_m(t_l - \Delta t), t_l - \Delta t\right) ||^2 \right).
 \end{align*}
-placing Gaussian process priors on the drift functions $\vb^{-}_{\Q_{i}}$ and $\vb^{+}_{\P_{i}}$ we arrive at the following multioutput GP regression problems:
+Placing Gaussian process priors on the drift functions $\vb^{-}_{\Q_{i}} \sim \mathcal{GP} $ and $\vb^{+}_{\P_{i}} \sim \mathcal{GP} $, we arrive at the following multioutput GP regression problems:
 \begin{align*}
-        \frac{\vx^{-}_j(t_l) - \vx^{-}_j(t_l - \Delta t)}{\Delta t} = \vb^{+}_{\P_{i}}\left(\vx^{-}_j(t_l - \Delta t), t_l - \Delta t\right) +\frac{\bm{\gamma}^{1/2}}{\Delta t}\epsilon ,\\
-        \frac{\vx^{-}_j(t_l - \Delta t)  - \vx^{-}_j(t_l)}{\Delta t}  = -\vb^{-}_{\Q_{i}}\left(\vx^{-}_j(t_l - \Delta t), t_l - \Delta t\right) +\frac{\bm{\gamma}^{1/2}}{\Delta t}\epsilon,
+        \frac{\vx^{-}_n(t_k) - \vx^{-}_n(t_k - \Delta t)}{\Delta t} = \vb^{+}_{\P_{i}}\left(\vx^{-}_n(t_k - \Delta t), t_k - \Delta t\right) +\frac{\bm{\gamma}^{1/2}}{\Delta t}\epsilon ,\\
+        \frac{\vx^{-}_m(t_l - \Delta t)  - \vx^{-}_m(t_l)}{\Delta t}  = -\vb^{-}_{\Q_{i}}\left(\vx^{-}_m(t_l - \Delta t), t_l - \Delta t\right) +\frac{\bm{\gamma}^{1/2}}{\Delta t}\epsilon,
 \end{align*}
-where
+where $\epsilon \sim \calN(\vzero, \I)$. Following \citep{ruttor2013approximate, batz2018approximate}, we assume the dimensions of the drift function are independent (which is equivalent to imposing a block diagonal kernel matrix on a multi-output GP) and thus we fit a separate GP for each dimension, yielding the following predictive mean per dimension $d$ of the drift:
 \begin{align}
-   \vb^{+}_{\P_{i}} \sim \mathcal{GP} \quad \vb^{-}_{\Q_{i}} \sim \mathcal{GP}\quad \epsilon \sim \calN(\vzero, \I).
-\end{align}
-Following \citep{ruttor2013approximate, batz2018approximate} we assume the dimensions of the drift function are independent (which is equivalent to imposing a block diagonal kernel matrix on a multi-output GP) and thus we fit a separate GP for each dimension, yielding the following predictive mean per dimension $k$ of the drift,
-\begin{align}
-[\bar{\vb}^{+}_{\P_{i}}(\vx, t)]_k = \vk_k^{+}(\vx \oplus t)^{\top} \left(\mK_k^{+} + \frac{\gamma}{\Delta t} \I\right)^{-1}\!\!\!\!\!\!\vy_k^{+}, \\
-[\vb^{-}_{\Q_{i}}(\vx, t)]_k = \vk_k^{-}(\vx \oplus t)^{\top} \left(\mK_k^{-} + \frac{\gamma}{\Delta t} \I\right)^{-1}\!\!\!\!\!\!\vy_k^{-} ,
+[\bar{\vb}^{+}_{\P_{i}}(\vx, t)]_d = \vec\big(\vk_d^{+}(\vx \oplus t)\big)^{\top} \left(\tilde{\mK}_d^{+} + \frac{\gamma}{\Delta t} \mathbb{I}_{MT}\right)^{-1}\!\!\!\!\!\!\vec(\mY_d^{+}), \\
+[\vb^{-}_{\Q_{i}}(\vx, t)]_d = \vec\big(\vk_d^{-}(\vx \oplus t)\big)^{\top} \left(\tilde{\mK}_d^{-} + \frac{\gamma}{\Delta t} \mathbb{I}_{NT}\right)^{-1}\!\!\!\!\!\!\vec(\mY_d^{-}) ,
 \end{align}
 where,
 \begin{align*}
-   &[ \mK_k^{+} ]_{il} = {K}\big([\vx^{-}_j(t_i- \Delta t)]_k\oplus t_i - \Delta t, [\vx^{-}_j(t_i - \Delta t)]_k \oplus t_l - \Delta t \big) \\
-   &[ \mK_k^{-} ]_{il} = {K}\big([\vx^{+}_j(t_i)]_k \oplus t_i , [\vx^{+}_j(t_i)]_k\oplus t_l \big)  \\
-   &\vy_k^{+} =  \left[\frac{\vx^{-}_j(t_l) - \vx^{-}_j(t_l - \Delta t)}{\Delta t}\right]_k \quad \vy_k^{-} =  \left[\frac{\vx^{+}_j(t_l - \Delta t)  - \vx^{+}_j(t_l)}{\Delta t} \right]_k
+   & [ \tilde{\mK}_d^{+} ]_{m\cdot T+l,m'\cdot T+l'} = [ \tilde{\mK}_d^{+} ]_{mm'll'}, \:\:  [ \mK_d^{+} ]_{n\cdot T+k,n' \cdot T +k'} = [ \mK_d^{+} ]_{nn'kk'}\\
+   &[ \mK_d^{+} ]_{mm'll'} = {K}_d\big(\vx^{-}_m(t_l- \Delta t)\oplus (t_l - \Delta t), \vx^{-}_{m'}(t_{l'} - \Delta t)\oplus ( t_{l'} - \Delta t) \big), \\
+   &[ \mK_d^{-} ]_{nn'kk'} = {K}_d\big(\vx^{+}_n(t_k) \oplus t_k , \vx^{+}_{n'}(t_{k'})\oplus t_{k'} \big),  \\
+   &[\vk_d^{+}(\vx \oplus t)]_{lm} = K_d(\vx \oplus t , \vx^{-}_m(t_l- \Delta t)\oplus (t_l - \Delta t))\\
+   &[\vk_d^{-}(\vx \oplus t)]_{kn} = K_d(\vx \oplus t , \vx^{-}_n(t_k)\oplus (t_k))\\
+   &[\mY_d^{+}]_{lm} =  \left[\frac{\vx^{-}_m(t_l) - \vx^{-}_m(t_l - \Delta t)}{\Delta t}\right]_d, \quad [\mY_d^{-}]_{kn} =  \left[\frac{\vx^{+}_n(t_k - \Delta t)  - \vx^{+}_n(t_k)}{\Delta t} \right]_d,
 \end{align*}
-In practice we are not making use of the predictive variances \footnote{we are effectively just doing Kernel Ridge Regression.}. Instead we just use the predictive mean as an estimate for the drift and subsequently use that estimate to run the EM method required in this flavour of approximate g-IPFP.
-
-
-Now we have the relevant ingredients to carry out this flavour of approximate g-IPFP specified in Algorithm  \ref{alg:gp_gipfp}, where the $\text{SDESolve}\Big(-\bar{\vb}^{-}_{\Q_{i-1}}, \gamma, \pi_1, \Delta t, M\Big)$ routine generates $M$ trajectories using the Euler-Mayurama method.
-
-Note that we can use Equations \ref{eq:free_energy_1} and \ref{eq:free_energy_2} allow us to easily compute an estimate of the Schrödinger bridge using the current estimates of the optimal drifts.
+ $\oplus$ is the concatenation operator, $\vec$ is the standard vectorization operator 
 \begin{landscape}
 \begin{figure}
     % \centering
     \vspace{-2cm}
     \includegraphics[scale=0.7]{images/gp_IPFP.PNG}
-    \caption{$i^{\text{th}}$ Iteration for drift based approximation to g-IPFP. In each iteration we draw samples from the process in the direction that incorporates the constraint as an initial value, and we learn the drift which simulates the same path measure in the opposite direction to the sampling. With each iteration $\mathbf{\color{blue}{p^{\P^{*}_i}_0}}$ and $\mathbf{\color{red}{p^{\Q^{*}_i}_1}}$ get close to $\mathbf{\color{blue}{\pi_0}}$ and $\mathbf{\color{red}{\pi_1}}$ respectively}
+    \caption{$i^{\text{th}}$ Iteration for drift based approximation to g-IPFP. In each iteration, we draw samples from the process in the direction that incorporates the constraint as an initial value, and we learn the drift which simulates the same path measure in the opposite direction to the sampling. With each iteration $\mathbf{\color{blue}{p^{\P^{*}_i}_0}}$ and $\mathbf{\color{red}{p^{\Q^{*}_i}_1}}$ get close to $\mathbf{\color{blue}{\pi_0}}$ and $\mathbf{\color{red}{\pi_1}}$ respectively.}
     \label{fig:gp_drift}
 \end{figure}
 \end{landscape}
- 
+and $K_d: \R^{d+1} \times \R^{d+1} \rightarrow \R$ is a valid kernel function. In practice, we are not making use of the predictive variances \footnote{We are effectively simply doing Kernel Ridge Regression.}. Instead, we simply use the predictive mean as an estimate of the drift and subsequently use that estimate to perform the EM method .
+
+We now have the relevant ingredients to carry out this flavour of approximate g-IPFP specified in Algorithm  \ref{alg:gp_gipfp}, where the $\text{SDESolve}\Big(-\bar{\vb}^{-}_{\Q_{i-1}}, \gamma, \pi_1, \Delta t, M\Big)$ routine generates $M$ trajectories using the Euler-Mayurama method.
+
+Note that we can use Equations \ref{eq:free_energy_1} and \ref{eq:free_energy_2}, which allow us to easily compute an estimate of the Schrödinger bridge using the current estimates of the optimal drifts.
 %  $\{\vx^{+}_i(t_k)\}_{i,k}^N$ or  $\{\vx^{-}_j(t_l)\}_{j,l}^M$
 \begin{algorithm} \label{alg:gp_gipfp}
 \SetKwInOut{Input}{input}
@@ -1352,263 +1349,263 @@ Note that we can use Equations \ref{eq:free_energy_1} and \ref{eq:free_energy_2}
 Initialise:\\
 $i=0$ \\
 $\Q^{*}_0 =\W^{\gamma}$\\
-Obtain or estimate backwards drift of prior: \\
+Obtain or estimate backward drift of prior: \\
 $\bar{\vb}^{-}_{\Q_{0}}(\vx, t) := \text{ObtainBackwardDrift}(\Q^{*}_0)$\\
 
 \Repeat{convergence}{
       $i := i + 1$ \\
-      $\{\vx^{-}_j(t_l)\}_{j,l}^M = \text{SDESolve}\Big(-\bar{\vb}^{-}_{\Q_{i-1}}, \gamma, \pi_1, \Delta t, M\Big)$\\
-     $ \bar{\vb}^{+}_{\P_{i}} := \text{GaussianProcessDriftEstimate}\Big( \{\vx^{-}_j(t_l)\}_{j,l}^M, \gamma, \, \text{forwards=True} \Big)$\\ 
-     $\{\vx^{+}_n(t_k)\}_{n,k}^N = \text{SDESolve}\Big(\bar{\vb}^{+}_{\P_{i}}, \gamma, \pi_0, \Delta t, N\Big)$ \\
-     $\bar{\vb}^{-}_{\Q_{i}}\!:=\!\text{GaussianProcessDriftEstimate}\Big(\! \{\vx^{+}_n(t_k)\}_{n,k}^N, \gamma, \, \text{forwards=False}\! \Big)$
+      $\left\{\big(\vx^{-}_m(t_l)\big)_{l=0}^T\right\}_{m=0}^{M} = \text{SDESolve}\Big(-\bar{\vb}^{-}_{\Q_{i-1}}, \gamma, \pi_1, \Delta t, M\Big)$\\
+     $ \bar{\vb}^{+}_{\P_{i}} := \text{GPDriftFit}\Big( \left\{\big(\vx^{-}_m(t_l)\big)_{l=0}^T\right\}_{m=0}^{M}, \gamma, \, \text{forward=True} \Big)$\\ 
+     $\left\{ \big(\vx^{+}_n(t_k) \big)_{k=0}^T \right\}_{n=0}^{N} = \text{SDESolve}\Big(\bar{\vb}^{+}_{\P_{i}}, \gamma, \pi_0, \Delta t, N\Big)$ \\
+     $\bar{\vb}^{-}_{\Q_{i}}\!:=\!\text{GPDriftFit}\Big(\! \left\{ \big(\vx^{+}_n(t_k) \big)_{k=0}^T \right\}_{n=0}^{N}, \gamma, \, \text{forward=False}\! \Big)$
     }
 \Return{$\bar{\vb}^{-}_{\Q_{i}}, \bar{\vb}^{+}_{\P_{i}}$}
-\caption{ Approximate g-IPFP with Gaussian processes   }
+\caption{ Approximate g-IPFP with Gaussian processes (GP)   }
 \end{algorithm}
 
 
 
-\subsubsection{Sampling a Reverse-time Difussion }
-A quick note to the reader is that the sign multiplying the drift in line $8$ of Algorithm \ref{alg:gp_gipfp} may seem a bit ad-hoc however we can motivate it via seeing Itô-process as the continuous time limit of discrete time Markov chains.
+\subsubsection{Sampling a Reverse-Time Diffusion }
+A quick note to the reader is that the sign multiplying the drift in line $8$ of Algorithm \ref{alg:gp_gipfp} may seem arbitrary. However, we can motivate it by regarding an Itô-process as the continuous time limit of discrete time Markov chains.
 
-We want to consider the case where both backwards and forward transitions obey the same joint probability law, that is:
+We want to consider the case where both backward and forward transitions obey the same joint probability law, that is:
 \begin{align}\label{eq:markov_e}
     p^{+}(\vx_{t+\Delta t}|\vx_t)p_t(\vx_t)=p^{-}(\vx_t|\vx_{t+\Delta t})p_{t+\epsilon}(\vx_{t+\Delta t}),
 \end{align}
-where $p_t(\cdot)$ is the marginal distribution at time $t$. $p^{+}(\cdot|\cdot)$ and $p^{-}(\cdot|\cdot)$ are Gaussian's of the form:
+where $p_t(\cdot)$ is the marginal distribution at time $t$ and $p^{+}(\cdot|\cdot)$,  $p^{-}(\cdot|\cdot)$ respectively are Gaussians of the form:
 \begin{align*}
-p^{+}(\vx_{t+\Delta t}|\vx_t)&=\frac{1}{2\pi \Delta t }\exp\left(-\frac{1}{2\Delta t}\left[\vx_{t+\Delta t}-(\vx_t+\vb^{+}(\vx_t,t)\Delta t)\right]^2\right) \\
+p^{+}(\vx_{t+\Delta t}|\vx_t)&=\frac{1}{2\pi \Delta t }\exp\left(-\frac{1}{2\Delta t}\left[\vx_{t+\Delta t}-(\vx_t+\vb^{+}(\vx_t,t)\Delta t)\right]^2\right), \\
 p^{-}(\vx_t|\vx_{t+\Delta t})&=\frac{1}{2\pi \Delta t}\exp\left(-\frac{1}{2\Delta t}\left[\vx_t-\left(\vx_{t+\Delta t}-\vb^{-}(\vx_{t+\Delta t},t+\Delta t)\Delta t\right)\right]^2\right).
 \end{align*}
-Taking logs on Equation \ref{eq:markov_e} and preserving a linear order in $\Delta t$ gives
+Taking logs on Equation \ref{eq:markov_e} and preserving a linear order in $\Delta t$ gives:
 \begin{align*}
     (\vb^+(\vx_t,t)-\vb^-(\vx_{t+\Delta t},t+\Delta t)(\vx_{t+\Delta t}-\vx_t)=\log p_{t+\Delta t}(\vx_{t+\Delta t}) - \log p_t(\vx_t), 
 \end{align*}
-which in the continuous time limit arrives to our chosen flavour \footnote{Different authors parametrise the duality formula with different signs in result changing the sign of the EM discretisation.} of Nelson's duality formula \citep{nelson1967dynamical}:
+which in the continuous time limit arrives to our chosen flavour \footnote{Different authors (e.g. \cite{nagasawa2012stochastic}) parametrise the duality formula with different signs in turn changing the sign of the EM discretisation.} of Nelson's duality formula \citep{nelson1967dynamical}:
 \begin{align*}
-      \vb^+(\vx_t,t) -\vb^-(\vx_t,t) = \nabla\log p(\vx_t, t)
+      \vb^+(\vx_t,t) -\vb^-(\vx_t,t) = \nabla\log p(\vx_t, t).
 \end{align*}
 
 \section{Stochastic Control Approach}
 
-We would like to carry out a variant of g-IPFP that is based on the stochastic control formulations of the half bridge problems. Via a slight adaptation of Lemma \ref{lemma:control} we can re-write the half bridge steps of g-IPFP as:
+We would like to carry out a variant of g-IPFP that is based on the stochastic control formulations of the half bridge problems. Using a slight adaptation to Lemma \ref{lemma:control} we can rewrite the half bridge steps of g-IPFP as:
 \begin{itemize}
-\item Backward Half bridge (time-reversed dynamics): 
+\item Backward half bridge (time-reversed dynamics): 
 \begin{align} \label{eq:controlled_haalf_bridge_forward}
-  \rvb^{-}_{\P_{i}}(t) = \min_{\rvb^{-} \in \calB }  &\E_\P\left[\int_0^1 \frac{1}{2\gamma}\big|\big|\rvb^{-}(t) -\rvb^{-}_{\Q_{i-1}}(t) \big|\big|^2 dt\right] \nonumber \\
-    s.t.\;\;\; d\rvx(t) = \rvb^{-}(t) &dt + \sqrt{\gamma} \rvw^{-}(t), \;\; \rvx(1) \sim \pi_1
+  \rvb^{-}_{\P_{i}}(t) = \min_{\rvb^{-} \in \calB }  &\E_\P\left[\int_0^1 \frac{1}{2\gamma}\big|\big|\rvb^{-}(t) -\rvb^{-}_{\Q_{i-1}}(t), \big|\big|^2 dt\right] \nonumber \\
+    s.t.\;\;\; d\rvx(t) = \rvb^{-}(t) &dt + \sqrt{\gamma} d\rvw^{-}(t), \;\; \rvx(1) \sim \pi_1.
 \end{align}
-\item Forward Half bridge:
+\item Forward half bridge:
 \begin{align} \label{eq:controlled_half_bridge_backward}
-   \rvb^{+}_{\Q_{i}}(t) =\min_{\rvb^{+} \in \calB } & \E_\Q\left[\int_0^1 \frac{1}{2\gamma}\big|\big|\rvb^{+}(t) -\rvb^{+}_{\P_{i}}(t)\big|\big|^2 dt\right] \nonumber \\
-    s.t.\;\;\; d\rvx(t) = \rvb^{+}(t) &dt + \sqrt{\gamma} \rvw^{+}(t), \;\; \rvx(0) \sim \pi_0
+   \rvb^{+}_{\Q_{i}}(t) =\min_{\rvb^{+} \in \calB } & \E_\Q\left[\int_0^1 \frac{1}{2\gamma}\big|\big|\rvb^{+}(t) -\rvb^{+}_{\P_{i}}(t)\big|\big|^2 dt\right], \nonumber \\
+    s.t.\;\;\; d\rvx(t) = \rvb^{+}(t) &dt + \sqrt{\gamma} d\rvw^{+}(t), \;\; \rvx(0) \sim \pi_0.
 \end{align}.
 \end{itemize}
-Where the dual drifts can be obtained via Nelson's duality equation:
+The dual drifts can be obtained using Nelson's duality equations:
 \begin{align*}
       \rvb^{-}_{\Q_{i-1}}(t)   &=\rvb^{+}_{\Q_{i-1}}(t) -\gamma\nabla_{\vx} p^{\Q_{i-1}}(\rvx(t), t) \\
     \rvb^{+}_{\P_{i}}(t) &=  \rvb^{-}_{\P_{i}}(t) +\gamma\nabla_{\vx} p^{\P_{i}}(\rvx(t), t)
 \end{align*}
-Note that we express the dynamical evolution for $\P$ in the backwards half bridge as a time reversed process \citep{pavon1991free, nelson1967dynamical} such that the terminal distribution constraint $\rvx(1) \sim \pi_1$ becomes an initial value problem in reversed time, which is something we know how to sample from. 
+Note that we express the dynamical evolution of $\P$ in the backward half bridge as a time reversed process \citep{pavon1991free, nelson1967dynamical}, such that the terminal distribution constraint $\rvx(1) \sim \pi_1$ becomes an initial value problem in reversed time, which is something we know how to sample from. 
 
-In theory we now have all the elements required to carry out g-IPFP under this control formulation, however note that the dual drifts require the logarithmic gradient of the solution to their respective Fokker-Plank equations (i.e. $\nabla_{\vx} p^{\P_{i}}(\rvx(t), t)$, $\nabla_{\vx} p^{\Q_{i-1}}(\rvx(t), t)$). Estimating $p^{\P_{i}}(\rvx(t), t)$ or $p^{\Q_{i-1}}(\rvx(t), t)$ is very costly since we will also need to evaluate such estimations for every point in the interval $[0,1]$ that we use to estimate the integral $\int_0^1 \hdots dt$.
+In theory, we now have all the elements required to carry out g-IPFP under this control formulation. However, the dual drifts require the logarithmic gradient of the solution to their respective Fokker-Plank equations (i.e. $\nabla_{\vx} p^{\P_{i}}(\rvx(t), t)$, $\nabla_{\vx} p^{\Q_{i-1}}(\rvx(t), t)$). Estimating $p^{\P_{i}}(\rvx(t), t)$ or $p^{\Q_{i-1}}(\rvx(t), t)$ is very costly since we will also need to evaluate such estimations for every point in the interval $[0,1]$ that we use to estimate the integral $\int_0^1 \hdots dt$.
 
-\subsection{Forwards and Backwards Diffusions}
+\subsection{Forward and Backward Diffusions}
 
-As mentioned earlier Equations \ref{eq:controlled_half_bridge_backward}, and \ref{eq:controlled_haalf_bridge_forward} exhibit the computational challenge of estimating solutions to the FPK equation along trajectories in $[0,1]$.  In order to overcome this we will derive alternate expressions for Equations \ref{eq:controlled_half_bridge_backward},  \ref{eq:controlled_haalf_bridge_forward} that do not involve FPK solution terms inside the time integral.
+As mentioned previously, Equations \ref{eq:controlled_half_bridge_backward}, and \ref{eq:controlled_haalf_bridge_forward} exhibit the computational challenge of estimating solutions to the FPK equation along trajectories in $[0,1]$.  In order to overcome this, we will derive alternate expressions for Equations \ref{eq:controlled_half_bridge_backward} and \ref{eq:controlled_haalf_bridge_forward} that do not involve FPK solution terms inside the time integral.
 \begin{proposition}\label{prop:halfforcontrol}
-The Forward half bridge (We set $\gamma=1$  for simplicity):
+The forward half bridge (setting $\gamma=1$  for simplicity):
 \begin{align*} 
-   \rvb^{+}_{\Q_{i}}(t) =\min_{\rvb_\Q^{-} \in \calB } & \E_\Q\left[\int_0^1 \frac{1}{2}\big|\big|\rvb_\Q^{+}(t) -\rvb^{+}_{\P_{i}}(t)\big|\big|^2 dt\right] \nonumber \\
+   \rvb^{+}_{\Q_{i}}(t) =\min_{\rvb_\Q^{-} \in \calB } & \E_\Q\left[\int_0^1 \frac{1}{2}\big|\big|\rvb_\Q^{+}(t) -\rvb^{+}_{\P_{i}}(t)\big|\big|^2 dt\right], \nonumber \\
     s.t.\;\;\; d\rvx(t) = \rvb_\Q^{+}(t) &dt +  \rvw^{+}(t), \;\; \rvx(0) \sim \pi_0
 \end{align*}
-can be expressed as \footnote{We thank Professor Austen Lamacraft for providing the first sketch of this proof, which we have reviewed and proof read in detail. There is still the question of the boundary terms looking odd , that additional factor of 2. We have experimented with and without the factor of 2 on the derived boundary term.}:
+can be expressed as \footnote{We thank Professor Austen Lamacraft for providing the first sketch of this proof, which we have reviewed in detail and iterated on.}:
 \begin{align} \label{eq:div_control_forward}
-   \rvb^{+}_{\Q_{i}}(t) =\min_{\rvb^{-} \in \calB } -2\E_{p^{\Q}_1}\left[\log \pi_1 \right] &+ \E_{\Q}\left[\int_0^1 \left(\frac{1}{2}(b_\Q^{+}(t) - b_{\P_{i}}^{-}(t))^2 - \nabla\cdot b^{-}_{\P_{i}}(t) \right)\right] \nonumber \\
-    s.t.\;\;\; d\rvx(t) = \rvb_\Q^{+}(t) &dt + \rvw^{+}(t), \;\; \rvx(0) \sim \pi_0
-\end{align}.
+   \rvb^{+}_{\Q_{i}}(t) =\min_{\rvb^{-} \in \calB } -2\E_{p^{\Q}_1}\left[\log \pi_1 \right] &+ \E_{\Q}\left[\int_0^1 \left(\frac{1}{2}||\rvb_\Q^{+}(t) -\rvb_{\P_{i}}^{-}(t)||^2 - \nabla\cdot\rvb^{-}_{\P_{i}}(t) \right)\right], \nonumber \\
+    s.t.\;\;\; d\rvx(t) = \rvb_\Q^{+}(t) &dt + \rvw^{+}(t), \;\; \rvx(0) \sim \pi_0.
+\end{align}
 \end{proposition}
 \begin{proof}
-First lets  abbreviate  terms of the form $p^{\X}(\rvx(t), t)$ with $p^{\X}_t$ and $b^{\X}_{\pm}(t)$ with $b^{\X}_{\pm}$ for compactness purposes. Lets express the KL in terms of backwards drifts (known result):
+First, we  abbreviate  terms of the form $p^{\X}(\rvx(t), t)$ with $p^{\X}_t$ and $\rvb^{\X}_{\pm}(t)$, using $\rvb^{\X}_{\pm}$ for compactness. We express the KL in terms of backward drifts (known result):
 \begin{align}
-\KL(\Q||{\P_{i}}) = \KL( p_0^{\Q}|| p_0^{{\P_{i}}}) + \frac{1}{2}\E_{\Q}\left[\int_0^1 ( b_\Q^{+} - b^{\P_{i}}_{+})^2 dt\right].
+\KL(\Q||{\P_{i}}) = \KL( p_0^{\Q}|| p_0^{{\P_{i}}}) + \frac{1}{2}\E_{\Q}\left[\int_0^1 || \rvb_\Q^{+} -\rvb_{\P_{i}}^{+}||^2 dt\right].
 \end{align}
-Using Nelson's duality formula $b^{\P_{i}}_+(t) =b^{\P_{i}}_-(t) + \nabla\log p_t$:
+Using Nelson's duality formula $\rvb^{\P_{i}}_+(t) =\rvb^{\P_{i}}_-(t) + \nabla\log p_t$:
 \begin{align}
-\KL(\Q||{\P_{i}}) = \KL( p_0^{\Q}|| p_0^{{\P_{i}}}) + \frac{1}{2}\E_{\Q}\left[\int_0^1 ( b_\Q^{+} - b_{\P_{i}}^{-} - \nabla\log p_t^{\P_{i}})^2 dt\right].
+\KL(\Q||{\P_{i}}) = \KL( p_0^{\Q}|| p_0^{{\P_{i}}}) + \frac{1}{2}\E_{\Q}\left[\int_0^1 || \rvb_\Q^{+} - \rvb_{\P_{i}}^{-} - \nabla\log p_t^{\P_{i}}||^2 dt\right].
 \end{align}
 Expanding:
 \begin{align*}
-\KL(\Q&||{\P_{i}}) = \KL( p_0^{\Q}|| p_0^{{\P_{i}}}) +\\ &\frac{1}{2}\E_{\Q}\left[\int_0^1 \left(( b_\Q^{+} - b_{\P_{i}}^{-})^2 - 2\nabla\log p_t^{\P_{i}} \cdot ( b_\Q^{+} - b_{\P_{i}}^{-}) + {\nabla\log p_t^{\P_{i}}}^2 \right)dt\right].
+\KL(\Q&||{\P_{i}}) = \KL( p_0^{\Q}|| p_0^{{\P_{i}}}) +\\ &\frac{1}{2}\E_{\Q}\left[\int_0^1 \left(|| \rvb_\Q^{+} - \rvb_{\P_{i}}^{-}||^2 - 2\nabla\log p_t^{\P_{i}} \cdot ( \rvb_\Q^{+} - \rvb_{\P_{i}}^{-}) + {\nabla\log p_t^{\P_{i}}}^2 \right)dt\right].
 \end{align*}
 Using the chain rule for the second derivative $\Delta \log  p = -\frac{(\nabla p)^2}{ p^2}  + \frac{\Delta  p}{ p}$:
 \begin{align*}
-&\KL(\Q||{\P_{i}}) =\KL( p_0^{\Q}|| p_0^{{\P_{i}}}) +\\ &\frac{1}{2}\E_{\Q}\left[\int_0^1 \left(\!\!( b_\Q^{+} - b_{\P_{i}}^{-})^2 \!\!- 2\nabla\log p_t^{\P_{i}}\!\!\!\cdot \!( b_\Q^{+} - b_{\P_{i}}^{-}) - \Delta \log  p^{\P_{i}}\!\!\!+ \frac{\nabla  p^{\P_{i}}}{ p^{\P_{i}}}\!\!\right)dt\right].
+&\KL(\Q||{\P_{i}}) =\KL( p_0^{\Q}|| p_0^{{\P_{i}}}) +\\ &\frac{1}{2}\E_{\Q}\left[\int_0^1 \left(\!\!|| \rvb_\Q^{+} - \rvb_{\P_{i}}^{-}||^2 \!\!- 2\nabla\log p_t^{\P_{i}}\!\!\!\cdot \!( \rvb_\Q^{+} - \rvb_{\P_{i}}^{-}) - \Delta \log  p^{\P_{i}}\!\!\!+ \frac{\nabla  p^{\P_{i}}}{ p^{\P_{i}}}\!\!\right)dt\right].
 \end{align*}
 
 Using Itô's rule we can show the following is true: 
 \begin{align*}
-\E_\Q\left[\log p^{\P_{i}}_1-\log p^{\P_{i}}_0\right] = \E_\Q\left[\int dt \left(b_+^\Q\cdot\nabla\log p_t^{\P_{i}} + \frac{1}{2}\Delta \log p_t^{\P_{i}}\right)\right],\\
-\E_\Q\left[\int dt \left(b_+^\Q\cdot\nabla\log p_t^{\P_{i}} \right)\right] = \E_\Q\left[\log p^{\P_{i}}_1-\log p^{\P_{i}}_0 - \int dt \left( \frac{1}{2}\Delta \log p_t^{\P_{i}}\right)\right].
+\E_\Q\left[\log p^{\P_{i}}_1-\log p^{\P_{i}}_0\right] = \E_\Q\left[\int dt \left(\rvb^+_\Q\cdot\nabla\log p_t^{\P_{i}} + \frac{1}{2}\Delta \log p_t^{\P_{i}}\right)\right],\\
+\E_\Q\left[\int dt \left(\rvb_+^\Q\cdot\nabla\log p_t^{\P_{i}} \right)\right] = \E_\Q\left[\log p^{\P_{i}}_1-\log p^{\P_{i}}_0 - \int dt \left( \frac{1}{2}\Delta \log p_t^{\P_{i}}\right)\right].
 \end{align*}
 
-The above step is arrived to via Itô's formula:
+The above step is derived using Itô's formula :
 \begin{align*}
-d\log  p_t^{{\P_{i}}} = b_+^\Q\cdot\nabla\log p_t^{\P_{i}} dt + \frac{1}{2}\Delta \log p_t^{\P_{i}} dt + \nabla \log p_t^{\P_{i}} \cdot d\rvw(t),
+d\log  p_t^{{\P_{i}}} =\rvb^+_\Q\cdot\nabla\log p_t^{\P_{i}} dt + \frac{1}{2}\Delta \log p_t^{\P_{i}} dt + \nabla \log p_t^{\P_{i}} \cdot d\rvw^{+}(t),
 \end{align*}
-which implies (via taking expectations on both sides wrt $\Q$ and then dividing by $dt$)
+which implies (taking expectations on both sides w.r.t. $\Q$ and then dividing by $dt$. See Equation 5.13 , Theorem 5.4 from \cite{sarkka2019applied}):
 \begin{align*}
-\partial_t \E_{\Q}[\log  p_t^{{\P_{i}}}] = \E_{\Q}{\left[b_+^\Q\cdot\nabla\log p_t^{\P_{i}} + \frac{1}{2}\Delta \log p_t^{\P_{i}}\right]}.
+\partial_t \E_{\Q}[\log  p_t^{{\P_{i}}}] = \E_{\Q}{\left[\rvb^+_\Q\cdot\nabla\log p_t^{\P_{i}} + \frac{1}{2}\Delta \log p_t^{\P_{i}}\right]}.
 \end{align*}
-Then integrating both sides from $0$ to $1$ (and applying Fubbini) gives exactly the above result.
+Integrating both sides from $0$ to $1$ (and applying Fubbini) gives exactly the above result.
 
 Substituting this back into the KL (the Laplacians cancel out):
 \begin{align*}
-\KL(\Q||{\P_{i}}) = &\E_\Q\left[-\log \frac{ p^{\P_{i}}_1}{ p^\Q_0}\right] \\+ &\frac{1}{2}\E_{\Q}\left[\int_0^1 \left(( b_\Q^{+} - b_{\P_{i}}^{-})^2 + 2\nabla\log p_t^{\P_{i}} \cdot b_{\P_{i}}^{-}+ \frac{\Delta  p^{\P_{i}}}{ p^{\P_{i}}}\right)dt\right].
+\KL(\Q||{\P_{i}}) = &\E_\Q\left[-\log \frac{ p^{\P_{i}}_1}{ p^\Q_0}\right] \\+ &\frac{1}{2}\E_{\Q}\left[\int_0^1 \left(|| \rvb_\Q^{+} - \rvb_{\P_{i}}^{-}||^2 + 2\nabla\log p_t^{\P_{i}} \cdot \rvb_{\P_{i}}^{-}+ \frac{\Delta  p^{\P_{i}}}{ p^{\P_{i}}}\right)dt\right].
 \end{align*}
-Using that $ p_t^{\P_{i}}$ obeys the Fokker—Planck equation (this is the case for diagonal covariance Itô-Processes, otherwise we would have cross terms form the Hessian) see Equation 13.4 in \cite{nelson1967dynamical}\footnote{more generally we have $\pm\partial_t p_t^{\P_{i}} = \frac{1}{2}\Delta p_t^{\P_{i}}\mp\nabla\cdot(b_\pm^{\P_{i}} p_t^{\P_{i}})$}: 
+Using that $ p_t^{\P_{i}}$ obeys the Fokker-Planck equation (this is the case for diagonal covariance Itô-Processes, otherwise we would have cross terms from the Hessian, see Equation 13.4 in \cite{nelson1967dynamical}\footnote{more generally we have $\pm\partial_t p_t^{\P_{i}} = \frac{1}{2}\Delta p_t^{\P_{i}}\mp\nabla\cdot(\rvb_\pm^{\P_{i}} p_t^{\P_{i}})$}): 
 \begin{align*}
--\partial_t p_t^{\P_{i}} = \frac{1}{2}\Delta p_t^{\P_{i}}+\nabla\cdot(b_{-}^{\P_{i}} p_t^{\P_{i}}),
+-\partial_t p_t^{\P_{i}} = \frac{1}{2}\Delta p_t^{\P_{i}}+\nabla\cdot(\rvb_{-}^{\P_{i}} p_t^{\P_{i}}).
 \end{align*}
-using the product rule : 
+Using the product rule : 
 \begin{align*}
--\partial_t p_t^{\P_{i}} = \frac{1}{2}\Delta p_t^{\P_{i}}+  p_t^{\P_{i}} \nabla\cdot(b_{-}^{\P_{i}}) + b_{-}^{\P_{i}} \cdot \nabla p_t^{\P_{i}}, \\
--\partial_t p_t^{\P_{i}} -  p_t^{\P_{i}} \nabla\cdot b_{-}^{\P_{i}}  = \frac{1}{2}\Delta p_t^{\P_{i}}+ b_{-}^{\P_{i}} \cdot\nabla  p_t^{\P_{i}},
+-\partial_t p_t^{\P_{i}} = \frac{1}{2}\Delta p_t^{\P_{i}}+  p_t^{\P_{i}} \nabla\cdot(b_{-}^{\P_{i}}) + \rvb^{-}_{\P_{i}} \cdot \nabla p_t^{\P_{i}}, \\
+-\partial_t p_t^{\P_{i}} -  p_t^{\P_{i}} \nabla\cdot \rvb^{-}_{\P_{i}}  = \frac{1}{2}\Delta p_t^{\P_{i}}+ \rvb^{-}_{\P_{i}} \cdot\nabla  p_t^{\P_{i}}.
 \end{align*}
-dividing both sides by $ p_t^{\P_{i}}$:
+Dividing both sides by $ p_t^{\P_{i}}$:
 \begin{align*}
--\partial_t \log  p_t^{\P_{i}} - \nabla\cdot b_{-}^{\P_{i}}  = \frac{1}{2}\frac{\Delta  p_t^{\P_{i}}}{ p_t^{\P_{i}}}+  b_{-}^{\P_{i}} \cdot \nabla \log  p_t^{\P_{i}},
+-\partial_t \log  p_t^{\P_{i}} - \nabla\cdot \rvb^{-}_{\P_{i}}  = \frac{1}{2}\frac{\Delta  p_t^{\P_{i}}}{ p_t^{\P_{i}}}+  \rvb^{-}_{\P_{i}} \cdot \nabla \log  p_t^{\P_{i}}.
 \end{align*}
-substituting back into the KL we have:
+Substituting back into the KL we have:
 \begin{align*}
-\KL(\Q||{\P_{i}}) &= \E_\Q\left[-\log \frac{{ p^{\P_{i}}_1}^2}{ p^\Q_0  p_0^{{\P_{i}}}}\right] + \frac{1}{2}\E_{\Q}\left[\int_0^1 \left(( b_\Q^{+} - b_{\P_{i}}^{-})^2 - 2\nabla\cdot b_{-}^{\P_{i}} \right)dt\right], \\
-D(\Q||{\P_{i}}) &= \E_\Q\left[-\log \frac{{ p^{\P_{i}}_1}^2}{ p^\Q_0   p_0^{{\P_{i}}}}\right] + \E_{\Q}\left[\int_0^1 \left(\frac{1}{2}( b_\Q^{+} - b_{\P_{i}}^{-})^2 - \nabla\cdot b_{-}^{\P_{i}} \right)dt\right].
+\KL(\Q||{\P_{i}}) &= \E_\Q\left[-\log \frac{{ p^{\P_{i}}_1}^2}{ p^\Q_0  p_0^{{\P_{i}}}}\right] + \frac{1}{2}\E_{\Q}\left[\int_0^1 \left(|| \rvb_\Q^{+} - \rvb_{\P_{i}}^{-}||^2 - 2\nabla\cdot \rvb^{-}_{\P_{i}} \right)dt\right], \\
+\KL(\Q||{\P_{i}}) &= \E_\Q\left[-\log \frac{{ p^{\P_{i}}_1}^2}{ p^\Q_0   p_0^{{\P_{i}}}}\right] + \E_{\Q}\left[\int_0^1 \left(\frac{1}{2}|| \rvb_\Q^{+} - \rvb_{\P_{i}}^{-}||^2 - \nabla\cdot \rvb^{-}_{\P_{i}} \right)dt\right].
 \end{align*}
-We only care about terms that depend on $b_{+}^\Q$ for the optimisation and using $p^{\P_{i}}_1=\pi_1$ following as a constraint from the previous iteration we arrive at:
+We are only interested in terms that depend on $\rvb^{+}_\Q$ for the optimisation. Using that $p^{\P_{i}}_1=\pi_1$, which follows as a constraint from the previous iteration, we arrive at:
 \begin{align}
-\KL(\Q||{\P_{i}}) \propto -2\E_{ p^\Q_1}\left[\log {{ \pi_1 }} \right] + \E_{\Q}\left[\int_0^1 \left(\frac{1}{2}( b_\Q^{+} - b_{\P_{i}}^{-})^2 - \nabla\cdot b_{-}^{\P_{i}} \right)dt\right].
+\KL(\Q||{\P_{i}}) \propto -2\E_{ p^\Q_1}\left[\log {{ \pi_1 }} \right] + \E_{\Q}\left[\int_0^1 \left(\frac{1}{2}|| \rvb_\Q^{+} - \rvb_{\P_{i}}^{-}||^2 - \nabla\cdot \rvb^{-}_{\P_{i}} \right)dt\right].
 \end{align}
 \end{proof}
-Now following the same steps as above we can derive the equivalent result for the backwards bridge:
+Following the same steps as above we can derive the equivalent result for the backward bridge:
 \begin{proposition}
-The Backwards half bridge :
+The backward half bridge :
 \begin{align*} 
-   \rvb^{-}_{\P_{i}}(t) =\min_{\rvb_{\P}^{-} \in \calB } & \E_\Q\left[\int_0^1 \frac{1}{2}\big|\big|\rvb_\P^{-}(t) -\rvb^{-}_{\Q_{i-1}}(t)\big|\big|^2 dt\right] \nonumber \\
+   \rvb^{-}_{\P_{i}}(t) =\min_{\rvb_{\P}^{-} \in \calB } & \E_\Q\left[\int_0^1 \frac{1}{2}\big|\big|\rvb_\P^{-}(t) -\rvb^{-}_{\Q_{i-1}}(t)\big|\big|^2 dt\right], \nonumber \\
     s.t.\;\;\; d\rvx(t) = \rvb_\P^{-}(t) &dt +  \rvw^{-}(t), \;\; \rvx(1) \sim \pi_1,
-\end{align*}.
+\end{align*}
 can be expressed as:
 \begin{align} \label{eq:div_control_backward}
-   \rvb^{+}_{\P_{i}}(t) =\min_{\rvb_\P^{-} \in \calB } -2\E_{p^{\P}_0}\left[\log \pi_0 \right] &+ \E_{\P}\left[\int_0^1 \left(\frac{1}{2}(b_\P^{-}(t) - b_{\Q_{i-1}}^{+}(t))^2 + \nabla\cdot b^{+}_{\Q_{i-1}}(t) \right)\right] \nonumber \\
+   \rvb^{+}_{\P_{i}}(t) =\min_{\rvb_\P^{-} \in \calB } -2\E_{p^{\P}_0}\left[\log \pi_0 \right] &+ \E_{\P}\left[\int_0^1 \left(\frac{1}{2}||\rvb_\P^{-}(t) - \rvb_{\Q_{i-1}}^{+}(t)||^2 + \nabla\cdot\rvb^{+}_{\Q_{i-1}}(t) \right)\right], \nonumber \\
     s.t.\;\;\; d\rvx(t) = \rvb_\P^{-}(t) &dt +  \rvw^{-}(t), \;\; \rvx(1) \sim \pi_1.
 \end{align}.
 \end{proposition}
-Now we have all the ingredients to carry out g-IPFP using the newly derived half bridge formulations:
+We now have all the ingredients to carry out g-IPFP using the newly derived half bridge formulations:
 \begin{itemize}
     \item Backward step:
     \begin{align*}
-   \rvb^{+}_{\P_{i}}(t) =\min_{\rvb_\P^{-} \in \calB } -2\E_{p^{\P}_0}\left[\log \pi_0 \right] &+ \E_{\P}\left[\int_0^1 \left(\frac{1}{2}(b_\P^{-}(t) - b_{\Q_{i-1}}^{+}(t))^2 + \nabla\cdot b^{+}_{\Q_{i-1}}(t) \right)\right] \nonumber \\
-    s.t.\;\;\; d\rvx(t) = \rvb_\P^{-}(t) &dt + \sqrt{\gamma} \rvw^{-}(t), \;\; \rvx(1) \sim \pi_1
+   \rvb^{+}_{\P_{i}}(t) =\min_{\rvb_\P^{-} \in \calB } -2\E_{p^{\P}_0}\left[\log \pi_0 \right] &+ \E_{\P}\left[\int_0^1 \left(\frac{1}{2}||\rvb_\P^{-}(t) - \rvb_{\Q_{i-1}}^{+}(t)||^2 + \nabla\cdot\rvb^{+}_{\Q_{i-1}}(t) \right)\right], \nonumber \\
+    s.t.\;\;\; d\rvx(t) = \rvb_\P^{-}(t) &dt + \sqrt{\gamma} \rvw^{-}(t), \;\; \rvx(1) \sim \pi_1.
     \end{align*}
     \item Forward step:
     \begin{align*} 
-   \rvb^{+}_{\Q_{i}}(t) =\min_{\rvb^{+} \in \calB } -2\E_{p^{\Q}_1}\left[\log \pi_1 \right] &+ \E_{\Q}\left[\int_0^1 \left(\frac{1}{2}(b_\Q^{+}(t) - b_{\P_{i}}^{-}(t))^2 - \nabla\cdot b^{-}_{\P_{i}}(t) \right)\right] \nonumber \\
-    s.t.\;\;\; d\rvx(t) = \rvb_\Q^{+}(t) &dt + \sqrt{\gamma} \rvw^{+}(t), \;\; \rvx(0) \sim \pi_0
+   \rvb^{+}_{\Q_{i}}(t) =\min_{\rvb^{+} \in \calB } -2\E_{p^{\Q}_1}\left[\log \pi_1 \right] &+ \E_{\Q}\left[\int_0^1 \left(\frac{1}{2}||\rvb_\Q^{+}(t) - \rvb_{\P_{i}}^{-}(t)||^2 - \nabla\cdot\rvb^{-}_{\P_{i}}(t) \right)\right], \nonumber \\
+    s.t.\;\;\; d\rvx(t) = \rvb_\Q^{+}(t) &dt + \sqrt{\gamma} \rvw^{+}(t), \;\; \rvx(0) \sim \pi_0.
     \end{align*}
 \end{itemize}
-Where $\rvb^{+}_{\Q^{0}}(t)$  is initialised in accordance to the prior (such that $\Q^0=\W^\gamma$)which in the case of Brownian $\W^\gamma$ motion it is zero $\rvb^{+}_{\Q_{0}}(t) =0$.
+Here, $\rvb^{+}_{\Q^{0}}(t)$  is initialised in accordance to the prior (such that $\Q^0=\W^\gamma$), which in the case of Brownian $\W^\gamma$ motion is zero, that is $\rvb^{+}_{\Q_{0}}(t) =0$.
 
-We quickly highlight that the newly derived objective has an interpretable  decomposition:
+We highlight that the newly derived objective has an interpretable  decomposition:
 \begin{align*}
- \mathcolor{blue}{\overbrace{-2\E_{p^{\P}_0}\left[\log \pi_0 \right]}^{\textbf{cross entropy/data fit}}} &+ \mathcolor{red}{\overbrace{\E_{\P}\left[\int_0^1 \left(\frac{1}{2}(b_\P^{-}(t) - b_{\Q_{i-1}}^{+}(t))^2 + \nabla\cdot b^{+}_{\Q_{i-1}}(t) \right)\right] }^{\textbf{path error}}}
+ \mathcolor{blue}{\overbrace{-2\E_{p^{\P}_0}\left[\log \pi_0 \right]}^{\textbf{cross entropy/data fit}}} &+ \mathcolor{red}{\overbrace{\E_{\P}\left[\int_0^1 \left(\frac{1}{2}||\rvb_\P^{-}(t) - \rvb_{\Q_{i-1}}^{+}(t)||^2 + \nabla\cdot\rvb^{+}_{\Q_{i-1}}(t) \right)\right] }^{\textbf{path error}}}
 \end{align*}
 
-Where the $\mathcolor{blue}{\textbf{cross entropy / data fit}}$ term acts a density estimator encouraging the drift to match its end point distribution in this case $\mathcolor{blue}{\pi_0}$ (remember the starting distribution $\pi_1$ is already enforced via the SDE parametrisation). Meanwhile the $\mathcolor{red}{\textbf{path error}}$ term enforces the duality of the drifts as well as making the process akin to the reference prior.
+The $\mathcolor{blue}{\textbf{cross entropy / data fit}}$ term acts a density estimator encouraging the drift to match its end point distribution, in this case $\mathcolor{blue}{\pi_0}$ (remember the starting distribution $\pi_1$ is already enforced via the SDE parametrisation). Meanwhile, the $\mathcolor{red}{\textbf{path error}}$ term enforces the duality of the drifts, as well as making the process akin to the reference prior in the KL sense.
 
-Note that the  new terms left to estimate that may seem unnatural are the cross entropy terms $\E_{p^{\Q}_1}\left[\log \pi_1 \right]$ and $\E_{p^{\P}_0}\left[\log \pi_0 \right]$. We can estimate the cross entropy's from samples. 
+Note that the new terms left to estimate that may seem nontrivial are the cross entropy terms $\E_{p^{\Q}_1}\left[\log \pi_1 \right]$ and $\E_{p^{\P}_0}\left[\log \pi_0 \right]$. We will later discuss how to estimate the cross entropy of two distribution that are only available through samples. 
 
 \subsection{Numerical Implementation}
 
-Note that the objectives we have just derived are in general not solvable in closed form for the optimal drift, thus we will require three main approximations:
+The objectives we have just derived are in general not solvable in closed form for the optimal drift, thus we will require three main approximations:
 \begin{itemize}
     \item A parametrisation of the drift such that we can optimise the objectives approximately using gradient based methods.
-    \item A Monte Carlo Approximation to the path integrals arising from the expectations.
+    \item A Monte Carlo approximation to the path integrals arising from the expectations.
     \item We need to be able to estimate the cross entropy terms as discussed previously.
 \end{itemize}
 
 We will now proceed to discuss these approximations in more detail.
 \subsubsection{Numerical Optimization (Differentiable Parametrisation)}
 
-In order to optimise the control based variants of the half bridge objectives we need to parametrise the drift as a differentiable function \footnote{We could alternatively parametrise the space of admissible control signals $\calB$ as a functional space (i.e. an  RKHS) in which we may be able to carry out minimisation of the half bridges in closed form. However we were unable to come up with such a space.}. We parametrise the forwards and backwards drift with neural networks:
-\begin{align}
-    \rvb^{+}_{\Q}(t) := \rvb^{+}_{\phi}(\vx(t), t) \nonumber \\
-    \rvb^{-}_{\P}(t) := \rvb^{-}_{\theta}(\vx(t), t)
+In order to optimise the control based variants of the half bridge objectives, we need to parametrise the drift as a differentiable function \footnote{We could alternatively parametrise the space of admissible control signals $\calB$ as a functional space (i.e. an  RKHS) in which we may be able to carry out minimisation of the half bridges in closed form.}. We parametrise the forward and backward drift with neural networks:
+\begin{align} \label{eq:drift_param}
+    \rvb^{+}_{\Q}(t) := \rvb^{+}_{\phi}(\vx(t), t), \nonumber \\
+    \rvb^{-}_{\P}(t) := \rvb^{-}_{\theta}(\vx(t), t).
 \end{align}
-So now rather than optimising over $\calB$ the optimisations are carried out in terms of the parameters $\theta$ and $\phi$ respectively. Note that this will also help us in the next step which is estimating the expectations and integrals in the half bridge objective.
+Rather than optimising over $\calB$, the optimisations are carried out in terms of the parameters $\theta$ and $\phi$ respectively. This will also help in the next step, which is estimating the expectations and integrals in the half bridge objective.
 
-Note we refer to the path measures induced under this parametrisation as $\P_{\theta}$ and $\Q_{\phi}$ accordingly.
+We refer to the path measures induced under this parametrisation as $\P_{\theta}$ and $\Q_{\phi}$ accordingly.
 
 \subsubsection{Numerical Integration (Path Error Term)}
-We can sample from $\Q_{\phi}$ and $\P_{\theta}$ whilst enabling the single boundary constraints using the Euler-Mayurama method:
+We can sample from $\Q_{\phi}$ and $\P_{\theta}$, whilst enabling the single boundary constraints using the Euler-Mayurama method:
 \begin{itemize}
     \item  Forward SDE discretisation for $\Q_{\phi}$:
 \begin{align*}
-    \rvx_{t + \Delta t} = \rvx_t + \rvb^{+}_{\phi}(\vx_t, t) + \sqrt{\gamma} \rvepsilon, \quad \rvx_0 \sim \pi_0, \;\;\rvepsilon \sim \calN(\vzero, \I) 
+    \rvx_{t + \Delta t} = \rvx_t + \rvb^{+}_{\phi}(\vx_t, t) + \sqrt{\gamma} \rvepsilon, \quad \rvx_0 \sim \pi_0, \;\;\rvepsilon \sim \calN(\vzero, \I) .
 \end{align*}
     \item  Backward SDE discretisation for $\P_{\theta}$:
 \begin{align*}
-    \rvx_{t} = \rvx_{t+\Delta t} - \rvb^{-}_{\phi}(\vx_t, t) + \sqrt{\gamma} \rvepsilon, \quad \rvx_1 \sim \pi_1,\;\; \rvepsilon \sim \calN(\vzero, \I)
+    \rvx_{t} = \rvx_{t+\Delta t} - \rvb^{-}_{\phi}(\vx_t, t) + \sqrt{\gamma} \rvepsilon, \quad \rvx_1 \sim \pi_1,\;\; \rvepsilon \sim \calN(\vzero, \I).
 \end{align*}
 \end{itemize}
 
-Once we have sampled batches of trajectories $\{\vx^{+}_i(t_k)\}_{i,k}^N$ and $\{\vx^{-}_j(t_l)\}_{j,l}^M$ we can proceed to estimate the path error term in the objective using the Monte Carlo  method:
+Once we have sampled batches of trajectories $\{\vx^{+}_i(t_k)\}_{i,k}^N$ and $\{\vx^{-}_j(t_l)\}_{j,l}^M$, we can proceed to estimate the path error term in the objective using the Monte Carlo  method:
 
 
 \begin{itemize}
     \item Backward path error term 
 \begin{align}
-    \E&_{\P}\left[\int_0^1 \left(\frac{1}{2}(b_\P^{-}(\vx(t),t) - b_{\Q_{i-1}}^{+}(\vx(t),t))^2 + \nabla\cdot b^{+}_{\Q_{i-1}}(\vx(t),t) \right)\right] \approx \nonumber   \\
-    &\frac{\Delta t}{M} \sum_{j,l}\left(\frac{1}{2}(b_\phi^{-}(\vx^{-}_j(t_l), t_l) - b_{\theta}^{+}(\vx^{-}_j(t_l), t_l))^2 + \nabla\cdot b^{+}_{\theta}(\vx^{-}_j(t_l), t_l)\right)
+    \E&_{\P}\left[\int_0^1 \left(\frac{1}{2}||\rvb_\P^{-}(\vx(t),t) - \rvb_{\Q_{i-1}}^{+}(\vx(t),t)||^2 + \nabla\cdot\rvb^{+}_{\Q_{i-1}}(\vx(t),t) \right)\right] \approx \nonumber   \\
+    &\frac{\Delta t}{M} \sum_{j,l}\left(\frac{1}{2}||\rvb_\phi^{-}(\vx^{-}_j(t_l), t_l) - \rvb_{\theta}^{+}(\vx^{-}_j(t_l), t_l)||^2 + \nabla\cdot\rvb^{+}_{\theta}(\vx^{-}_j(t_l), t_l)\right).
 \end{align}
     \item Forward path error term
 \begin{align}
-    \E&_{\Q}\left[\int_0^1 \left(\frac{1}{2}(b_\Q^{+}(\vx^{-}(t), t) - b_{\P_{i}}^{-}(\vx, t))^2 - \nabla\cdot b^{-}_{\P_{i}}(\vx, t) \right)\right]  \approx \nonumber   \\
-    &\frac{\Delta t}{N} \sum_{i,k}\left(\frac{1}{2}(b_\theta^{+}(\vx^{-}_i(t_l), t_k) - b_{\phi}^{-}(\vx^{-}_i(t_l), t_k))^2 - \nabla\cdot b^{-}_{\phi}(\vx^{-}_i(t_l), t_k)\right)
+    \E&_{\Q}\left[\int_0^1 \left(\frac{1}{2}||\rvb_\Q^{+}(\vx^{-}(t), t) - \rvb_{\P_{i}}^{-}(\vx, t)||^2 - \nabla\cdot\rvb^{-}_{\P_{i}}(\vx, t) \right)\right]  \approx \nonumber   \\
+    &\frac{\Delta t}{N} \sum_{i,k}\left(\frac{1}{2}||\rvb_\theta^{+}(\vx^{-}_i(t_l), t_k) - \rvb_{\phi}^{-}(\vx^{-}_i(t_l), t_k)||^2 - \nabla\cdot\rvb^{-}_{\phi}(\vx^{-}_i(t_l), t_k)\right).
 \end{align}
 \end{itemize}
 \subsubsection{Cross-entropy Boundary Terms}
 
-Note that the densities inside the cross-entropy terms are $\pi_0, \pi_1$ which we only have access to via samples, thus we cannot apply the standard Monte Carlo  method as we cant evaluate the integrands $\pi_0, \pi_1$ at the Monte Carlo samples.
+The densities inside the cross-entropy terms are $\pi_0, \pi_1$, which we only have access to via samples. Thus, we can not apply the standard Monte Carlo  method as we can not evaluate the integrands $\pi_0, \pi_1$ at the Monte Carlo samples.
 
-Thus we are required to do some form of density estimation for the boundary distributions $\pi_0, \pi_1$ so that we can compute a Monte Carlo  estimator for the cross entropy boundary terms. The two approximations we consider are non parametric approximations using Kernel Density Estimation and K-Nearest Neighbours.
+Therefore, we are required to use some form of density estimation for the boundary distributions $\pi_0, \pi_1$, in order to compute a Monte Carlo  estimator for the cross entropy boundary terms. The two approximations we consider are non parametric approximations using Kernel Density Estimation and K-Nearest Neighbours.
 
 We need to estimate:
 \begin{align*}
-\E_{\pi_0^\P}[\ln\pi_{0}] &\approx \frac{1}{M}\sum_{j}^{M} \ln \hat{\pi}_0(\vx_j^{-}(1)) \\
+\E_{\pi_0^\P}[\ln\pi_{0}] &\approx \frac{1}{M}\sum_{j}^{M} \ln \hat{\pi}_0(\vx_j^{-}(1)), \\
 \E_{\pi_1^\Q}[\ln\pi_{1}] &\approx \frac{1}{N}\sum_{i}^{N} \ln \hat{\pi}_1(\vx_i^{+}(0)),
 \end{align*}
 where $\hat{\pi}_i$ is a KDE based approximation of $\pi_i$:
 \begin{align*}
-\hat{\pi}_0(\vx) = \frac{1}{N} \sum_b^{N} \kk_{\mH_x}(\vx - \vx_i) \\
-\hat{\pi}_1(\vy) = \frac{1}{M} \sum_b^{M} \kk_{\mH_y}(\vy - \vy_i)
+\hat{\pi}_0(\vx) = \frac{1}{N} \sum_b^{N} \kk_{\mH_x}(\vx - \vx_i), \\
+\hat{\pi}_1(\vy) = \frac{1}{M} \sum_b^{M} \kk_{\mH_y}(\vy - \vy_i),
 \end{align*}
-where, $\kk_{\textbf{H}}$ is a smooth function called a kernel, in our case we use the Squared Exponential (SE aka Gaussian) kernel:
+where, $\kk_{\textbf{H}}$ is a smooth function called a kernel. In our case we use the Squared Exponential kernel:
 \begin{align*}
 \kk_{\mH}(\vx-\vx') = (2\pi)^{d/2}|\mH|^{-1/2}\exp\left(-\frac{1}{2}||\vx-\vx'||^{2}_{\mH^{-1}}\right),
 \end{align*}
 where the bandwidth matrix $\mH$ is set using Silverman's rule \citep{silverman1986density}:
 \begin{align}
 \mH_{ij} = \begin{cases}
-\left(\frac{4}{d+2}\right)^{\frac{2}{d+4}} N^{\frac{-2}{d+4}} \sigma_{i}^2  &\text{  if  } i=j \\
-0  &\text{otherwise}.
+\left(\frac{4}{d+2}\right)^{\frac{2}{d+4}} N^{\frac{-2}{d+4}} \sigma_{i}^2  &\text{  if  } i=j, \\
+0  &\text{otherwise},
 \end{cases}
 \end{align}
 
-Where $N$ is the number of data points used in the KDE estimate. Alternatively for estimating the densities non-parametrically one can use a K-nearest neighbours basis \citep{veksler2013nonparametric}:
+where $N$ is the number of data points used in the KDE estimate. Alternatively, for estimating the densities non-parametrically one can use a K-nearest neighbours basis \citep{veksler2013nonparametric}:
 \begin{align*}
 \hat{\pi}_0(\vx) \propto  \text{R}_k(\vx, \{\vx_i\})^{-d}\\
 \hat{\pi}_1(\vy) \propto \text{R}_k(\vy, \{\vy_j\})^{-d},
 \end{align*}
-where $\text{R}_k(\vx, \{\vx_i\})$ is the distance to the kth nearest neighbour of $\vx$ in $\{\vx_i\}$.  Approximating the density with a KNN basis is the core ingredient for approximating entropy's in \cite{singh2016analysis}.
+where $\text{R}_k(\vx, \{\vx_i\})$ is the distance to the $k^{th}$ nearest neighbour of $\vx$ in $\{\vx_i\}$.  Approximating the density with a KNN basis is the core ingredient for approximating entropy in \cite{singh2016analysis}.
 
 \subsection{Mode Collapse in Reverse KL}
 
@@ -1620,7 +1617,7 @@ minimizing the forward KL (red) and the reverse KL (blue).}
     \label{fig:babrber_kl}
 \end{figure}
 
-It is a well studied fact that minimising the reverse KL (i.e $\argmin_{\Q \in \cdot }$ $\KL(\Q ||\P)$) can be prone to mode collapse \citep{zhang2019variational}. The issue arises from the expectations and minimisation's both being taken with respect to $\Q$ and thus we can set the measure $\Q$ to 0 for regions where $\P$ has mass without incurring in an additional penalty since this zeroes out the cost over that region. This is different to the forward KL (e.g. Maximum Likelihood)  $\argmin_{\P \in \cdot }\KL(\Q ||\P)$  which blows up  when $\P$ tries to assign $0$ to regions where $\Q$ has mass.
+The forward KL (e.g. Maximum Likelihood)  $\argmin_{\Q \in \cdot }\KL(\P ||\Q)$  which blows up  when $\P$ tries to assign $0$ to regions where $\Q$ has mass. When minimising the reverse KL (i.e $\argmin_{\Q }$ $\KL(\Q ||\P)$), on the other hand, it is a well studied fact that it can be prone to mode collapse \citep{zhang2019variational}. The issue arises from the expectations and minimisations both being taken with respect to $\Q$ and thus we can set the measure $\Q$ to 0 for regions where $\P$ has mass without incurring in an additional penalty since this zeroes out the cost over that region.
 
 As put succinctly in \cite{lawrence2001variational}:
 
@@ -1629,13 +1626,12 @@ well matched to the true posterior, the former case is likely to produce a very 
 The latter case will only produce plausible inference, in legal terms it would find the truth, nothing
 but the truth, but not the whole truth."}
 
-Meaning that the reverse KL provides us with the truth (it is precise ), yet  it does not provide us with the whole truth (i.e. has low recall).
+Meaning that the reverse KL provides us with the truth (it is precise), yet  it does not provide us with the whole truth (i.e. has low recall).
 
 \section{Conceptual Comparison of Approaches}
 
-In this section we will briefly define and contrast some of the points of failures of each method based on conceptual observations prior to any experimentation.
+In this section we will briefly define and contrast some of the points of failure of each method based on conceptual observations prior to any experimentation.
 
-%TC:ignore
 \begin{table}[]
 \begin{adjustbox}{width=\columnwidth}
 \begin{tabular}{LllllF}
@@ -1649,170 +1645,187 @@ Stochastic Control      & \xmark & \cmark & \cmark & \xmark & \xmark \\
 \bottomrule
 \end{tabular}
 \end{adjustbox}
-\caption{Challenges faced by methods. A check mark indicates the method overcomes of the respective pitfall.}\label{tab:conceptual_pits}
+\caption{Challenges faced by methods. A check mark indicates the method overcomes the respective pitfall.}\label{tab:conceptual_pits}
 \end{table}
-%TC:endignore
 \begin{itemize}
-    \item \textbf{Copes Mode Collapse}: This occurs when the optimisation procedure is not penalised for missing a particular mode in the boundary distributions. As a result the method is prone to missing modes and is unable to map between distributions with a signficant difference in the numbers of modes.
+    \item \textbf{Copes with Mode Collapse}: This occurs when the optimisation procedure is not penalised for missing a particular mode in the boundary distributions. As a result the method is prone to missing modes and is unable to map between distributions with a signficant difference in the numbers of modes.
     \item \textbf{No Auxiliary Sampling:} This is concerned with computing integrals with auxiliary distributions (e.g. importance sampling) as done in the method by \cite{pavon2018data}.
-    \item \textbf{Handles Distant Support:} This issue is concerned in being unable to generate samples that cover are in the support of $\pi_1$ when evolving from $\pi_0$ (and vice-versa). This problem is due to the reference process not being able to transport samples from one marginal to areas where there are mass in the other marginal. As a result this wont give any initial signal to the IPFP algorithm and in lay terms it wont kick off the feedback-loop that refines the constraints in turn.
-    \item \textbf{Scales well in $N,M$ and $\Delta t$:} By this we mean that the method scales well in the number of data-points. Most non parametric kernel methods do not scale well well in the number of data points. Note this is not a particularly major issue since there are techniques to overcome this. 
-    \item \textbf{No Explicit Density Estimation:} This applies to methods that require to solve an explicit density estimation method at each g-IPFP iteration. Whilst this it not a major downside  \cite{pavon2018data} mentions that density estimation in high dimensions may be both difficult and inaccurate, resulting in poor g-IPFP iterations.
+    \item \textbf{Handles Distant Support:} This issue is concerned with being unable to generate samples that are in the empirical support of $\pi_1$ when evolving from $\pi_0$ (and vice-versa). This problem is due to the reference process not being able to transport samples from one marginal to areas where there is mass in the other marginal. As a result, this will not give any initial signal to the IPFP algorithm and in lay terms it will not kick off the feedback-loop that refines the constraints in turn.
+    \item \textbf{Scales well in $N,M$ and $\Delta t$:} By this we mean that the method scales well in the number of data-points, a problem with most non-parametric kernel methods. Note that there are techniques to overcome this (i.e. sparse variational approaches \cite{van2019sparse}).
+    \item \textbf{No Explicit Density Estimation:} This applies to methods that require solving an explicit density estimation task at each g-IPFP iteration. Whilst not a major downside,  \cite{pavon2018data} mentions that density estimation in high dimensions may be both difficult and inaccurate, resulting in poor g-IPFP iterations.
 \end{itemize}
-Note that we believe that Mode Collapse, and Auxiliary Sampling are the most impact-full issues when numerically solving the empirical bridge. In the case of mode collapse we could not find any successful heuristics to improve this issue. For auxiliary sampling based approaches as in \cite{pavon2018data} it becomes very difficult to scale them to high dimensions in particular one needs to design an approach that is aware of where the mass in the integrand resides, such as \cite{osborne2012active}.  The issue regarding missing the support of the boundary distributions can be addressed by can re-scaling the data (i.e. standardise) such that it is at a scale where the Brownian motion prior can cover the support of the boundaries when going from one to the other, alternatively increasing the value of $\gamma$ will also achieve this. See Table \ref{tab:conceptual_pits} for a conceptual comparison between the studied methods in this thesis.
+We believe that mode collapse  and auxiliary sampling are the most impact-full issues when numerically solving the empirical bridge, since there are mitigations for the other issues. We could not find any successful heuristics to improve mode collapse. For auxiliary sampling based approaches as in \cite{pavon2018data}, it becomes very difficult to scale them to high dimensions. In particular, one needs to design an approach that is aware of where the mass in the integrand resides, as in \cite{osborne2012active}. This is where our proposed methods have the biggest advantage.
+\\The problem of missing the support of the boundary distributions can be addressed by re-scaling the data (i.e. standardise) so that it is at a scale where the Brownian motion prior can cover the support of the boundaries when going from one to the other. Alternatively, increasing the value of $\gamma$ will also achieve this. See Table \ref{tab:conceptual_pits} for a conceptual comparison between the studied methods in this thesis.
 %\chapter{Evaluation} 
 \chapter{Experiments}
 
-In this section we will be exploring to which extent our methods for the empirical Schrödinger bridge work on toy 1D and 2D datasets. We limit ourselves to toy data which we can visually evaluate, due to the early nature of the approaches we first wish to gain a practical understanding of their mechanics and limitations before jumping to real world data. 
+In this section we will be exploring to what extent our methods for the empirical Schrödinger bridge perform on toy 1D and 2D datasets. We limit ourselves to toy data which we can visually evaluate, due to the early nature of the approaches. This helps gain a practical understanding of their mechanics and limitations before handling real world data. 
 
-The comparisons between the methods are in this stage preliminary and are by no extent thorough.
+As mentioned above for illustrative purposes we restricted ourselves to toy examples and did not experiment on high dimensional real data which would make it difficult to provide some of the more in-depth diagnosis behind each method that we will be showing in the following chapter.
+
+Our experiments can be grouped into the following tasks:
+\begin{itemize}
+    \item \textbf{Unimodal to Unimodal Tests:} In these experiments we evaluate the ability of the algorithms to transition from simple unimodal Gaussian distributions with different means and variances. This is one of the simplest tests and serves as the most basic sanity check for each method.
+    \item \textbf{Unimodal to Multimodal Tests:} As previously mentiones, one of the presented methods suffer the potential of mode collapsing, meaning it may learn a map that misses one of the modes in the boundary distributions. In order to evaluate the ability of a method to fit multimodal boundaries, we set up a simple test of mapping from a unimodal distribution to a multimodal one. 
+    \item \textbf{Non-Gaussian Distributions Tests:} Here we explore the tasks for mapping from a unimodal Gaussian to a complex non-Gaussian distribution, such as the moons and circles datasets \cite{pedregosa2011scikit}. Due to time constraints, we only explored this test with the direct drift estimation approach.
+\end{itemize}
+
+Finally, we select two toy datasets (one unimoda to unimodal and one unimodal to bimodal) which all methods managed to fit visually and construct a hypothesis test in order to compare the methods against each other in a more statistically sound framework. 
 \begin{figure}[t]
     \centering
-    \includegraphics[scale=0.42,trim={2.3cm 0.2cm 1.5cm 0}, clip]{images/Pavon/Forward_unimodal_working_pavon_relu_nn500.png}\\\vspace{-0.2cm}
-    \includegraphics[scale=0.42,trim={2.3cm 0 1.5cm 1.5cm}, clip]{images/Pavon/Backward_unimodal_working_pavon_relu_nn500.png} 
-    \caption{Schrödinger Bridge results on unimodal Gaussian 1d data. Have included the potentials since it  were helpful to see how they cancel each other out. }
+    \includegraphics[scale=0.4,trim={2.3cm 0.2cm 1.5cm 0}, clip]{images/Pavon/Forward_unimodal_working_pavon_relu_nn500.png}\\\vspace{-0.2cm}
+    \includegraphics[scale=0.4,trim={2.3cm 0 1.5cm 1.5cm}, clip]{images/Pavon/Backward_unimodal_working_pavon_relu_nn500.png} 
+    \caption{Schrödinger Bridge results using the method by \cite{pavon2018data} on unimodal Gaussian 1D data. We included the potentials since it was helpful to illustrate how they compensate each other. }
     \label{fig:driftpavon}
 \end{figure}
+
 \section{Method by \cite{pavon2018data}}
-
-We initially were unable to get the method \cite{pavon2018data} to work since the fitted distributions kept co lapsing to delta distributions for the marginals. We later discovered that setting larger values of $\gamma$ for the prior $\W^{\gamma}$ were required to obtain good results. Further down we learned another heuristic to solve this problem which was to standardise the data, effectively the issue was a matter of not being able to cover the support of the boundary distributions when sampling from the transition density of $\W^{\gamma}$. Thus we set $\gamma=1000$ in all the following experiments unless mentioned otherwise, we determined this value to be stable enough for us to explore the method. Furthermore we used $400$ Monte Carlo  samples for each of the expectations approximated and a single hidden layer neural network \citep{lecun2015deep} with ReLu activation's with $500$ hidden units is used to parametrised the potentials across all experiments. Each example was trained for an outer loop of $250$ epochs with $150$ inner epochs for the MLE sub iterations. We initialise the weights of the neural networks using the Glorot initialisation \citep{glorot2010understanding} and we used the \cite{duchi2011adaptive} optimiser.
-
-\subsection{Unimodal Experiments}
-
-In this section we consider transitioning from two normal distributions with different means and variances, we also illustrate how the method fails for small values of $\gamma$ and correctly diagnose a cause in addition to proposing heuristics to overcome this issue. 
-\subsubsection{Different Means, Same Variances}
-
-In this section we explored the following generative process for the marginals:
-\begin{align*}
-\color{blue}{\pi_0(x)} &\color{blue}{= \calN(x; 5,  1)} \\
-    \color{red}{\pi_1(y)} &\color{red}{= \calN(y; -2, 1)} 
-\end{align*}
-\subsubsection{Different Means and Variances}
-\begin{figure}
+\begin{figure}[t]
     \centering
-    \includegraphics[scale=0.42,trim={2.3cm 0.2cm 1.5cm 0}, clip]{images/Pavon/Forward_bigvar_test_working.png}\\\vspace{-0.2cm}
-    \includegraphics[scale=0.42,trim={2.3cm 0 1.5cm 1.5cm}, clip]{images/Pavon/Backward_bigvar_test_working.png} 
-    \caption{Schrödinger Bridge results on unimodal Gaussian 1d data. }
+    \includegraphics[scale=0.4,trim={2.3cm 0.2cm 1.5cm 0}, clip]{images/Pavon/Forward_bigvar_test_working.png}\\\vspace{-0.2cm}
+    \includegraphics[scale=0.4,trim={2.3cm 0 1.5cm 1.5cm}, clip]{images/Pavon/Backward_bigvar_test_working.png} 
+    \caption{Schrödinger Bridge results using the method by \cite{pavon2018data} on unimodal Gaussian 1D data and different variances. }
     \label{fig:small_to_big}
 \end{figure}
+We found the method \cite{pavon2018data} to be extremely sensitive to the value of $\gamma$ in the prior $\W^{\gamma}$. That is, for most values of $\gamma < 5$, the method worked poorly and the boundary distributions would collapse to Dirac delta distributions. In order to overcome this issue, we had to experiment with large values of $\gamma$. Alternatively, we found that another heuristic to overcome this issue was to standardise the data.  This led us to understand that the issue was due to not being able to cover the support of the boundary distributions when sampling from the transition density of $\W^{\gamma}$. 
+
+We set $\gamma=1000$ in all the following experiments, unless stated otherwise. We determined this value to be stable enough for us to explore the method. Furthermore, we used $400$ Monte Carlo  samples for each of the expectations approximated. A single hidden layer neural network \citep{lecun2015deep} with ReLu activations \citep{glorot2011deep} with $500$ hidden units is used to parametrise the potentials across all experiments. Each example was trained for an outer loop of $250$ epochs with $150$ inner epochs for the MLE sub-iterations. We initialise the weights of the neural networks using the Glorot initialisation \citep{glorot2010understanding} and we used the Adagrad \citep{duchi2011adaptive} optimiser.
+\begin{figure}
+    \centering
+    \includegraphics[scale=0.4,trim={2.3cm 1cm 2.5cm 0}, clip]{images/Pavon/pavon convergence big var.png} \vspace{-0.6cm}
+    \caption{Likelihood per epoch for the method by \cite{pavon2018data} applied to unimodal Gaussian 1D data with different variances. }
+    \label{fig:small_to_big_convergence}
+\end{figure}
+\subsection{Unimodal Experiments}
+
+In this section we explore transitioning from two normal distributions with different means and variances. We also illustrate how the method fails for small values of $\gamma$ and correctly diagnose a cause, in addition to proposing heuristics to overcome this issue. 
+\subsubsection{Different Means, Same Variances}
+
+In this section, we explore the following generative process for the marginals:
+\begin{align*}
+\color{blue}{\pi_0(x)} &\color{blue}{= \calN(x; 5,  1)} \\
+    \color{red}{\pi_1(y)} &\color{red}{= \calN(y; -2, 1)}. 
+\end{align*}
+Results can be found in Table \ref{fig:driftpavon}, where we can visually observe a good fit of the boundary distributions. This experiment mostly serves as a sanity check and to tune $\gamma$ to a value where the method was stable.
+
+\begin{figure}[t]
+    \centering
+    \includegraphics[scale=0.4,trim={2.3cm 0.2cm 1.5cm 0}, clip]{images/Pavon/Forward_unimodal_test_working_convex.png} \\\vspace{-0.2cm}
+    \includegraphics[scale=0.4,trim={2.3cm 0 1.5cm 1.5cm}, clip]{images/Pavon/Backward_unimodal_test_working_convex.png} 
+    \caption{Schrödinger Bridge results using the method by \cite{pavon2018data} on unimodal to bimodal Gaussian 1D data. This example illustrates the Dirac delta collapse of the marginals.}
+    \label{fig:small_delta_collapse}
+\end{figure}
+\subsubsection{Different Means and Variances}
+
 We generated a 1D- toy dataset using the following process:
 \begin{align*}
      \color{blue}{\pi_0(x)} &\color{blue}{= \calN(x; 0,  9)} \\
-    \color{red}{\pi_1(y)} &\color{red}{= \calN(y; 20, 0.5 ^2)} 
+    \color{red}{\pi_1(y)} &\color{red}{= \calN(y; 20, 0.5 ^2)}. 
 \end{align*}
-Results can be found in Figure \ref{fig:small_to_big} where we can observe a good fit for $\color{blue}{\pi_0}$ yet visually not such a good fit for $\color{red}{\pi_1}$ furthermore we found that the Lagrange constraint integral converged to approximately $0.6$ rather than $1$ meaning the distribution was not normalised via this approximate Lagrange multipliers based approach. Furthermore from the Figure \ref{fig:small_to_big_convergence} it is not clear if the method fully converged. 
-\begin{figure}
-    \centering
-    \includegraphics[scale=0.47,trim={2.3cm 1cm 2.5cm 0}, clip]{images/Pavon/pavon convergence big var.png} \vspace{-0.6cm}
-    \caption{Schrödinger Bridge results on unimodal Gaussian 1d data, plot of likelihood per epoch. }
-    \label{fig:small_to_big_convergence}
-\end{figure}
+Results can be found in Figure \ref{fig:small_to_big}, where we can observe a good fit for $\color{blue}{\pi_0}$, yet visually not such a good fit for $\color{red}{\pi_1}$. Furthermore, we found that the Lagrange constraint integral converged to approximately $0.6$ rather than $1$ meaning the distribution was not normalised via this approximate Lagrange multipliers based approach. From Figure \ref{fig:small_to_big_convergence} it is not clear if the method fully converged. 
 \begin{figure}[t]
     \centering
-    \includegraphics[scale=0.42,trim={2.3cm 0.2cm 1.5cm 0}, clip]{images/Pavon/Forward_unimodal_test_working_convex.png} \\\vspace{-0.2cm}
-    \includegraphics[scale=0.42,trim={2.3cm 0 1.5cm 1.5cm}, clip]{images/Pavon/Backward_unimodal_test_working_convex.png} 
-    \caption{Schrödinger Bridge results on unimodal Gaussian 1d data.. }
-    \label{fig:small_delta_collapse}
-\end{figure}
-\subsubsection{Delta Collapse}
-In this section we explore how the method in \cite{pavon2018data} falls apart for small values of $\gamma$. In this case we use the different means same variance dataset and we set $\gamma=1$. Note we observed similar results up to $\gamma=10$ and it was not until $\gamma=100$ that results became stable. In order to save time and avoid having to tweak $\gamma$ per experiment we choose a overly conservative value of $\gamma=1000$ which we used on all experiments in this section.
-
-As we can see in Figure \ref{fig:small_delta_collapse} the learned marginal distributions have effectively collapsed into a dirac delta function centered at one point.  We believe this happens due to the transition probability not being able to hit points in the support of $\pi_0$ when mapping from $\pi_1$ (and vice-versa). We believe that empirical proof backing this is the fact that this only happens for low values of $\gamma$ and that standardising the data or considering toy examples whose modes lie in the unit cube fixes this issue. We note that in \cite{pavon2018data} they use a value of $\gamma=2$ and furthermore the only 2 examples they have are distributions centered very closely to 0 all with means $<3$ which is where we observe the cutoff to happen empirically. 
-\subsection{Multimodal Experiments}
-
-Unfortunately we were unable to obtain sensible results for trimodal data with distinct modes thus we focused solely on bimodal data where we managed to get the method working.
-\begin{align*}
-     \color{blue}{\pi_0(x)} &\color{blue}{= \calN(x; 0,  1)} \\
-    \color{red}{\pi_1(y)} &\color{red}{= \frac{1}{2}\calN(y; 20, 0.5 ^2) + \frac{1}{2}\calN(y; -20, 0.5 ^2)} 
-\end{align*}
-\begin{figure}[t]
-    \centering
-     \includegraphics[scale=0.45,trim={2.3cm 0.2cm 1.5cm 0}, clip]{images/Pavon/Forward_bimodal_test_working.png} \\ \vspace{-0.2cm}
-    \includegraphics[scale=0.45,trim={2.3cm 0 1.5cm 1.5cm}, clip]{images/Pavon/Backward_bimodal_test_working.png} 
-    \caption{Schrödinger Bridge results on bimodal Gaussian 1d data.. }
+     \includegraphics[scale=0.4,trim={2.3cm 0.2cm 1.5cm 0}, clip]{images/Pavon/Forward_bimodal_test_working.png} \\ \vspace{-0.2cm}
+    \includegraphics[scale=0.4,trim={2.3cm 0 1.5cm 1.5cm}, clip]{images/Pavon/Backward_bimodal_test_working.png} 
+    \caption{Schrödinger Bridge results using the method by \cite{pavon2018data} on unimodal to bimodal Gaussian 1D data. }
     \label{fig:pavon_bimodal}
 \end{figure}
-We can see from the results in  Figure \ref{fig:pavon_bimodal} the method correctly identifies the modes and in the case of $\color{blue}{\pi_1}$ it correctly identifies the variance. However for $\color{red}{\pi_0}$ we can see that the method fits some slightly broader variances than that of the target. 
-\subsection{Extracting the Optimal Drift}
+\subsubsection{Delta Collapse}
+In this section we explore how the method in \cite{pavon2018data} fails for small values of $\gamma$. In this case we use the different means, same variance dataset and set $\gamma=1$. We observed similar behaviour up to $\gamma=10$ and it was not until $\gamma=100$ that results became stable. In order to save time and avoid having to tweak $\gamma$ per experiment we choose an overly conservative value of $\gamma=1000$ which we used for all experiments in this section.
+
+As shown in Figure \ref{fig:small_delta_collapse}, the learnt marginal distributions have effectively collapsed into a Dirac delta function.  We believe this happens due to the transition probability not being able to hit points in the support of $\pi_0$ when mapping from $\pi_1$ (and vice-versa). The empirical proof backing this is the fact that this only happens for low values of $\gamma$ and that standardising the data or considering toy examples whose modes lie in the unit cube fixes this issue. We note that in \cite{pavon2018data} they use a value of $\gamma=2$ and furthermore the only 2 examples they have are distributions centered very closely to $0$, all with means $<3$, which is where we observe the cutoff to happen empirically. 
+\subsection{Multimodal Experiments}
 \begin{figure}[t]
     \centering
     \includegraphics[scale=0.45,trim={2.3cm 1cm 2.5cm 0}, clip]{images/Pavon/pavon_trajectories_bimodal.png} 
     \caption{Extracted drift from optimal potentials. Marginals highlighted in red for visibility. }
     \label{fig:pavon_bimodal_drift}
 \end{figure}
-Using Proposition 3.3 of \cite{pavon1991free} we extract the optimal control signal/drift $\rvb_t^+$ from the potentials fitted in Figure \ref{fig:pavon_bimodal} by \cite{pavon2018data}'s method using: 
+Unfortunately, we were unable to obtain sensible results for trimodal data with distinct modes, thus we focused solely on bimodal data where we managed to get this method working.
+\begin{align*}
+     \color{blue}{\pi_0(x)} &\color{blue}{= \calN(x; 0,  1)} \\
+    \color{red}{\pi_1(y)} &\color{red}{= \frac{1}{2}\calN(y; 20, 0.5 ^2) + \frac{1}{2}\calN(y; -20, 0.5 ^2)}. 
+\end{align*}
+
+As shown in Figure \ref{fig:pavon_bimodal}, the method correctly identifies the modes and in the case of $\color{blue}{\pi_1}$ it correctly identifies the variance. However, for $\color{red}{\pi_0}$ we can see that the method fits some slightly broader variances than that of the target. 
+\subsection{Extracting the Optimal Drift}
+
+Using Proposition 3.3 of \cite{pavon1991free}, we extract the optimal control signal/drift $\rvb_t^+$ from the potentials fitted in Figure \ref{fig:pavon_bimodal} by \cite{pavon2018data}'s method using: 
 \begin{align*} 
-    \rvb_t^{+} = \gamma \nabla \ln \phi^*_t(\vx(t) ),
+    \rvb_t^{+} = \gamma \nabla \ln \phi^*_t(\vx(t)).
 \end{align*}
 \begin{figure}
     \centering
     \includegraphics[scale=0.4,trim={2.3cm 1cm 2.5cm 0}, clip]{images/GP/SB_gp_bigvar_epochs_samp_200.png}
-    \caption{Loss per epoch for fitted unimodal SB using the direct drift estimation method. }
+    \caption{Loss per epoch for fitted unimodal SB using the DDE method.}
     \label{fig:epochsbigvargp}
 \end{figure}
-we then generate trajectories using the EM method in order to visualise samples from the fitted path measure. Results can be seen in Figure \ref{eq:drifr_potential}, whilst the trajectories successfully split and manage to match the modes they don't match the variances of the fitted potentials from Figure \ref{fig:pavon_bimodal}. This suggests that whilst the method from \cite{pavon2018data} may seem to solve the static bridge and provide some reasonable approximation for the potentials in the Schrödinger system, we are not able to recover a good estimate of the drift from these fitted potentials. This may be due to the inaccuracies arising from the importance sampling used in the method generating an overall poor estimate of the logarithmic derivative. We do note that the method by \cite{pavon1991free} does seem to provide reasonable estimates to the solution of the FPK equation and thus one can still interpolate the fitted distribution at different times.
+We then generate trajectories using the EM method in order to visualise samples from the fitted path measure. Results can be seen in Figure \ref{fig:pavon_bimodal_drift}. Whilst the trajectories successfully split and manage to match the modes, they do not match the variances of the fitted potentials from Figure \ref{fig:pavon_bimodal}. This suggests that although the method from \cite{pavon2018data} may seem to solve the static bridge and provide some reasonable approximation for the potentials in the Schrödinger system, we are not able to recover a good estimate of the drift from these fitted potentials. This may be due to the inaccuracies arising from the importance sampling used in the method generating an overall poor estimate of the logarithmic derivative. We do note that the method by \cite{pavon2018data} does seem to provide reasonable estimates to the solution of the FPK equation and thus one can still interpolate the fitted distribution at different times.
 
 \begin{figure}[t]
     \centering
     \includegraphics[scale=0.4,trim={2.3cm 1cm 2.5cm 0}, clip]{images/GP/gp_bigvar_trajectories.png}
-    \caption{ Fitted SB trajectories.  }
+    \caption{ Fitted SB trajectories using the DDE approach on unimodal to unimodal 1D data.  }
     \label{fig:bigvar200trajectroies}
 \end{figure}
-\section{Direct Drift Estimation}
+\section{Our Approach - Direct Drift Estimation (DDE)}
 
-We found this approach to be much less brittle than the method by \cite{pavon2018data} when it came to distributions whose modes were far from the origin. However it still suffers the similar phenomena that it cannot fit distributions that are beyond a radius of that is too far from the origin. We were empirically able to fit distributions whose means exceeded 4 with a value of $\gamma=1$. All experiments in this section were performed with $\gamma=1$ and in some cases we adapted the examples from previous sections to have smaller means in order to accommodate for the issue regarding relative support of the distributions that we mentioned earlier. An important detail is that we did not optimise the hyperparameters of the fitted GP, this was mostly due to time constraints. Due to the typical memory constraints in Gaussian processes we use 200 datapoints in each toy dataset and 70 time steps for the EM method.
+We found this approach to be much less brittle than the method by \cite{pavon2018data} when it came to distributions whose modes were far from the origin. However, it still suffers the similar phenomena that it cannot fit distributions whose support are too far from each other. We were empirically able to fit distributions whose means exceeded 4 with a value of $\gamma=1$. All experiments in this section were performed with $\gamma=1$ and in some cases we adapted the examples from previous sections to have smaller means in order to accommodate for the issue regarding relative support of the distributions that we mentioned earlier. An important detail is that we did not optimise the hyperparameters of the fitted GP, this was mostly due to time constraints. Due to the typical memory constraints in Gaussian processes, we use 200 datapoints in each toy dataset and 70 time steps for the EM method.
 
 \subsection{1D Toy Experiments }
 \subsubsection{Unimodal Experiments}
-Given the success of this method in more complex tasks we omit the simple experiment of mapping in between different mean but shared variance Gaussian distributions.
+Given the success of this method in more complex tasks, we omit the simple experiment of mapping in between different mean but shared variance Gaussian distributions.
 \begin{figure}
     \centering
     \includegraphics[scale=0.3,trim={2.3cm 1cm 2.5cm 0}, clip]{images/GP/gp_bigvar_boundaires.png}
-    \caption{ Fitted SB marginals.  }
+    \caption{ Fitted SB marginals using the DDE approach on unimodal to unimodal 1D data.  }
     \label{fig:bigvar200boundaries}
 \end{figure}
-\textbf{Small to Big Variance}\\
+\\
+\textbf{Different Means and Variances}\\
 We generate this dataset following:
 \begin{align*}
 \color{blue}{\pi_0(x)} &\color{blue}{= \calN(x; 0,  1)} \\
-    \color{red}{\pi_1(y)} &\color{red}{= \calN(y; 4, 0.1^2)} 
+    \color{red}{\pi_1(y)} &\color{red}{= \calN(y; 4, 0.1^2)}.
 \end{align*}
-We can observe from Figure \ref{fig:bigvar200trajectroies} that the trajectories match the correct evolution of the means and the variances. Inspecting Figure \ref{fig:bigvar200boundaries} we can observe a minor struggle in matching the $0.1$ variance for which our approach seems to estimate a slightly higher variance. Overall we can observe a good fit.
+We can observe from Figure \ref{fig:bigvar200trajectroies} that the trajectories match the correct evolution of the means and the variances. Inspecting Figure \ref{fig:bigvar200boundaries}, we can observe a minor struggle in matching the $0.1$ variance for which our approach seems to estimate a slightly higher variance. Overall we can observe a good fit.
 
 \subsubsection{Multimodal Experiments}
 
-We experiment with mapping in between uni-modal and multimodal distributions. We empirically find that this is the only method that can robustly cope with more than 2-modes.
+We experiment with mapping in between unimodal and multimodal distributions. We empirically find that this is the only method that can robustly cope with more than 2 modes.
 
 \textbf{Unimodal to Bimodal}\\
-
 We follow the generative following generative process for generating the toy data:
 \begin{align*}
      \color{blue}{\pi_0(x)} &\color{blue}{= \calN(x; 0,  1)} \\
-    \color{red}{\pi_1(y)} &\color{red}{= \frac{1}{2}\calN(y; 1.8, 0.6 ^2)}\color{red}{ + \frac{1}{2}\calN(y; -1.9, 0.6 ^2) }
+    \color{red}{\pi_1(y)} &\color{red}{= \frac{1}{2}\calN(y; 1.8, 0.6 ^2)}\color{red}{ + \frac{1}{2}\calN(y; -1.9, 0.6 ^2) }.
 \end{align*}
 \begin{figure}
     \centering
     \includegraphics[scale=0.4,trim={2.3cm 1cm 2.5cm 0}, clip]{images/GP/gp_final_bimodal_trajectories.png}
-    \caption{ Fitted SB trajectories.  }
-    \label{fig:bimodfinal200trajectroies}
+    \caption{ Fitted SB trajectories using the DDE method on the unimodal to bimodal 1D dataset.  }
+    \label{fig:bimodfinal200trajectories}
 \end{figure}
 \begin{figure}
     \centering
     \includegraphics[scale=0.3,trim={4cm 1cm 2.5cm 0}, clip]{images/GP/gp_2_mode_final_boundaires.png}
-    \caption{ Fitted SB marginals.  }
+    \caption{ Fitted SB marginals using the DDE method on the unimodal to bimodal 1D dataset.  }
     \label{fig:bimodfinal200boundaries}
 \end{figure}
+Results can be found in Figures and \ref{fig:bimodfinal200boundaries} \ref{fig:bimodfinal200trajectories}. We observe mostly a good fit for the unimodal boundary and for the bimodal boundary with the exception of 3 outliers that were transported to an area that should have close to 0 probability mass.  
+We found that these outliers occured outside of the Schrödinger bridge context and rather due to the method by \cite{ruttor2013approximate} (used for fitting the drift of SDEs) struggling in matching low variances at the boundaries. It is possible that optimising the GPs hyperparameters may also improve on this. 
+
 \textbf{Unimodal to Trimodal}\\
 \begin{figure}[t]
     \centering
     \includegraphics[scale=0.4,trim={2.3cm 1cm 2.5cm 0}, clip]{images/GP/gp_3_mode_200_trimodal_boundaires_trajectories.png}
-    \caption{ Fitted SB trajectories for unimodal to trimodal data.  }
+    \caption{ Fitted SB trajectories for unimodal to trimodal data using DDE, successfully fitting three modes.  }
     \label{fig:3mode1d200trajectroies}
 \end{figure}
 We generate the 1D toy dataset following the following distribution:
 \begin{align*}
      \color{blue}{\pi_0(x)} &\color{blue}{= \calN(x; 0,  1)} \\
-    \color{red}{\pi_1(y)} \color{red}{= \frac{1}{3}\calN(y; 5, 0.5 ^2)}&\color{red}{ + \frac{1}{3}\calN(y; 2, 0.5 ^2) + \frac{1}{3}\calN(y; -5, 0.5 ^2)}
+    \color{red}{\pi_1(y)} \color{red}{= \frac{1}{3}\calN(y; 5, 0.5 ^2)}&\color{red}{ + \frac{1}{3}\calN(y; 2, 0.5 ^2) + \frac{1}{3}\calN(y; -5, 0.5 ^2)}.
 \end{align*}
 \begin{figure}
     \centering
@@ -1820,10 +1833,10 @@ We generate the 1D toy dataset following the following distribution:
     \caption{ Fitted SB trajectories for unimodal to trimodal data.  }
     \label{fig:3mode1d200boundaries}
 \end{figure}
-We can observe from Figures \ref{fig:3mode1d200trajectroies}, \ref{fig:3mode1d200boundaries} that the boundaries distributions are matched quite nicely both in variance and mean. Furthermore the trajectories look sound  in that they have some reminiscence of Brownian motion, follow nice simple paths, and look dual to each other.
+We can observe from Figures \ref{fig:3mode1d200trajectroies}, \ref{fig:3mode1d200boundaries} that the boundaries distributions are matched  nicely both in variance and mean. Furthermore, the trajectories look sound: they have some reminiscence of Brownian motion, follow nice simple paths, and look dual to each other. We can also observe that for the two modes that are close to each other there are two outliers in low probability areas.
 \subsection{2D Toy Experiments}
 
-Given the success of this method in going beyond splitting two modes, we decided to experiment further and go into 2-dimensions. Due to time constraints we choose not to push the experiments further with the method in \cite{pavon2018data}, furthermore we were unable to get their method to split beyond 2 modes. 
+Given the success of the DDE method in going beyond splitting two modes, we decided to experiment further and go into 2-dimensions. Due to time constraints we chose not to carry out 2-dimensional experiments for the method in \cite{pavon2018data}, furthermore we were unable to get their method to split beyond 2 modes. 
 
 \subsubsection{Trimodal Experiment}
 In this section we consider the 2D extension of the trimodal experiment.   We use the following distributions to generate our toy examples:
@@ -1842,72 +1855,72 @@ In this section we consider the 2D extension of the trimodal experiment.   We us
 \begin{figure}
     \centering
     \includegraphics[scale=0.4,trim={5.3cm 1cm 2.5cm 0}, clip]{images/GP/2d_3mode_GP_means_3.3_3.6_0.7_std_0.1_200.png}
-    \caption{ Fitted SB trajectories for unimodal to trimodal data.  }
+    \caption{ Fitted SB trajectories using the DDE method for unimodal to trimodal data using DDE.  }
     \label{fig:3mode2d200trajectroies2d}
 \end{figure}
 From Figure \ref{fig:3mode2d200trajectroies2d}  we can see how the trajectories successfully split and merge into 3 modes.
 \begin{figure}
     \centering
     \includegraphics[scale=0.4,trim={2.3cm 1cm 2.5cm 0}, clip]{images/GP/2d_3mode_GP_means_3.3_3.6_0.7_std_0.1_scatter_200_.png}
-    \caption{ Fitted SB marginals for unimodal to trimodal data.  }
+    \caption{ Fitted SB marginals using the DDE method for unimodal to trimodal data.}
     \label{fig:3mode2d200}
 \end{figure}
 \begin{figure}
     \centering
     \includegraphics[scale=0.4,trim={2.3cm 1cm 2.5cm 0}, clip]{images/GP/2d_3mode_GP_means_3.3_3.6_0.7_std_0.1_hist_200.png}
-    \caption{ Fitted SB marginals for unimodal to trimodal data.  }
+    \caption{ 2D histograms for the fitted SB marginals using the DDE method for unimodal to trimodal data.  On the left we show the true empirical distribution and on the right we show the empirical distribution learned by our Schrödinger bridge mapping.}
     \label{fig:3mode2d200hist}
 \end{figure}
-In \ref{fig:3mode2d200} we can observe that the marginal constraints are enforced to a reasonable amount, matching means quite well yet struggling partly with the variance. In general we found that in 2dimensions this method struggled in matching small variances, we noted that this issue occurs when fitting the drift of SDEs in general using the method by \cite{ruttor2013approximate} and is not specific to the Schrödinger bridge context.
+In Figure \ref{fig:3mode2d200} we observe that the marginal constraints are enforced to a reasonable amount, matching means quite well, yet struggling partly with the variance. In general, we found that in two dimensions this method struggled in matching small variances. This issue occurs when fitting the drift of SDEs in general using the method by \cite{ruttor2013approximate}.
 
-\subsubsection{Circles Data Set}
+\subsubsection{Circles Dataset}
 
 \begin{figure}
     \centering
-    \includegraphics[scale=0.4,trim={5.3cm 1cm 2.5cm 0}, clip]{images/GP/gp_circles_trajectories_200_big.png}
-    \caption{ Fitted SB trajectories for unimodal to circles data.  We can observe the nice and clear concentric circles trajectories arising }
+    \includegraphics[scale=0.4,trim={5.3cm 2cm 2.5cm 0}, clip]{images/GP/gp_circles_trajectories_200_big.png}
+    \caption{ Fitted SB trajectories using the DDE method for unimodal to circles data.  We can observe the nice and clear concentric circles trajectories arising in the learned bridge. }
     \label{fig:circ2d200trajectroies2d}
 \end{figure}
 \begin{figure}
     \centering
-    \includegraphics[scale=0.4,trim={2.3cm 1cm 2.5cm 0}, clip]{images/GP/gp_circles_scatter_200_big_.png}
-    \caption{ Fitted SB Boundary distributions}
+    \includegraphics[scale=0.4,trim={2.3cm 1cm 3.5cm 0}, clip]{images/GP/gp_circles_scatter_200_big_.png}
+    \caption{ Fitted SB Boundary distributions using the DDE method on unimodal to circles data.}
     \label{fig:circ2d200scatter2d}
 \end{figure}
 \begin{figure}
     \centering
     \includegraphics[scale=0.4,trim={2.3cm 1cm 2.5cm 0}, clip]{images/GP/gp_circles_hist_200_big.png}
-    \caption{ Fitted SB Boundary distribution histograms.}
+    \caption{ 2D histograms for the fitted SB marginals using the DDE method for unimodal to circles data.}
     \label{fig:circ2d20hist2d}
 \end{figure}
-We  used the Circles Dataset \citep{pedregosa2011scikit} which consists of two concentric circles. In this task we consider mapping from a standardised unimodal Gaussian to the Circles data.
+We  used the circles dataset \citep{pedregosa2011scikit} which consists of two concentric circles. In this task we consider mapping from a standardised unimodal Gaussian to the Circles data.
 \begin{align*}
      \color{blue}{\pi_0(\vx)} &\color{blue}{= \calN(\vx; \vzero,  \mathbb{I}_2)} \\
-    \color{red}{\hat{\pi}_1(\vy)} &\color{red}{= \text{GenerateCircles(factor=0.3, radius=3.5, noise=0.03)}}
+    \color{red}{\hat{\pi}_1(\vy)} &\color{red}{= \text{GenerateCircles(factor=0.3, radius=3.5, noise=0.03)}}.
 \end{align*}
-The radius and factor (distance between circles) were picked such that the data was still within a close proximity to the origin whilst making the circles distinct.
+The radius and factor (distance between circles) were picked so the data was still within a close proximity to the origin, whilst making the circles distinct.
 
 We can see from Figure \ref{fig:circ2d200trajectroies2d} that some very structured inner circle like trajectories are formed going forwards and backwards with a dual like pattern. Furthermore from Figures \ref{fig:circ2d200scatter2d}, \ref{fig:circ2d20hist2d} we can observe a good fit in terms of structure, however the fits of our method are  bit more dispersed they seem to have higher variance. We noticed this can be improved partially with using more training data and tweaking the GP hyper-parameters, further experiments should be carried out to diagnose and solve this issue. 
 
 
-\subsubsection{Moons Data Set}
+\subsubsection{Moons Dataset}
 
 \begin{figure}
     \centering
     \includegraphics[scale=0.4,trim={5.3cm 1cm 2.5cm 0}, clip]{images/GP/moons_2d_gp_trajectories_short_200.png}
-    \caption{ Fitted SB trajectories for unimodal to moons data.  }
+    \caption{ Fitted SB trajectories using the DDE method for unimodal to moons data.  }
     \label{fig:moon2d200trajectroies2d}
 \end{figure}
 \begin{figure}
     \centering
     \includegraphics[scale=0.4,trim={2.3cm 1cm 2.5cm 0}, clip]{images/GP/gp_moons_scatter_200_big_.png}
-    \caption{ Fitted SB Boundary distributions}
+    \caption{ Fitted SB Boundary distributions using the DDE method for unimodal to moons data.}
     \label{fig:moon2d200scatter2d}
 \end{figure}
 \begin{figure}
     \centering
     \includegraphics[scale=0.4,trim={2.3cm 1cm 2.5cm 0}, clip]{images/GP/moons_2d_gp_hist_short_200.png}
-    \caption{ Fitted SB Boundary distribution histograms.}
+    \caption{2D histograms for the fitted SB marginals using the DDE method for unimodal to moons data.}
     \label{fig:moon2d20hist2d}
 \end{figure}
 We use the moons dataset from \cite{pedregosa2011scikit}, generated by the following procedure:
@@ -1915,21 +1928,21 @@ We use the moons dataset from \cite{pedregosa2011scikit}, generated by the follo
      \color{blue}{\pi_0(\vx)} &\color{blue}{= \calN(\vx; \vzero,  \mathbb{I}_2)} \\
     \color{red}{\hat{\pi}_1(\vy)} &\color{red}{= \text{GenerateMoons(scale\_x=1.8, scale\_y=3.8, noise=0.03)}}.
 \end{align*}
-Just like with the circles dataset the scales where picked to give a nice visual scale and a clear separation between the moons. We did this in order to make the task as simple as possible given that we were still in an early/exploratory stage.
+Similar to the circles dataset, the scales were picked to give a nice visual scale and a clear separation between the moons. This was done in order to make the task as simple as possible given that we were still in an exploratory stage.
 
 
-\section{Stochastic Control Approach}
+\section{Stochastic Control (SC)  Approach}
 \begin{figure}
     \centering
-    \includegraphics[scale=0.4,trim={2.3cm 1cm 2.5cm 0}, clip]{images/Control/big_var_loss.png}
-    \caption{Loss per epoch for fitted unimodal SB using tanh activation, single layer and 200 hidden units}
+    \includegraphics[scale=0.4,trim={2.3cm 1cm 2.5cm 0cm}, clip]{images/Control/big_var_loss.png}
+    \caption{Loss per epoch for fitted unimodal SB using tanh activation, single layer and 200 hidden units for SC approach.}
     \label{fig:epochsbigvarnn}
 \end{figure}
-Throughout this section we experiment we use neural networks \citep{lecun2015deep} and experiment with 3 different types of activation's : Tanh, Hard Tanh, ReLu.  We varied layer widths and depths in order  to obtain good results in the specific experiments without a careful regard for overfitting since as mentioned earlier we are merely exploring the capacities and faults of the approaches. Across all experiments we initialise the weights of the neural networks using the Glorot initialisation \citep{glorot2010understanding} and we used the Adagrad optimiser \citep{duchi2011adaptive}. Due to the KNN based approach to computing cross entropy being unstable/difficult to optimise in practice we settled with using the KDE based approach across all experiments. This method allowed for using bigger datasets than the previous two methods, thus we used 900 datapoints in each toy dataset, 100 time steps for the EM method and a batch size of 900 (a single batch) for the optimiser. 
+Throughout this section we employ neural networks \citep{lecun2015deep} to parametrise the drifts in Equation \ref{eq:drift_param} and experiment with 3 different types of activations : Tanh, Hard Tanh, ReLu.  We varied layer widths and depths in order  to obtain good results in the specific experiments without a careful regard for overfitting, since, as mentioned earlier, we are merely exploring the capacities and faults of the approaches. Across all experiments, we initialise the weights of the neural networks using Glorot initialisation \citep{glorot2010understanding} and we used the Adagrad optimiser \citep{duchi2011adaptive}. Due to the KNN based approach to computing cross entropy being unstable, we settled with using the KDE based approach across all experiments. This method allowed using bigger datasets than the previous two methods, thus we used 900 datapoints in each toy dataset, 100 time steps for the EM method and a batch size of 900 (only one batch) for the optimiser. 
 \begin{figure}
     \centering
-    \includegraphics[scale=0.4,trim={2.3cm 1cm 2.5cm 0}, clip]{images/Control/big_var_marginals_best_tanh_trajectories.png}
-    \caption{ Fitted SB  trajectories using tanh activation, single layer and 200 hidden units}
+    \includegraphics[scale=0.4,trim={2.3cm 1.9cm 2.5cm 2cm}, clip]{images/Control/big_var_marginals_best_tanh_trajectories.png}
+    \caption{ Fitted SB trajectories using the SC method with tanh activations, single layer and 200 hidden units, fitted on the unimodal dataset. Note that the trajectories seem much smoother than the ones induced by the direct drift approach. This is merely a visual effect that is due to the scale of the y axis being much higher. In other words you cannot see the noise if you zoom out.}
     \label{fig:trajectoriesbigvarnn}
 \end{figure}
 \subsection{Unimodal Experiments}
@@ -1943,19 +1956,19 @@ data was generated using:
 \end{align*}
 \begin{figure}
     \centering
-    \includegraphics[scale=0.4,trim={2.3cm 1cm 2.5cm 0}, clip]{images/Control/big_variance_tanh_marginals.png}
-    \caption{ Fitted SB  boundary distributions using tanh activation, single layer and 200 hidden units}
+    \includegraphics[scale=0.4,trim={2.3cm 2cm 2cm 2cm}, clip]{images/Control/big_variance_tanh_marginals.png}
+    \caption{ Fitted SB  boundary distributions using the SC method with tanh activations, single layer and 200 hidden units. }
     \label{fig:boundsbigvarnn}
 \end{figure}
 
-For these particular experiments we found very little differences among the trajectories learned by different activations.
+For these particular experiments we found very little differences among the trajectories learned by different activations. Results can be found in Figures \ref{fig:boundsbigvarnn} and \ref{fig:trajectoriesbigvarnn}, from which we can see a good fit for the marginal with low variance, but a not so good fit for the high variance distribution where the variance seems to be matched but the mode is not.
 \subsection{Multimodal Experiments}
 In this section we followed the generative process:
 \begin{align*}
      \color{blue}{\pi_0(x)} &\color{blue}{= \calN(x; 0,  1)} \\
     \color{red}{\pi_1(y)} &\color{red}{= \frac{1}{2}\calN(y; 20, 0.6 ^2)}\color{red}{ + \frac{1}{2}\calN(y; -20, 0.6 ^2) }.
 \end{align*}
-Furthermore we parametrised the drifts with 3 hidden layers each of 20 hidden units. With the exception of the final experiment and best performing model for which we used 2 hidden layers each of 200 units. In general we found that increasing the number of units and layers made the optimisation process more unstable and typically required reducing the initial step size for the optimiser.
+Furthermore we parametrised the drifts with 3 hidden layers each of 20 hidden units. With the exception of the final experiment and best performing model for which we used 2 hidden layers each of 200 units. In general we found that increasing the number of units and layers made the optimisation process more unstable and typically required reducing the initial step size for the optimiser. As mentioned earlier we carry out these experiments to see how the stochastic control based approach can handle mode collapse.
 \subsubsection{ReLu}
 \begin{figure}
     \centering
@@ -1966,13 +1979,13 @@ Furthermore we parametrised the drifts with 3 hidden layers each of 20 hidden un
 \begin{figure}
     \centering
     \includegraphics[scale=0.4,trim={2.3cm 1cm 2.5cm 0}, clip]{images/Control/bimod_final_relu_boundaires.png}
-    \caption{ Fitted SB  boundary distributions using ReLu activation, 3 hidden layers of 20 hidden units each}
+    \caption{ Fitted SB  boundary distributions using the SC method with ReLu activations, 3 hidden layers of 20 hidden units each}
     \label{fig:boundsbimodrelunn}
 \end{figure}
 \begin{figure}
     \centering
     \includegraphics[scale=0.7,trim={0cm 0cm 0cm 0}, clip]{images/Control/almost_perfect_bimodal_relu.PNG}
-    \caption{ Additional bimodal experiment - Fitted SB  trajectories using ReLu activation, 3 hidden layers of 20 hidden units each}
+    \caption{ Additional bimodal experiment - Fitted SB  trajectories using the SC method with ReLu activations, 3 hidden layers of 20 hidden units each}
     \label{fig:trajectoriesbimodrelunn_}
 \end{figure}
 
@@ -1984,13 +1997,13 @@ Here we use the hyperbolic-tangent (Tanh) as the activation function. We also ex
 \begin{figure}
     \centering
     \includegraphics[scale=0.4,trim={2.3cm 1cm 2.5cm 0}, clip]{images/Control/bimodal_marginals_best_tanh_trajectories.png}
-    \caption{ Fitted SB  trajectories using tanh activation, 3 hidden layers of 20 hidden units each}
+    \caption{ Fitted SB  trajectories using the SC method with tanh activations, 3 hidden layers of 20 hidden units each}
     \label{fig:trajectoriesbimodtanhnn}
 \end{figure}
 \begin{figure}
     \centering
     \includegraphics[scale=0.4,trim={2.3cm 1cm 2.5cm 0}, clip]{images/Control/bimodal_marginals_best_tanh.png}
-    \caption{ Fitted SB  boundary distributions using tanh activation, 3 hidden layers of 20 hidden units each}
+    \caption{ Fitted SB  boundary distributions using the SC method with tanh activations, 3 hidden layers of 20 hidden units each}
     \label{fig:boundsbimodtanhnn}
 \end{figure}
 We can observe from Figure's \ref{fig:trajectoriesbimodtanhnn} and \ref{fig:boundsbimodtanhnn} that the method roughly matches the means plus there is a clear dual nature between the trajectories. However we can see that a strange spike forms where the two modes try to merge, this spike has a much sharper variance than the actual marginal and seems the an issue specific the tanh (and sigmoid and hard-tanh) based activations seem to experience when merging modes. We found that increasing the number of hidden units improved this effect however we could not remove it completely. 
@@ -2013,7 +2026,7 @@ and it is a piecewise analogue of the tanh function just like the step function 
 \begin{figure}
     \centering
     \includegraphics[scale=0.4,trim={2.3cm 1cm 2.5cm 0}, clip]{images/Control/hard_tanh_200_200_succesfl_bimodal_boundaires.png}
-    \caption{ Fitted SB  boundary distributions using hard-tanh activation, 2 hidden layers and 200 hidden units per layer}
+    \caption{ Fitted SB  boundary distributions using the SC method with hard-tanh activations, 2 hidden layers and 200 hidden units per layer}
     \label{fig:boundsbimodtanhnnhard}
 \end{figure}
 As we can see from Figures \ref{fig:trajectoriesbimodtanhnnhard} and \ref{fig:boundsbimodtanhnnhard} the trajectories and results are similar to when using a tanh activation function, however the spike caused when the trajectories merge was less prominent, we believe that increasing the parameters of the network led to this improvement. Unfortunately we were unable to improve on this issue further.  We explored several other activations. Overall hard-tanh gave the best results when it came to splitting.
@@ -2023,7 +2036,7 @@ An interesting empirical observation we found is that increasing the depth of th
 \begin{figure}[t]
     \centering
     \includegraphics[scale=0.4,trim={2.3cm 1cm 2.5cm 0}, clip]{images/Control/mode_colapse_final_relu_trajectories.png}
-    \caption{ Mode collapse example, using tanh activation, 3 hidden layers 20 hidden units each.}
+    \caption{ Mode collapse example, using the SC method with tanh activations, 3 hidden layers 20 hidden units each.}
     \label{fig:trajectoriesmodecop}
 \end{figure}
 As mentioned earlier, due to minimising the reverse KL numerically this method is in theory prone to mode collapse. We found that in practice mode collapse did happen quite often , specially when the marginals where not symmetrically positioned relative to each other. 
@@ -2109,7 +2122,7 @@ At the core of the direct drift estimation approach, we have successfully transf
 The key contributions of this thesis are:
 
 \begin{itemize}
-    \item Provided a thorough and accessible introduction to the problem, with motivational examples closer to machine learning as well as intuitive proof sketch for steps that are skipped in the available literature.
+    \item Provided a thorough and accessible introduction to the problem, with motivational examples closer to machine learning as well as intuitive proof sketches for steps that are skipped in the available literature.
     \item Structured the existing IPFP algorithmic framework and provided formal connections between existing methods, highlighting that they are within the IPFP framework.
     \item Turned the iterative procedure for solving the Schrödinger bridge into a classical machine learning task (i.e. regression). This contribution makes the problem much more accessible to the ML community.
     \item Proposed, implemented and evaluated two new working methods that use common methodology from machine learning. The newly proposed methods overcome some of the conceptual issues in \cite{pavon2018data}.
@@ -2140,7 +2153,7 @@ The goal of this sub section is to illustrate the challenges in parametrising th
 
 \section{Unimodal Gaussian Like Parametrisation}
 
-Following the reparametrisation introduced in the section \ref{sec:unormfit} we consider the case of parametrising the potentials with unimodal Gaussian's this allows for further analysis of the method since both the normalisation and the updates can be attained in closed form. 
+Following the reparametrisation introduced in the Section \ref{sec:unormfit} we consider the case of parametrising the potentials with unimodal Gaussian's this allows for further analysis of the method since both the normalisation and the updates can be attained in closed form. 
 
 Firstly we put forward the following counter example that valid Gaussian like parametrisation's for the potentials cannot solve the bridge even for uni-modal Gaussian marginals:
 \begin{proposition}
