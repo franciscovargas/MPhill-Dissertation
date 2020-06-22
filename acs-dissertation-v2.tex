@@ -20,7 +20,7 @@
 \def\authorcollege{Girton College\xspace}
 \def\authoremail{fav25@cam.ac.uk}
 \def\dissertationtitle{Machine Learning Approaches for The Empirical Schrödinger Bridge Problem}
-\def\wordcount{13487}
+\def\wordcount{14962}
 
 
 %\usepackage[dvips]{epsfig,graphics} 
@@ -92,6 +92,7 @@
 \input{titlepage}
 \onehalfspacing
 \input{declaration}
+\input{acknowledgements}
 \singlespacing
 \input{abstract}
 
@@ -397,7 +398,7 @@ A direct consequence of this result is
     \int_A f(\vx) d\P(\vx) =  \int_{A} f(\vx)  \frac{d\P}{d\Q}(\vx)  d\Q(\vx).
 \end{align*}
 
-The change of measure above is analogous to the trick carried out when we do importance sampling \citep{martino2017effective}. The RN derivative is effectively the same as the importance sample weights, and it in fact reduces to a ratio of PDFs for the case when the PDFs of the respective distributions are available.
+The change of measure above is analogous to the trick employed when we do importance sampling \citep{martino2017effective}. The RN derivative is effectively the same as the importance sample weights, and it in fact reduces to a ratio of PDFs for the case when the PDFs of the respective distributions are available.
 \begin{figure}[t!]
     \centering
     \includegraphics[scale=0.3]{images/disint2.png}
@@ -467,7 +468,7 @@ The above result is used across a variety of different texts in stochastic proce
 \subsection{RN Derivative of Itô Processes}
 
 
-As we hinted earlier, Itô processes do not admit a PDF, since they are not absolutely continuous with respect to the Lebesgue measure. However, some Itô processes are absolutely continuous with respect to one another, and thus we are able to compute their RN derivatives, which is useful if we want to compute the KL divergence between the two processes.  First, we must introduce the following notation:
+As hinted earlier, Itô processes do not admit a PDF, since they are not absolutely continuous with respect to the Lebesgue measure. However, some Itô processes are absolutely continuous with respect to one another, and thus we are able to compute their RN derivatives, useful for calculating the KL divergence between the two processes.  First, we must introduce the following notation:
 \begin{definition} (Path measure) \label{def:pathmesu}
     For an Itô process of the form
     \begin{align*}
@@ -479,7 +480,7 @@ As we hinted earlier, Itô processes do not admit a PDF, since they are not abso
 In short, the path measure represents the probability measure associated to the stochastic process specified by the SDE.  For example, $\W_{\gamma}$ is the Wiener measure and represents the path measure of a Wiener process with volatility $\sqrt{\gamma}$
  (i.e. $d\rvx(t) = \sqrt{\gamma} d \rvw(t)$). For a more formal introduction to path measures, we require the notion of a \textit{path integral}. We point the reader to \cite{sarkka2019applied, oksendal2003stochastic} for a more thorough introduction.
  
-Now, we can go ahead and present the following theorem \citep{sarkka2019applied}:
+We can now present the following theorem \citep{sarkka2019applied}:
 \begin{theorem}\label{thrm:ito_ratio}\citep{sarkka2019applied}
 Given two Itô processes with the same constant volatility: 
     \begin{align*}
@@ -488,10 +489,10 @@ Given two Itô processes with the same constant volatility:
     \end{align*}
 the RN derivative of their respective path measures $\P,\Q$ is given by
 \begin{align} \label{eq:girsanov}
-    \frac{d\P}{d\Q}(\cdot) = \exp\left(-\frac{1}{2\sigma^2}\int_0^t ||\rvb_1(s) - \rvb_2(s)||^2 ds + \frac{1}{\sigma^2}\int_0^t (\rvb_1(s) - \rvb_2(s))^{\top}d\rvw(s) \right).
+    \frac{d\P}{d\Q}(\cdot) = \exp\left(-\frac{1}{2\sigma^2}\int_0^t ||\rvb_1(s) - \rvb_2(s)||^2 ds + \frac{1}{\sigma^2}\int_0^t (\rvb_1(s) - \rvb_2(s))^{\top}d\rvw(s) \right),
 \end{align}
 \end{theorem}
-Where the type signature of this RN-derivative is $\frac{d\P}{d\Q}: C(T, \R^d) \rightarrow \R$, for example if  $\rvb_1(s)=\vb_1(\rvx(s), s)$ and $\rvb_2(s)=\vb_2(\rvx(s), s)$ we can write:
+where the type signature of this RN derivative is $\frac{d\P}{d\Q}: C(T, \R^d) \rightarrow \R$. For example, if  $\rvb_1(s)=\vb_1(\rvx(s), s)$ and $\rvb_2(s)=\vb_2(\rvx(s), s)$ we can write
 \begin{align*}
     \frac{d\P}{d\Q}(\vx(t)) = \exp\Bigg(-&\frac{1}{2\sigma^2}\int_0^t ||\vb_1(\vx(s), s) - \vb_2(\vx(s), s)||^2 ds \\ 
     &+ \frac{1}{\sigma^2}\int_0^t \big(\vb_1(\vx(s), s) - \vb_2(\vx(s), s)\big)^{\top}d\rvw(s) \Bigg).
@@ -544,47 +545,47 @@ For a more technically thorough introduction, please check \cite{leonard2013surv
 We can see how the extremisation in the exponent of Equation \ref{eq:max_ent} may be a difficult problem numerically, since it involves two boundary-value constraints, which cannot both be enforced without introducing computational overhead. For example, using the approach of Lagrange multipliers will turn the problem into one of finding a saddle point, rather than a minimisation for which our current tools are better suited.
 
 \section{Dynamic Formulation}
-The dynamic formulation of the Schrödinger bridge follows directly from the exponent in the maximum entropy formulation. The dynamic version of the Schrödinger bridge is written in terms of path measures that describe the stochastic dynamics defined over the unit interval.
+The dynamic formulation of the Schrödinger bridge follows directly from the exponent in the maximum-entropy formulation. The dynamic version of the Schrödinger bridge is written in terms of path measures, that describe the stochastic dynamics defined over the unit interval.
 \begin{definition}
-    (Dynamic Schrödinger Problem) The dynamic Schrödinger problem is given by:
+    (Dynamic Schrödinger problem) The dynamic Schrödinger problem is given by
     \begin{align}
-        \inf_{\Q \in \calD(\pi_0, \pi_1)} \KL\left(\Q \big|\big| \W^{\gamma}\right).
+        \inf_{\Q \in \calD(\pi_0, \pi_1)} \KL\left(\Q \big|\big| \W^{\gamma}\right),
     \end{align}
-    Where $\Q \in \calD(\pi_0, \pi_1)$ is a path measure with prescribed marginals of $\pi_0, \pi_1$ at times $0, 1$ and $\W_{\gamma}$ is the Wiener measure with volatility $\gamma$ (see Definition \ref{def:pathmesu}). 
+    where $\Q \in \calD(\pi_0, \pi_1)$ is a path measure with prescribed marginals of $\pi_0, \pi_1$ at times $0, 1$, and $\W_{\gamma}$ is the Wiener measure with volatility $\gamma$ (see Definition \ref{def:pathmesu}). 
 \end{definition}
 \subsection{As a Stochastic Control Problem}
 
-This formulation of the Schrödinger bridge problem is characterised in terms of extremising a mean squared error styled objective with respect to the drift that describes the SDE for $\Q$. This formulation will allow us to naturally enforce one of the boundary value constraints as an initial value, which will be helpful in the design of an iterative procedure for solving the Schrödinger bridge problem.
+This formulation of the Schrödinger bridge problem is characterised in terms of extremising a mean-squared-error-styled objective with respect to the drift that describes the SDE for $\Q$. This formulation will allow us to naturally enforce one of the boundary value constraints as an initial value, which will be helpful in the design of an iterative procedure for solving the Schrödinger bridge problem.
 
-The two results presented below are from \cite{pavon1991free}. For pedagogical reasons we provide a proof sketch of these two results.
+The two results presented below are from \cite{pavon1991free}. For pedagogical reasons, we provide a proof sketch of these two results.
 
-We can represent $\Q$ as the distribution which evolves according to the solution of an SDE of the form:
+We can represent $\Q$ as the distribution which evolves according to the solution of an SDE of the form
 \begin{align*}
-    d\rvx(t) = \rvb^{+}(t) dt + \sqrt{\gamma} \rvw^+(t)
+    d\rvx(t) = \rvb^{+}(t) dt + \sqrt{\gamma} \rvw^+(t).
 \end{align*}
 \begin{lemma}\citep{pavon1991free}
-    The KL Divergence between $\Q$ and $\W_{\gamma}$ can be decomposed as:
+    The KL divergence between $\Q$ and $\W_{\gamma}$ can be decomposed as
 \begin{align}\label{eq:free_energy_1}
      \KL\left(\Q \big|\big| \W^{\gamma}\right) = \KL(p^{\Q}_0 || p_0^{ \W^{\gamma}}) + \E_\Q\left[\int_0^1 \frac{1}{2\gamma}\big|\big|\rvb^{+}(t) \big|\big|^2 dt\right].
 \end{align}
-We use the notation $p^{\calX}_t$ for the marginal induced by path measure $\calX$ at time $t$. We refer to this expression (Equation \ref{eq:free_energy_1}) as the stochastic control formulation of the Schrödinger bridge problem.
+We use the notation $p^{\calX}_t$ for the marginal induced by path measure $\calX$, at time $t$. We refer to this expression (Equation \ref{eq:free_energy_1}) as the stochastic control formulation of the Schrödinger bridge problem.
 \end{lemma}
 \begin{proof}
-Via the disintegration theorem and Theorem \ref{lemma:rn_des} we can condition on the endpoint and re-write the RN derivative as:
+Via the Disintegration Theorem and Theorem \ref{lemma:rn_des}, we can condition on the endpoint and re-write the RN derivative as
 \begin{align*}
     \frac{d\Q}{d\W^{ \gamma}} = \frac{p_0^\Q}{p_0^{ \W^{\gamma}}} \frac{d\Q_{(0,1]}}{d\W_{(0,1]}^{\gamma}}\left(\cdot | \rvx(0) =\vx\right),
 \end{align*}
-where the disintegration $\Q_{(0,1]}\left(\cdot | \rvx(0) = \vx \right)$ is a solution $d\rvx(t) = \rvb_t^+ dt + \sqrt{\gamma} \rvw^+(t), \; \rvx(0) \sim p_0^\Q$ then by Theorem \ref{thrm:ito_ratio} we can express the RN-derivative in terms of  drift $\rvb_t^+$:
+where the disintegration $\Q_{(0,1]}\left(\cdot | \rvx(0) = \vx \right)$ is a solution to $d\rvx(t) = \rvb_t^+ dt + \sqrt{\gamma} \rvw^+(t)$. Then, by Theorem \ref{thrm:ito_ratio}, we can express the RN derivative in terms of  the drift $\rvb_t^+$:
 \begin{align*}
-    \frac{d\Q}{d\W^{\gamma}} = \frac{p_0^\Q}{p_0^{ \W^{\gamma}}}\exp\left(\int_0^1\frac{1}{2\gamma} \big|\big|\rvb^+(t)\big|\big|^2 dt\right),
+    \frac{d\Q}{d\W^{\gamma}} = \frac{p_0^\Q}{p_0^{ \W^{\gamma}}}\exp\left(\int_0^1\frac{1}{2\gamma} \big|\big|\rvb^+(t)\big|\big|^2 dt\right).
 \end{align*}
- substituting the above back into the KL divergence completes the result for Theorem \ref{eq:free_energy_1}.
+Substituting the above back into the KL divergence completes the result for Theorem \ref{eq:free_energy_1}.
 \end{proof}
  We can equivalently express $\Q$ as the solution to a reverse time diffusion:
 \begin{align}
     d\rvx(t) = \rvb^{-}(t) dt + \sqrt{\gamma} \rvw^{-}(t), 
 \end{align}
-where $\rvx(t)$ is adapted to the reverse filtration $(\calF^{-}_i)_{i\in T}$ that is $\calF^{-}_t \subseteq \calF^{-}_s, \; s \leq t$\footnote{this simply means $\rvx(t)$  is only aware about the future.} and:
+where $\rvx(t)$ is adapted to the reverse filtration $(\calF^{-}_i)_{i\in T}$, that is $\calF^{-}_t \subseteq \calF^{-}_s, \; s \leq t$\footnote{This simply means $\rvx(t)$ is only aware about the future.}, and
 \begin{align}\label{eq:nelson}
     {\rvb^{+}(t) - \rvb^{-}(t)} =\gamma \nabla_{\vx} p(\rvx(t), t),
 \end{align}
@@ -592,12 +593,12 @@ where $p(\rvx(t), t)$ is the solution to the FPK equation. The above is typicall
 
 Using reverse diffusion, \cite{pavon1991free} decompose the KL divergence as done with the forward diffusion:
 \begin{lemma}\label{lemma:control}\citep{pavon1991free}
-    The KL Divergence between $\Q$ and $\W^{\gamma}$ can be decomposed as:
+    The KL divergence between $\Q$ and $\W^{\gamma}$ can be decomposed as
 \begin{align}\label{eq:free_energy_2}
      \KL\left(\Q \big|\big| \W^{\gamma}\right) = \KL(p^{\Q}_1 || p_1^{ \W^{\gamma}}) + \E_\Q\left[\int_0^1\frac{1}{2\gamma} \big|\big|\rvb^{-}(t)\big|\big|^2 dt\right].
 \end{align}
 \end{lemma}
-Using the drift based formulations defined above, \cite{pavon1991free} derive alternate (yet equivalent) objectives for the Schrödinger Bridge problem:
+Using the drift-based formulations defined above, \cite{pavon1991free} derive alternate (yet equivalent) objectives for the Schrödinger Bridge problem:
 
 \begin{itemize}
 \item Forward Objective: 
@@ -611,10 +612,10 @@ Using the drift based formulations defined above, \cite{pavon1991free} derive al
     s.t.\;\;\; d\rvx(t) = \rvb^{-}(t) &dt + \sqrt{\gamma} \rvw^{-}(t), \;\; \rvx(1) \sim \pi_1 , \;\; \rvx(0) \sim \pi_0.
 \end{align}
 \end{itemize}
-Notice that the conditioning carried out by the disintegration theorem allows us to remove one of the boundary constraints and integrate it as an initial value problem to the objective. This result inspired us the most in the design of an iterative algorithm for solving the Schrödinger bridge numerically. 
+Where $\calB$ represents the space of admissible control signals or equivalently the space of valid drifts. Notice that the conditioning carried out by the disintegration theorem allows us to remove one of the boundary constraints and integrate it as an initial value problem to the objective. This result inspired us the most in the design of an iterative algorithm for solving the Schrödinger bridge numerically. 
 \section{Static Formulation}
 \begin{definition}\label{def:static_bridge}
-    (Static Schrödinger Problem) The static Schrödinger bridge consists in finding the joint distribution $q(\vx, \vy) \in \calD(\pi_0(\vx), \pi_1(\vy))$ which is closest to the Brownian motion prior, subject to marginal constraints, that is:
+    (Static Schrödinger Problem) The static Schrödinger bridge consists in finding the joint distribution $q(\vx, \vy) \in \calD(\pi_0(\vx), \pi_1(\vy))$, which is closest to the Brownian-motion prior subject to marginal constraints, that is
     \begin{align}\label{eq:static_bridge}
         \inf_{q(\vx,\vy)} \KL (q(\vx,\vy)  &|| p^{\W^{\gamma}}(\vx,\vy)) \nonumber \\
         s.t. \;\;\; \pi_0(\vx) = \int q(\vx,\vy) d\vy, &\;\;\pi_1(\vy) = \int q(\vx,\vy) d\vx.
@@ -622,80 +623,80 @@ Notice that the conditioning carried out by the disintegration theorem allows us
 \end{definition}
 We will now derive this result from the dynamic version. Most surveys and papers on the Schrödinger bridge include some form of this derivation, however they skip several steps which might make it inaccessible. 
 \begin{theorem}\citep{follmer1988random}
-    The dynamic Schrödinger bridge is solved by:
+    The dynamic Schrödinger bridge is solved by
 \begin{align}
     \Q^{*} (\cdot) =  \int \W^{\gamma} \left(\cdot | \vx, \vy\right)  q^{*}(\vx,\vy) d\vx d\vy ,
 \end{align}
-    where $q^*$ is the optimal density that solves the static bridge:
+    where $q^*$ is the optimal density that solves the static bridge
     \begin{align*}
         q^{*}(\vx,\vy)& = \arginf_{q(\vx,\vy)} \KL (q(\vx,\vy)  || p^{\W^{\gamma}}(\vx,\vy)),  \\
         s.t. \;\;\; \pi_0(\vx) &= \int q(\vx,\vy) d\vy, \;\;\pi_1(\vy) = \int q(\vx,\vy) d\vx,
     \end{align*}
-    and:
+    and
     \begin{align*}
-        \W^{\gamma} \left(\cdot | \vx, \vy\right)  = \W_{(0,1)}^{\gamma}\left(\cdot | \rvx(0) =\vx, \rvx(1) =\vy\right),
+        \W^{\gamma} \left(\cdot | \vx, \vy\right)  = \W_{(0,1)}^{\gamma}\left(\cdot | \rvx(0) =\vx, \rvx(1) =\vy\right)
     \end{align*}
     is the conditional (disintegration) of the Wiener measure about its endpoints.
 \end{theorem} %\vspace{-0.6cm}
 \begin{proof}
-Firstly we decompose the KL divergence over path measures $\KL\left(\Q \big|\big| \W\right)$ using Lemma \ref{lemma:rn_des}, conditioning on the endpoints $\rvx(0), \rvx(1)$ we can re-express the RN-derivative as:
+Firstly, we decompose the KL divergence over path measures $\KL\left(\Q \big|\big| \W\right)$ using Lemma \ref{lemma:rn_des}, and conditioning on the endpoints $\rvx(0), \rvx(1)$ we can re-express the RN derivative as
 \begin{align}
     \frac{d\Q}{d\W^\gamma} = \frac{q(\vx, \vy)}{p^{\W^{\gamma}}(\vx, \vy)}\frac{d\Q_{(0,1)}}{d\W_{(0,1)}^\gamma}\left(\cdot | \rvx(0) =\vx, \rvx(1) =\vy\right).
 \end{align}
-Let $\Q_{(0,1)}(\cdot |  \rvx(0) =\vx, \rvx(1) =\vy) = \Q(\cdot |  \vx,\vy)$. Substituting the above decomposition back into the KL divergence and marginalising where possible we arrive at: 
+Let $\Q_{(0,1)}(\cdot |  \rvx(0) =\vx, \rvx(1) =\vy) = \Q(\cdot |  \vx,\vy)$. Substituting the above decomposition back into the KL divergence and marginalising where possible, we arrive at 
 \begin{align} \label{eq:follmer_kl}
-    \KL\left(\Q \big|\big| \W^{\gamma}\right) =&  \KL\left(q(\vx, \vy) \big|\big| p^{\W^{\gamma}}(\vx. \vy) \right)  + \E_{\Q}\left[\frac{d\Q}{d\W^\gamma}\left(\cdot | \vx, \vy\right)\right], \nonumber \\
+    \KL\left(\Q \big|\big| \W^{\gamma}\right) =&  \KL\left(q(\vx, \vy) \big|\big| p^{\W^{\gamma}}(\vx. \vy) \right)  + \E_{\Q}\left[\frac{d\Q}{d\W^\gamma}\left(\cdot | \vx, \vy\right)\right] \nonumber \\
     =&  \KL\left(q(\vx, \vy) \big|\big| p^{\W^{\gamma}}(\vx. \vy) \right)  + \E_{q(\vx,\vy)}\left[\KL\left(\Q(\cdot |  \vx,\vy)\big|\big|\W^{\gamma}(\cdot |  \vx,\vy)\right)\right].
 \end{align}
-Notice that the conditional $\Q_{(0,1)}(\cdot |  \rvx(0) =\vx, \rvx(1) =\vy)$ is not affected by the boundary constraints, thus we can set $\Q(\cdot | \vx,\vy) = \W^\gamma\left(\cdot | \vx, \vy\right)$ making the second term 0, and leaving us with the static bridge. It then suffices to reverse the disintegration theorem in order to build up $\Q^{*}$ from $q^{*}$ and $\Q^{*}(\cdot | \vx,\vy)$ completing the proof.
+Notice that the conditional $\Q_{(0,1)}(\cdot |  \rvx(0) =\vx, \rvx(1) =\vy)$ is not affected by the boundary constraints, thus we can set $\Q(\cdot | \vx,\vy) = \W^\gamma\left(\cdot | \vx, \vy\right)$, making the second term 0, and leaving us with the static bridge. It then suffices to reverse the disintegration theorem, in order to build up $\Q^{*}$ from $q^{*}$ and $\Q^{*}(\cdot | \vx,\vy)$, completing the proof.
 \end{proof}
 
 The earliest references we found for the above result are given by \cite{follmer1988random}, where the decomposition of the KL divergence for two diffusions (Equation \ref{eq:follmer_kl}) is provided. However, we were not able to find a good reference for Lemma \ref{lemma:rn_des} and thus we have provided an instructive derivation for it.
-\subsection{As an Entropy Regularised Optimal Transport Problem}
+\subsection{As an Entropy-Regularised Optimal Transport Problem}
 
-The optimal transport problem in its intuitive form is concerned with the transport of a distribution into another distribution subject to cost $c(\vx,\vy)$. In its discrete histogram based formulation it is referred to as the earth movers distance (EMD) \citep{levina2001earth}, since it can be illustrated as moving in between two piles of earth. One of the early applications of EMD was in comparing grey-scale images for the development of a image retrieval system. 
+The optimal transport problem in its intuitive form is concerned with the transportation of a distribution into another distribution, subject to cost $c(\vx,\vy)$. In its discrete histogram-based formulation, it is referred to as the earth mover's distance (EMD) \citep{levina2001earth}, since it can be illustrated as moving dirt between two piles of earth. One of the early applications of EMD was in comparing grey-scale images for the development of an image retrieval system. 
 
 \begin{definition}
 Formally, the optimal transport problem is given by the following objective:
 \begin{align*}
 \inf_{Q \in \calD(\pi_0, \pi_1)}\int  c(\vx, \vy) dQ(\vx, \vy),
 \end{align*}
-and if $Q$ is absolutely continuous w.r.t.\ to the Lebesgue measure we can express the above as:
+and if $Q$ is absolutely continuous w.r.t.\ to the Lebesgue measure, we can express the above as
 \begin{align*}
 \inf_{Q \in \calD(\pi_0, \pi_1)}\int \int c(\vx, \vy) q(\vx, \vy) d\vx d\vy.
 \end{align*}
-Furthermore, when $ c(\vx, \vy) = || \vx - \vy||^2$  the above resembles the square of the Wasserstein distance $\calW^2_{2}(\pi_0, \pi_1)$ .
+Furthermore, when $ c(\vx, \vy) = || \vx - \vy||^2$, the above resembles the square of the Wasserstein distance $\calW^2_{2}(\pi_0, \pi_1)$.
 \end{definition}
 
-Here we will present and discuss a very well studied \citep{mikami2008optimal,leonard2012schrodinger,leonard2013survey,carlier2017convergence} connection between the static bridge and the Wasserstein distance.  For the Wiener process $\W^\gamma$ prior we have:
+Here, we will present and discuss a very well-studied \citep{mikami2008optimal,leonard2012schrodinger,leonard2013survey,carlier2017convergence} connection between the static bridge and the Wasserstein distance.  For the Wiener process $\W^\gamma$ prior, we have
 \begin{align}
     p^{\W^{\gamma}}(\vx,\vy) = p^{\W^{\gamma}}_0(\vx)\calN(\vy | \vx, \gamma\I),
 \end{align}
-and the term:
+and the term
 \begin{align*}
-    \int q(\vx, \vy)\ln  p^{\W^{\gamma}}_0(\vx) d\vx d\vy =  \int \pi_0(\vx) \ln  p^{\W^{\gamma}}_0(\vx) d\vx  ,
+    \int q(\vx, \vy)\ln  p^{\W^{\gamma}}_0(\vx) d\vx d\vy =  \int \pi_0(\vx) \ln  p^{\W^{\gamma}}_0(\vx) d\vx 
 \end{align*}
-does not depend on $q$ (due to the constraints). Substituting the above into Equation \ref{eq:static_bridge} we arrive at:
+does not depend on $q$ (due to the constraints). Substituting the above into Equation \ref{eq:static_bridge}, we arrive at
 \begin{align}
     &\inf _{q \in \calD(\pi_0, \pi_1)}\int \int -\frac{||\vx - \vy ||^2}{2\gamma} q(\vx, \vy) d\vx d\vy  + \int \int q(\vx, \vy) \ln q(\vx, \vy) d\vx d\vy, \nonumber \\
     &=\inf _{q \in \calD(\pi_0, \pi_1)}\int \int -\frac{||\vx - \vy ||^2}{2} q(\vx, \vy) d\vx d\vy  - \gamma \text{H} \left(q(\vx, \vy)\right),
 \end{align}
-which is an entropy regularised optimal mass transport problem (OMT) \citep{villani2003topics} with a quadratic cost function. Furthermore, as the volatility/noise of the Brownian motion prior goes to 0 ($\gamma \downarrow 0$) the above quantity converges to $\calW^2_{2}(\pi_0, \pi_1)$ (squared Wasserstein distance in an $L_2$ metric space).
+which is an entropy-regularised optimal mass transport problem (OMT) \citep{villani2003topics} with a quadratic cost function. Furthermore, as the volatility/noise of the Brownian-motion prior goes to 0 ($\gamma \downarrow 0$), the above quantity converges to $\calW^2_{2}(\pi_0, \pi_1)$ (squared Wasserstein distance in an $L_2$ metric space).
 \subsection{The Schrödinger System}
 
-Following \cite{pavon2018data} the Lagrangian of Equation \ref{eq:static_bridge} is given by:
+Following \cite{pavon2018data}, the Lagrangian of Equation \ref{eq:static_bridge} is given by
 \begin{align}\label{eq:schro_lagrangian}
     \calL(q, \lambda,  \mu) &=  \KL (q(\vx,\vy)  || p^{\W^{\gamma}}(\vx,\vy))  \nonumber\\
     &+ \int \lambda(\vx)\left( \int q(\vx,\vy)d\vy -\pi_0(\vx)\right)d\vx \nonumber \\
     &+ \int \mu(\vy) \left(\int q(\vx,\vy) d\vx - \pi_1(\vy)\right) d\vy.
 \end{align}
-Let $p^{\W^{\gamma}}(\vx,\vy) = p^{\W^{\gamma}}_0(\vx)p^{\W^{\gamma}}(\vy|\vx)$, where $p^{\W^{\gamma}}_0(\vx)$ is the marginal prior which we are free to set and $p^{\W^{\gamma}}(\vy|\vx)=\calN(\vy | \vx, \gamma\I)$ is the transition density of the prior. Then we set the functional derivative $\frac{\delta \calL}{\delta q(\vx, \vy)}$ to 0 and obtain:
+Let $p^{\W^{\gamma}}(\vx,\vy) = p^{\W^{\gamma}}_0(\vx)p^{\W^{\gamma}}(\vy|\vx)$, where $p^{\W^{\gamma}}_0(\vx)$ is the marginal prior, which we are free to set, and $p^{\W^{\gamma}}(\vy|\vx)=\calN(\vy | \vx, \gamma\I)$ is the transition density of the prior. Then, we set the functional derivative $\frac{\delta \calL}{\delta q(\vx, \vy)}$ to 0 and obtain
 \begin{align*}
     1 + \ln q(\vx, \vy)  - \ln p^{\W^{\gamma}}(\vy|\vx)
     - \ln p^{\W^{\gamma}}_0(\vx)+ \lambda(\vx)
-+ \mu(\vy) = 0, \nonumber
++ \mu(\vy) = 0. \nonumber
 \end{align*}
-rearranging:
+Rearranging, we get
 \begin{align*}
 {q^{*}(\vx, \vy) }  = \exp\left(  \ln p^{\W^{\gamma}}_0(\vx) -\lambda(\vx) -1\right)p^{\W^{\gamma}}(\vy|\vx)\exp\left(- \mu(\vy)\right) ,\nonumber
 \end{align*}
@@ -703,12 +704,12 @@ which we can re-express in terms of the auxiliary potentials $\hphi_0(\vx), \phi
 \begin{align*}
 {q^{*}(\vx, \vy) }  = \hphi_0(\vx)p^{\W^{\gamma}}(\vy|\vx)\phi_1(\vy), \nonumber
 \end{align*}
-satisfying:
+satisfying
 \begin{align}
     \hphi_0(\vx) \int \phi_1(\vy) p^{\W^{\gamma}}(\vy|\vx) d\vy = \pi_0(\vx) , \nonumber\\ 
     \phi_1(\vy) \int \hphi_0(\vx) p^{\W^{\gamma}}(\vy|\vx) d\vx = \pi_1(\vy), \nonumber
 \end{align}
-where we re-label the terms with the integrals to:
+where we re-label the terms with the integrals to
 \begin{align} \label{eq:sysint}
     \phi_0(\vx) &= \int \phi_1(\vy) p^{\W^{\gamma}}(\vy|\vx) d\vy, \nonumber\\ 
     \hphi_1(\vy) &= \int \hphi_0(\vx) p^{\W^{\gamma}}(\vy|\vx) d\vx. \nonumber
@@ -718,30 +719,30 @@ Putting it all together, the following linear functional system is known as the 
     \hphi_0(\vx) \phi_1(\vx)  = \pi_0(\vx),  \nonumber \\ 
     \hphi_1(\vx) \phi_1(\vy)  = \pi_1(\vy).
 \end{align}
-We obtain the distribution $\pi^{*}_t(\vz)$ (Solution to the FPK equation for the optimal $Q^{*}$):
+We obtain the distribution $\pi^{*}_t(\vz)$ (solution to the FPK equation for the optimal $Q^{*}$):
 \begin{align}
     \pi^{*}_t(\vz) =  \hphi_t(\vz) \phi_t(\vz) ,
 \end{align}
-where:
+where
 \begin{align}
     \phi_t(\vz) &= \int \phi_1(\vy(1) ) p^{\W^{\gamma}}(\vy(1)|\vz(t)) d\vy(1), \nonumber\\ 
     \hphi_t(\vz) &= \int \hphi_0(\vx(0)) p^{\W^{\gamma}}(\vz(t)|\vx(0)) d\vx(0). \nonumber
 \end{align}
-Note that by Proposition 3.3 of \cite{pavon1991free}, the optimal control signal/drift $\rvb_t^+$ can be recovered from the solution of the Schrödinger system:
+Note that, by Proposition 3.3 of \cite{pavon1991free}, the optimal control signal/drift $\rvb_t^+$ can be recovered from the solution of the Schrödinger system:
 \begin{align} \label{eq:drifr_potential}
     \rvb_t^{+} = \gamma \nabla \ln \phi_t(\vx(t) ).
 \end{align}
 
-Note that the Schrödinger system is an equivalent formulation to the static Schrödinger problem in terms of the potential functions. It is by no means a method or an algorithm for solving the problem. One can solve the system in closed form when the integrals in Equation \ref{eq:sysint} admit a simple solution by guessing for the potentials in a similar way to how we formulate an \textit{ansatz} for simple differential equations. 
+The Schrödinger system is an equivalent formulation to the static Schrödinger problem in terms of the potential functions. It is by no means a method or an algorithm for solving the problem. One can solve the system in closed form, when the integrals in Equation \ref{eq:sysint} admit a simple solution, by guessing for the potentials in a similar way to how we formulate an \textit{ansatz} for simple differential equations. 
 
 \section{Half Bridges}
 
-Having only one boundary constraint simplifies the original problem since it becomes trivial to enforce such constraint numerically. In this section we will study in more detail such single constraint problems and illustrate why exactly it is a simpler problem. This construction will be of use since it will constitute part of the steps in the final algorithms for solving the full bridge problem.
+Having only one boundary constraint simplifies the original problem, since it becomes trivial to enforce such constraint numerically. In this section, we will study in more detail such single-constraint problems and illustrate why exactly it is a simpler problem. This construction will be of use, since it will constitute part of the steps in the final algorithms for solving the full bridge problem.
 
-The half bridge problem as presented in \cite{pavon2018data} is a simpler variant of the full Schrödinger bridge with only one boundary constraint. 
+The half-bridge problem, as presented in \cite{pavon2018data}, is a simpler variant of the full Schrödinger bridge with only one boundary constraint. 
 
 \begin{definition}
-The forward half bridge is given by:
+The forward half bridge is given by
     \begin{align}
         {\Q}^{*} = \inf_{\Q  \in \calD(\pi_0, \cdot)} \KL (\Q || \W^\gamma) .
     \end{align}
@@ -753,23 +754,23 @@ The forward half bridge is given by:
 \end{align}
 \end{theorem}
 \begin{proof}
-Via the disintegration theorem we have the following decomposition of KL:
+Via the disintegration theorem, we have the following decomposition of KL:
 \begin{align}
     \KL(\Q || \W^\gamma) = \KL(p_0^\Q|| p_0^{\W} )  + \E_p\left[\KL(\Q(\cdot| \vx) || \W^\gamma(\cdot | \vx))\right]. \nonumber
 \end{align}
-Thus via matching terms accordingly we can construct $\Q^*$ by setting the second term to $0$ and matching the constraints:
+Thus, via matching terms accordingly, we can construct $\Q^*$ by setting $\Q(\cdot| \vx)=\W^{\gamma}(\cdot| \vx)$ and matching the constraints:
 \begin{align}
     {\Q}^{*}\left(A_0 \times A_{(0,1]}\right) = \int_{A_0 \times A_{(0,1]}}\!\!\!\!\!\!\!\!\!\!\!\!\W^\gamma(A_{(0,1]} | \vx) d\pi_0(\vx),
 \end{align}
 \begin{align}
-    {\Q}^{*} &= \int_{A_0}  \frac{d\pi_0}{dp_0^{\W^\gamma}}(\vx)   \W^\gamma(\cdot | \vx) d p_0^{\W^{\gamma}}(\vx) , \nonumber \\
+    {\Q}^{*} &= \int_{A_0}  \frac{d\pi_0}{dp_0^{\W^\gamma}}(\vx)   \W^\gamma(\cdot | \vx) d p_0^{\W^{\gamma}}(\vx) \nonumber \\
     &= \int_{A_0 \times A_{(0,1]} }  \frac{d\pi_0}{dp_0^\W}(\vx)  d \W^{\gamma}.
 \end{align}
 \end{proof}
 \begin{definition}
-The backward half bridge is given by:
+The backward half bridge is given by
     \begin{align}
-        {\P}^{*} = \inf_{\Q  \in \calD(\cdot, \pi_1)} \KL (\P || \W^\gamma) .
+        {\P}^{*} = \inf_{\P  \in \calD(\cdot, \pi_1)} \KL (\P || \W^\gamma) .
     \end{align}
 \end{definition}
 \begin{theorem}\label{thrm:half_bridge_backward}
@@ -784,10 +785,10 @@ Same as Theorem \ref{thrm:half_bridge_forward}.
 \end{proof}
 
 
-Note how the main difference between the full and half bridges is that the half bridges admit a closed form solution in terms of known quantities. Similarly to the full bridge the half bridges admit a static formulation:
+Note how the main difference between the full and half bridges is that the half bridges admit a closed-form solution in terms of known quantities. Similarly to the full bridge, the half bridges admit a static formulation:
 
 \begin{definition}
-The static forward bridge is given by the following objective
+The static forward bridge is given by the following objective:
  \begin{align}\label{eq:static_bridge_forward}
         \inf_{q(\vx,\vy)} \KL  &(q(\vx,\vy) || p^{\W^{\gamma}}(\vx,\vy)), \nonumber \\
         s.t. \;\;\;& \pi_0(\vx) = \int q(\vx,\vy) d\vy.
@@ -806,7 +807,7 @@ See \cite{pavon2018data} for the solution of the backward half bridge. Proof is 
 The static backward bridge is given by the following objective:
  \begin{align}\label{eq:static_bridge_backward}
         \inf_{p(\vx,\vy)} \KL  &(p(\vx,\vy) || p^{\W^{\gamma}}(\vx,\vy)), \nonumber \\
-        s.t. \;\;\;& \pi_1(\vy) = \int p(\vx,\vy) d\vx, 
+        s.t. \;\;\;& \pi_1(\vy) = \int p(\vx,\vy) d\vx. 
 \end{align}
 \end{definition}
 \begin{theorem}\label{thrm:static_half_backward}
@@ -819,7 +820,7 @@ The static backward bridge is given by the following objective:
 See \cite{pavon2018data}.
 \end{proof}
 
-Half bridges are a significantly easier problem than full bridges. Not only do they admit ``closed form'' solutions in some sense, but they allow removing constraints by incorporating them as an initial value problem. Going forward, we will see how to build an iterative scheme for solving the full bridge that makes use of solving half bridge sub-problems at each iteration.
+Half bridges are a significantly easier problem than full bridges. Not only do they admit ``closed-form'' solutions in some sense, they also allow removing constraints by incorporating them as an initial value problem. Going forward, we will see how to build an iterative scheme for solving the full bridge that makes use of solving half bridge sub-problems at each iteration.
 
 \section{Summary}
  In this chapter, we have introduced the dynamic and static formulations of the Schrödinger bridge problem, together with the following equivalent formulations:
@@ -831,9 +832,9 @@ Half bridges are a significantly easier problem than full bridges. Not only do t
 %\chapter{Algorithmic Framework} 
 \chapter{Iterative Proportional Fitting Procedure}
 
-So far, we have introduced the Schrödinger bridge problem, as well as its simpler half bridge variant. We have also introduced the Schrödinger system and loosely hinted at a potential iterative solution, nonetheless we have not yet presented a full solution and discussed its guarantees/properties.
+So far we have introduced the Schrödinger bridge problem as well as its simpler half bridge variant. We have also introduced the Schrödinger system and loosely hinted at a potential iterative solution, but we have not yet presented a full solution and discussed its guarantees/properties.
 
-In this chapter we will study an algorithmic framework known as the Iterative Proportional Fitting Procedure (IPFP) \citep{csiszar1975divergence, kullback1968probability, ruschendorf1995convergence,cramer2000probability} and describe its usage for solving the Schrödinger bridge. Furthermore, we will formalise a previously made observation that connects Fortet's Iterative scheme \citep{fortet1940resolution} for solving the Schrödinger system with the more general IPFP. 
+In this chapter, we will study an algorithmic framework known as the Iterative Proportional Fitting Procedure (IPFP) \citep{csiszar1975divergence, kullback1968probability, ruschendorf1995convergence,cramer2000probability} and describe its usage for solving the Schrödinger bridge. Furthermore, we will formalise a previously made observation that connects Fortet's Iterative scheme \citep{fortet1940resolution} for solving the Schrödinger system with the more general IPFP. 
 
 \section{Fortet's Algorithm}
 
@@ -853,29 +854,29 @@ Initialise $\phi_0^{(0)}(\vx)$ such that $\phi_0^{(0)}(\vx) <\!< \pi_0(\vx)$ \\
 \Return{$\hphi_0^{(i)}(\vx), \phi_1^{(i)}(\vy)$}
 \caption{Fortet's Iterative Procedure}
 \end{algorithm}
-Modern adaptations for the proof of convergence for Algorithm  \ref{alg:fortet} can be found in \citep{essid2019traversing, chen2016entropic}, however these proofs are very technical and beyond the scope of this thesis. Let us now provide an intuition behind each step in the algorithm:
+Modern adaptations for the proof of convergence for Algorithm  \ref{alg:fortet} can be found in \citep{essid2019traversing, chen2016entropic}, however, these proofs are beyond the scope of this thesis. Let us now provide an intuition behind each step in the algorithm:
 
 \begin{itemize}
     \item $\hphi_0^{(i)}(\vx) := \frac{\pi_0(\vx)}{\phi_0^{(i)}(\vx)}$: enforces the marginal/boundary constraint at time $0$. That is, it enforces that the product of the factors/potentials matches the marginal distribution $\pi_0$.
-    \item $\hphi_1^{(i)}(\vy) := \int  p(\vy | \vx) \hphi_0^{(i)}(\vx) d\vx$ : Now that we have the factors $\phi_0^{(i)}(\vx) \hphi_0^{(i)}(\vx) $ $:= {\pi_0(\vx)}$ for the marginal at $t=0$ we transport/transition them to the marginal at time $t=1$ via marginalising the current estimate of the joint posterior $\pi_1(\vy) = \phi_1(\vy) \int p(\vy| \vx) \hphi_0^{(i)}(\vx) d\vx$.
-    \item  $\phi_1^{(i)}(\vy) := \frac{\pi_1(\vy)}{\hphi_1^{(i)}(\vy)}$: As with $t=0$ we enforce the marginal/boundary  constraint such that  $\phi_1^{(i)}(\vy) \hphi_1^{(i)}(\vy) := {\pi_1(\vy)}$. 
-    \item $\phi^{(i+1)}_0(\vx) := \int  p(\vy | \vx) \phi_1^{(i)}(\vy) d\vy$: Now that we have enforced the constraint for $t=1$ we marginalise our current estimate of the joint to move from $\vy$ to $\vx$ and repeat.
+    \item $\hphi_1^{(i)}(\vy) := \int  p(\vy | \vx) \hphi_0^{(i)}(\vx) d\vx$ : Now that we have the factors $\phi_0^{(i)}(\vx) \hphi_0^{(i)}(\vx) $ $:= {\pi_0(\vx)}$ for the marginal at $t=0$, we transport/transition them to the marginal at time $t=1$ by marginalising the current estimate of the joint posterior $\pi_1(\vy) = \phi_1(\vy) \int p(\vy| \vx) \hphi_0^{(i)}(\vx) d\vx$.
+    \item  $\phi_1^{(i)}(\vy) := \frac{\pi_1(\vy)}{\hphi_1^{(i)}(\vy)}$: As with $t=0$, we enforce the marginal/boundary  constraint such that  $\phi_1^{(i)}(\vy) \hphi_1^{(i)}(\vy) := {\pi_1(\vy)}$. 
+    \item $\phi^{(i+1)}_0(\vx) := \int  p(\vy | \vx) \phi_1^{(i)}(\vy) d\vy$: Now that we have enforced the constraint for $t=1$, we marginalise our current estimate of the joint to move from $\vy$ to $\vx$ and repeat.
 \end{itemize}
 
-We can now see that Fortet's algorithm is quite intuitive. The potential at time $t=0$ is initialised with the prior marginal. Then, we iterate the Schrödinger system until reaching a fixed point.  The marginal constraints are satisfied by alternating between the $t=0$ and $t=1$ marginals. This leads us to the following observation:
+ The potential at time $t=0$ is initialised with the prior marginal. Then, we iterate the Schrödinger system until reaching a fixed point.  The marginal constraints are satisfied by alternating between the $t=0$ and $t=1$ marginals. This leads us to the following observation:
 \begin{observation}\label{obs:forkek}
-Fortet's algorithm starting at $t=1$ rather than $t=0$ is equivalent to sequentially alternating between solving  forward and backward static half bridges.
+Fortet's algorithm starting at $t=1$, rather than $t=0$, is equivalent to sequentially alternating between solving forward and backward static half bridges.
 \begin{algorithm} \label{alg:ipfp_intro}
 \SetKwInOut{Input}{input}
 \Input{$\pi_0(\vx), \pi_1(\vy), p(\vy | \vx)$}
 Initialise:\\
 $p^{\W^{\gamma}}_1(\vy)$ such that $p^{\W^{\gamma}}_1(\vy) <\!< \pi_1(\vy)$ \\
-$ q^{*}_{0}(\vx,\vy) =p^{\W^{\gamma}}(\vx,\vy)$\\
+$ q^{*}_{0}(\vx,\vy) :=p^{\W^{\gamma}}(\vx,\vy)$\\
 $i=0$ \\
     \Repeat{convergence}{
       $i := i + 1$ \\
      $ p^{*}_{i}(\vx,\vy) = \inf_{p(\vx,\vy) \in \calD( \cdot, \pi_1)} \KL  (p(\vx,\vy) || p^{*}_{i-1}(\vx,\vy))$\\ 
-     $ q{*}_{i}(\vx,\vy)  = \inf_{q(\vx,\vy) \in \calD(\pi_0, \cdot)} \KL  (q(\vx,\vy) ||  p^{*}_{i}(\vx,\vy))$
+     $ q^{*}_{i}(\vx,\vy)  = \inf_{q(\vx,\vy) \in \calD(\pi_0, \cdot)} \KL  (q(\vx,\vy) ||  p^{*}_{i}(\vx,\vy))$
     }
 \Return{$q^{*}_{i}(\vx,\vy) , p{*}_{i}(\vx,\vy)$}
 \caption{Alternating half bridges (\cite{kullback1968probability} IPFP) }
@@ -886,26 +887,26 @@ Consider the first two iterations of Algorithm \ref{alg:ipfp_intro}:
 
 Using Theorem \ref{thrm:static_half_backward}, the solution to the backward half bridge
  \begin{align}
-        \inf_{p(\vx,\vy) \in \calD( \cdot, \pi_1)} \KL  &(p(\vx,\vy) || p^{\W^{\gamma}}(\vx,\vy)), \nonumber 
+        \inf_{p(\vx,\vy) \in \calD( \cdot, \pi_1)} \KL  &(p(\vx,\vy) || p^{\W^{\gamma}}(\vx,\vy)) \nonumber 
 \end{align}
-is:
+is
 \begin{align}
     p_0^{*} (\vx, \vy) = p^{\W^{\gamma}}_0(\vx) p^{\W^{\gamma}}(\vy| \vx) \frac{\pi_1(\vy)}{p^{\W^{\gamma}}_1(\vy)}.
 \end{align}
-We setup the following forward bridge:
+We set up the following forward bridge:
 \begin{align}
     \arginf_{q_0(\vx, \vy)  \in \calD(\pi_0 , \cdot)}\KL (q_0(\vx, \vy) ||p_0^{*} (\vx, \vy)),
 \end{align}
-which following theorem \ref{eq:static_bridge_forward} can be solved by:
+which, following Theorem \ref{eq:static_bridge_forward}, can be solved by
 \begingroup
 \allowdisplaybreaks
 \begin{align}
-    q_0^{*} (\vx, \vy) &= p_0^{*} (\vx, \vy) \frac{\pi_0(\vx)}{p_0^{*} (\vx)} ,\\
+    q_0^{*} (\vx, \vy) &= p_0^{*} (\vx, \vy) \frac{\pi_0(\vx)}{p_0^{*} (\vx)} \\
  &=  p^{\W^{\gamma}}(\vy| \vx) \frac{\pi_1(\vy)}{p^{\W^{\gamma}}_1(\vy)} \frac{\pi_0(\vx)}{\int   p^{\W^{\gamma}}(\vy| \vx) \frac{\pi_1(\vy)}{p^{\W^{\gamma}}_1(\vy)} d\vy}.
 \end{align}
 \endgroup
 
-If we proceed to the second iteration of this procedure the backward bridge step will yield:
+If we proceed to the second iteration of this procedure, the backward bridge step will yield
 \begin{align}
     p_1^{*} (\vx, \vy) =  q_0^{*} (\vx, \vy) \frac{p^{\W^{\gamma}}_1(\vy)}{ \underbrace{\displaystyle\int \frac{p^{\W^{\gamma}}(\vy| \vx)\pi_0(\vx)}{\int p^{\W^{\gamma}}(\vy| \vx) \frac{\pi_1(\vy)}{p^{\W^{\gamma}}_1(\vy)} d\vy}d\vx}_{{\phi}^{1}(\vy)}} ,
 \end{align}
@@ -913,12 +914,12 @@ and the forward step:
 \begin{align}
     q_1{*} (\vx, \vy) &= p_1^{*} (\vx, \vy) \frac{\int    p^{\W^{\gamma}}(\vy| \vx) \frac{\pi_1(\vy)}{p^{\W^{\gamma}}_1(\vy)}  d \vy}{\int    p^{\W^{\gamma}}(\vy| \vx) \frac{\pi_1(\vy)}{{\phi}^{1}(\vy)}  d \vy}.
 \end{align}
-Re-labeling: 
+Re-labeling, we get 
 \begin{align}
     \phi^0(\vy)&=p^{\W^{\gamma}}_1(\vy), \\ 
     \hat{\phi}_0^{i}(\vx) &= \int  p^{\W^{\gamma}}(\vy| \vx) \frac{\pi_1(\vy)}{{\phi}^{i}(\vy)}  d \vy,
 \end{align}
-we can make an inductive argument on $i$ for the following inductive hypothesis \footnote{Some simple term cancellation steps have been omitted to reduce verbosity.}:
+and we can make an inductive argument on $i$ for the following inductive hypothesis\footnote{Some simple term-cancellation steps have been omitted to reduce verbosity.}:
 \begin{align} \label{eq:recurrence}
   {\phi}^{i+1}(\vy) =  \displaystyle\int \frac{p^{\W^{\gamma}}(\vy| \vx)\pi_0(\vx)}{\int p^{\W^{\gamma}}(\vy| \vx) \frac{\pi_1(\vy)}{\phi^i(\vy)} d\vy}d\vx,
  \end{align}
@@ -928,26 +929,26 @@ we can make an inductive argument on $i$ for the following inductive hypothesis 
  \begin{align}
       q_i{*} (\vx, \vy) =     p_i^{*} (\vx, \vy) \frac{\hat{\phi}_0^{i-1}(\vx)}{\hat{\phi}_0^{i}(\vx)} .
 \end{align}
-We can see that the  recurrence in Equation \ref{eq:recurrence} is the exact same set of steps performed by Fortet's algorithm if we were to reverse the time order or start Fortet's algorithm at step 5 and consider the first steps  as an initialisation of $\phi_0(\vy)$.
+We can see that the  recurrence in Equation \ref{eq:recurrence} is the exact same set of steps performed by Fortet's algorithm, if we were to reverse the time order or start Fortet's algorithm at step 5 and consider the first steps  as an initialisation of $\phi_0(\vy)$.
 \end{proof}
 
 Whilst in hindsight the above observation may seem simple, we regard it as a contribution, as we have not observed a formal argument made towards this connection. As we will see in the following sections, Observation \ref{obs:forkek} establishes a link between Fortet's algorithm and algorithms derived from the iterative proportional fitting procedure.
 
 \section{Kullback's IPFP}
-The original Iterative Proportional Fitting Procedure (IPFP) consists of estimating a normalised contingency table (discrete joint distribution) given prescribed marginals, via some form of information discrimination/maximum entropy principle. However, our we are interested in the continuous variant of IPFP which dates back to Kullback \citep{kullback1968probability}.
+The original iterative proportional fitting procedure (IPFP) consists of estimating a normalised contingency table (discrete joint distribution) given prescribed marginals, via some form of information-discrimination/maximum-entropy principle. However, we are interested in the continuous variant of IPFP, which dates back to Kullback \citep{kullback1968probability}.
 
-What we call in this section Kullback's IPFP is in fact Algorithm \ref{alg:ipfp_intro}, which we have introduced via its formal connection to Fortet's algorithm.  The first complete proof of convergence to Algorithm \ref{alg:ipfp_intro} was provided in \cite{ruschendorf1995convergence} using information geometric arguments from \cite{csiszar1975divergence}.
+What we call in this section Kullback's IPFP is in fact Algorithm \ref{alg:ipfp_intro}, which we have introduced via its formal connection to Fortet's algorithm.  The first complete proof of convergence to Algorithm \ref{alg:ipfp_intro} was provided in \cite{ruschendorf1995convergence}, using information-geometric arguments from \cite{csiszar1975divergence}.
 
 \section{Generalised IPFP}
 
 \begin{figure}[t!]
     \centering
     \includegraphics[]{images/g-IPFP_ready.PNG}
-    \caption{Illustration of the iterative proportional fitting procedure, inspired and adapted from Figure 1 in \cite{bernton2019schr}. The red line represents valid Itô-process posteriors with the terminal constraint $\P \in \calD(\cdot, \pi_1)$ and the blue represents valid Itô-process posteriors with the initial constraint $\Q \in \calD( \pi_0, \cdot)$. The illustration shows the alternation between the forward and backward steps, until the joint bridge solution is reached where both constraints are met. Note the sheet represents the space of all valid Itô-processes in the interval $[0,1]$. By valid we mean Itô-processes driven by the prior of the form $d\rvx(t) = \rvb_t + \gamma d\rvw(t)$.}
+    \caption{Illustration of the iterative proportional fitting procedure, inspired and adapted from Figure 1 in \cite{bernton2019schr}. The red line represents valid Itô-process posteriors with the terminal constraint $\P \in \calD(\cdot, \pi_1)$, and the blue represents valid Itô-process posteriors with the initial constraint $\Q \in \calD( \pi_0, \cdot)$. The illustration shows the alternation between the forward and backward steps, until the joint-bridge solution is reached where both constraints are met. Note the sheet represents the space of all valid Itô processes in the interval $[0,1]$. By valid we mean Itô processes driven by the prior of the form $d\rvx(t) = \rvb_t + \gamma d\rvw(t)$.}
     \label{fig:info_pro}
 \end{figure}
 
-We call generalised iterative proportional fitting procedure (g-IPFP) the extension of the continuous IPFP initially proposed by Kullback to a more general setting over path measures, as presented in \cite{cramer2000probability, bernton2019schr}. The method is identical to the regular IPFP only that it re-states the problem in terms of probability measures.
+We call generalised iterative proportional fitting procedure (g-IPFP) the extension of the continuous IPFP, initially proposed by Kullback to a more general setting over path measures, as presented in \cite{cramer2000probability, bernton2019schr}. The method is identical to the regular IPFP, only that it re-states the problem in terms of probability measures.
 \begin{algorithm} \label{alg:gipfp}
 \SetKwInOut{Input}{input}
 \Input{$\pi_0(\vx), \pi_1(\vy), \W^{\gamma}$}
@@ -963,87 +964,87 @@ $i=0$ \\
 \caption{g-IPFP \citep{cramer2000probability} }
 \end{algorithm}
 
-Using Theorems \ref{thrm:half_bridge_forward}, \ref{thrm:half_bridge_backward}, steps 6 and 7 of Algorithm \ref{alg:gipfp} can be expressed in ``closed form'' in terms of known quantities:
+Using Theorems \ref{thrm:half_bridge_forward} and \ref{thrm:half_bridge_backward}, steps 6 and 7 of Algorithm \ref{alg:gipfp} can be expressed in ``closed form'' in terms of known quantities:
 \begin{align}
     {\P}^{*}_i\left( A_{[0,1)} \times A_1\right) =  \int_{ A_{[0,1)} \times A_1}  \frac{d \pi_1}{ d p_1^{\Q^{*}_{i-1}}} d\Q^{*}_{i-1},
 \end{align}
 \begin{align}
     {\Q}^{*}_i\left(A_0 \times A_{(0,1]}\right) =  \int_{A_0\times A_{(0,1]}} \frac{d \pi_0}{ dp_0^{\P^{*}_i}} d\P^{*}_i.
 \end{align}
-An important thing to note about the above solutions is that while these quantities are written in terms of components that we ``know'', such components are themselves not available in closed form and require some form of approximation scheme (e.g. Monte Carlo integration) in order to be computed.
+An important thing to note about the above solutions is that while these quantities are written in terms of components that we ``know'', such components are themselves not available in closed form and require some form of approximation scheme (e.g.\ Monte Carlo integration) in order to be computed.
 
-Via the disintegration theorem we can reduce g-IPFP to the standard IPFP by noting that $\Q^*_i(\cdot |\vx,\vy) =\P^*_i(\cdot |\vx,\vy) = \W(\cdot |\vx,\vy)$ remains invariant across iterations, thus we highlight that more than being an algorithm, g-IPFP serves as an algorithmic framework for the development and design of algorithms aimed at solving the Schrödinger Bridge.
+Via the disintegration theorem, we can reduce g-IPFP to the standard IPFP, by noting that $\Q^*_i(\cdot |\vx,\vy) =\P^*_i(\cdot |\vx,\vy) = \W(\cdot |\vx,\vy)$ remains invariant across iterations, thus we highlight that more than being an algorithm, g-IPFP serves as a framework for the development and design of algorithms aimed at solving the Schrödinger Bridge.
 
-The proof from \cite{ruschendorf1995convergence} extends naturally to g-IPFP as mentioned in \cite{bernton2019schr}. Furthermore, \cite{bernton2019schr} provide additional results regarding the convergence rate of g-IPFP.
+The proof from \cite{ruschendorf1995convergence} extends naturally to g-IPFP, as mentioned in \cite{bernton2019schr}. Furthermore, \cite{bernton2019schr} provide additional results regarding the convergence rate of g-IPFP.
 \begin{figure}[h!]
     \centering
     \includegraphics[width=\linewidth]{images/IPFP_Geanology.png}
-    \caption{Genealogy of IPFP based algorithms for solving the Schrödinger bridge problem. ``?'' symbolises an area with out much prior research. }
+    \caption{Genealogy of IPFP-based algorithms for solving the Schrödinger bridge problem. ``?'' symbolises an area without much prior research.}
     \label{fig:genealogy}
 \end{figure}
 
 %\chapter{Related Work} 
 \chapter{Related Problems}
 We have presented the Schrödinger bridge, as well as an algorithmic framework for solving it. In this chapter, we will compare the Schrödinger bridge and IPFP to two different methodologies employed in machine learning for mapping between distributions. 
-\section{Continuous Time Stochastic Flows}
+\section{Continuous-Time Stochastic Flows}
 
-Imagine that as a probabilistic modeller you were given the problem of mapping from one distribution to another. One of the simplest ways of approaching such task is to specify a generative process of the form,
+Imagine that, as a probabilistic modeller, you were given the problem of mapping from one distribution to another. One of the simplest ways of approaching such task is to specify a generative process of the form
 \begin{align*}
-    \rvx &\sim \pi_0 \\
+    \rvx &\sim \pi_0, \\
     \rvy &= \calT_{\theta}(\rvx),
 \end{align*}
-where $\calT_{\theta}(\rvx)$  is a stochastic mapping (i.e. $\calT_{\theta}(\rvx) = f_{\theta}(\rvx) + \rvepsilon$). Then to learn the mapping $\calT_{\theta}(\rvx)$  we maximise the marginal likelihood for a set of observations $\{\vy_i \sim \pi_1 \}$,
+where $\calT_{\theta}(\rvx)$  is a stochastic mapping (i.e.\ $\calT_{\theta}(\rvx) = f_{\theta}(\rvx) + \rvepsilon$). Then, to learn the mapping $\calT_{\theta}(\rvx)$, we maximise the marginal likelihood for a set of observations $\{\vy_i \sim \pi_1 \}$:
 \begin{align*}
    \argmax_{\theta} \prod_i p(\vy_i) = \argmax_{\theta} \prod_i \int p_{\theta}(\vy_i | \vx) d\pi_0(\vx).
 \end{align*}
 
 We can take a further step and model the relationship between the two distributions using an SDE:
 \begin{align*}
-    \rvx(0) &\sim \pi_0 \\
-    d\rvx(t) &= \vb_{\theta}(\rvx(t), t) + \sqrt{\gamma} d\rvw(t) \\
+    \rvx(0) &\sim \pi_0, \\
+    d\rvx(t) &= \vb_{\theta}(\rvx(t), t) + \sqrt{\gamma} d\rvw(t), \\
     \rvy &= f_{\theta}(\rvx(1)).
 \end{align*}
-In other words $\rvy$ is generated by the solutions to an SDE with initial distribution $\pi_0$. We can also interpret the above as the latent object living in path space, as we have no observations for the trajectories, but only observations of its initial and terminal distributions. Similarly to the latent variable model example, we aim to maximise an estimate of the marginal likelihood under this generative process. Variants of this approach are explored by \citep{lahdesmakideep, tzen2019neural} as ways of having infinitely deep neural networks and Gaussian processes.
+In other words: $\rvy$ is generated by the solutions to an SDE with initial distribution $\pi_0$. We can also interpret the above as the latent object living in path space (i.e. $C([0,1],\R^d)$), as we have no observations for the trajectories, but only observations of its initial and terminal distributions. Similarly to the latent-variable-model example, we aim to maximise an estimate of the marginal likelihood under this generative process. Variants of this approach are explored by \citep{lahdesmakideep, tzen2019neural} as ways of having infinitely-deep neural networks and Gaussian processes.
 
-It is clear that this approach is different to the Schrödinger Bridge. Firstly, the generative process requires the observation of pairs $\vx_i, \vy_i$ in order to estimate the marginal likelihood. Secondly, the Schrödinger bridge is based on the principle of maximum entropy \citep{jaynes1957information}, whilst this generative approach is based on maximising a marginal likelihood (ML-II). However, they share the similarity of exploiting stochastic dynamics to relate source and target distributions. Additionally, both have similar notions of prior and posterior dynamics.
+It is clear that this approach is different to the Schrödinger bridge. Firstly, the generative process requires the observation of pairs $\vx_i, \vy_i$ in order to estimate the marginal likelihood. Secondly, the Schrödinger bridge is based on the principle of maximum entropy \citep{jaynes1957information}, whilst this generative approach is based on maximising a marginal likelihood (ML-II). However, they share the similarity of exploiting stochastic dynamics to relate source and target distributions. Additionally, both have similar notions of prior and posterior dynamics.
 
 \section{Domain Adaptation and Generative Adversarial Networks (GANs)}
 
-In this section we will motivate and provide some formal arguments towards the following observation:
+In this section, we will motivate and provide some formal arguments towards the following observation:
 \begin{observation}
-Each half-bridge objective in the IPFP algorithm is equivalent to a GAN like objective with a corresponding cycle-consistency term up to a  regularisation term.
+Each half-bridge objective in the IPFP algorithm is equivalent to a GAN-like objective with a corresponding cycle-consistency term, up to a regularisation term.
 \end{observation}
 
 \subsection{Short Introduction to Domain Adaptation with GANs}
 
-The goal of a GAN \citep{goodfellow2014generative} is to fit a generative model of the form:
+The goal of a GAN \citep{goodfellow2014generative} is to fit a generative model of the form
 \begin{align*}
-    \rvx &\sim \pi_0 \\
+    \rvx &\sim \pi_0, \\
     \rvy &= f_{\theta}(\rvx),
 \end{align*}
-in the setting where we can sample from $\pi_0(\vx)$ and $\pi_1(\vy)$ tractably. Note that the above model induces likelihood $p_{\theta}(\vy | \vx)$ and marginal $p_{\theta}(\vy)$, however the marginal is never computed explicitly and thus, sometimes fitting GANs is referred to as fitting implicit generative models \citep{mohamed2016learning}.
+in the setting where we can sample from $\pi_0(\vx)$ and $\pi_1(\vy)$ tractably. The above model induces likelihood $p_{\theta}(\vy | \vx)$ and marginal $p_{\theta}(\vy)$, however the marginal is never computed explicitly and, thus, sometimes fitting GANs is referred to as fitting implicit generative models \citep{mohamed2016learning}.
 
-Using our notation, the GAN fitting procedure \citep{goodfellow2014generative} takes the following form:
+Using our notation, the GAN-fitting procedure \citep{goodfellow2014generative} takes the following form:
 
 \begin{itemize}
     \item (Discriminator loss) Estimating the surrogate to later be fitted by model $p_{\theta}(\vy)$:
  $$ {\beta}^{*} = \argmin_{\beta} \left(\alpha \E_{\pi_1(\vy)}[-\log D_{\beta}(\vy)] + (1-\alpha)\E_{p_{\theta}(\vy)}[-\log (1-D_{\beta}(\vy))]\right).$$ 
  \item (Generative loss) Fitting model $p_{\theta}(\vy)$ on the estimated surrogate:
- $$\theta^{*} = \argmin_{\theta}-\E_{p_{\theta}(\vy)}\left[\log(D_{\hat{\beta}}(\vy))\right].$$ 
+ $$\theta^{*} = \argmin_{\theta}-\E_{p_{\theta}(\vy)}\left[\log(D_{\hat{\beta^{*}}}(\vy))\right].$$ 
 \end{itemize}
 
 In practice, the generator step \citep{goodfellow2014generative} typically minimises $-\E_{p_{\theta}(\vy)}\left[\log(D(\vy))\right]$, which according to \cite{goodfellow2014generative} is equivalent to maximising  $\E_{p_{\theta}(\vy)}\left[\log(1-D(\vy))\right]$.
 
-The task of domain adaptation in GANs is finding a mapping between two distributions $\pi_0, \pi_1$ that have been observed empirically. This has applications in image and language translation \citep{zhu2017unpaired,lample2017unsupervised}. Typically in domain adaptation with GANs the following two processes are fitted in parallel:
+The task of domain adaptation in GANs is finding a mapping between two distributions $\pi_0, \pi_1$ that have been observed empirically. This has applications in image and language translation \citep{zhu2017unpaired,lample2017unsupervised}. Typically, in domain adaptation with GANs, the following two processes are fitted in parallel:
 \begin{align*}
-    \rvx &\sim \pi_0    &\rvy &\sim \pi_1\\
-    \rvy &= f_{\theta}(\rvx)   &\rvx &= g_{\phi}(\rvy).
+    \rvx &\sim \pi_0,    &\rvy &\sim \pi_1,\\
+    \rvy &= f_{\theta}(\rvx),   &\rvx &= g_{\phi}(\rvy).
 \end{align*}
-An interesting variation of GANs used for domain adaptation known as cycle-GAN adds an extra term to the generative loss called the cycle-consistency loss:
+An interesting variation of GANs, used for domain adaptation and known as Cycle-GAN, adds an extra term to the generative loss, called the cycle-consistency loss:
 \begin{align*}
    \E_{\vx \sim \pi_0}\left[ \Big|\Big|\vx- g_\phi\left(f_\theta(\vx) \right) \Big|\Big|^2\right] +  \E_{\vy \sim \pi_1}\left[ \Big|\Big|\vy- f_\theta\left(g_\phi(\vy) \right) \Big|\Big|^2\right].
 \end{align*}
-This additional auto-encoder loss encourages the transformations from one data-set to another to be inverses of each other. In the next section, we will show how the cycle consistency term arises naturally from the Schrödinger bridge problem.
+This additional auto-encoder loss encourages the transformations from one dataset to another to be inverses of each other. In the next section, we will show how the cycle-consistency term arises naturally from the Schrödinger bridge problem.
 
 \subsection{Connection to IPFP}
 Starting from the static Schrödinger bridge: 
@@ -1071,7 +1072,7 @@ Simplifying further:
 \argmin_\phi- \E_{p_{\phi}(\vx|\vy)\pi_1(\vy)}\left[  \log  q^{i-1}_{\theta}(\vy|\vx)\right] -  \E_{p_{\phi}(\vx)}\left[ \log  \pi_0(\vx) \right] - H\left(p_{\phi}(\vx|\vy)\pi_1(\vy)\right).
 \end{align*}
 
-Sampling from $p_{\phi}(\vx|\vy)\pi_1(y)$ can be achieved via  ancestral sampling and we can parametrise $p_{\phi}(\vx|\vy)=\calN(\vx | \mu_{\phi}(\vy), \sigma^2_\phi(\vy))$ following \cite{kingma2013auto} such that it is easy to sample $\vx$ conditioned on $\vy$. Under the discussed parametrisations, expectations are taken with respect to the empirical distribution via ancestral sampling and thus we do not require any importance sampling. However, we have introduced some bias by parametrising $p_{\phi}(\vx|\vy)$ with a class of distributions.
+Sampling from $p_{\phi}(\vx|\vy)\pi_1(y)$ can be achieved via ancestral sampling and we can parametrise $p_{\phi}(\vx|\vy)=\calN(\vx | \mu_{\phi}(\vy), \sigma^2_\phi(\vy))$ following \cite{kingma2013auto} such that it is easy to sample $\vx$ conditioned on $\vy$. However, we have introduced some bias by parametrising $p_{\phi}(\vx|\vy)$ with a class of distributions.
 
 Backward step:
 \begin{align*}
@@ -1095,13 +1096,12 @@ For simplicity, let's make the variance function independent of the input $\sigm
 \begin{align*}
 \E_{q_{\theta}(\vy|\vx)\pi_0(\vx)}\left[  \log  p^i_{\phi}(\vx|\vy)\right] \propto \E_{q_{\theta}(\vy|\vx)\pi_0(\vx)}\left[  -  \frac{1}{2\sigma_x^2}||\vx- {\mu}_{\phi}(\vy))||^2\right].
 \end{align*}
-We can apply the reparametrisation trick \cite{kingma2013auto} to $p_{\theta}(\vy|\vx)\pi_0(\vx)$: 
+Applying the reparametrisation trick \cite{kingma2013auto} to $p_{\theta}(\vy|\vx)\pi_0(\vx)$: 
 \begin{align*}
     \vx &\sim \pi_0(\vx) \\
-    \vy &= {\mu}_{\theta}(\vx) + \sigma_y \bm{\epsilon} \quad \bm{\epsilon} \sim \calN(\textbf{0}, \I).
+    \vy &= {\mu}_{\theta}(\vx) + \sigma_y \bm{\epsilon} \quad \bm{\epsilon} \sim \calN(\textbf{0}, \I),
 \end{align*}
-
-Using the above reparametrisation, we can re-write the cross-term loss as: 
+we can rewrite the cross-term loss as: 
 
 \begin{align*}
  \E_{q_{\theta}(\vy|\vx)\pi_0(\vx)}\left[  \log  p^i_{\phi}(\vx|\vy)\right] \propto \E_{\pi_0(\vx)\calN(\epsilon|\textbf{0},\I )}\left[  -  \frac{1}{2\sigma_x^2}\Big|\Big|\vx- \mu_\phi\left(\mu_\theta(\vx) + \sigma_y \bm{\epsilon}\right) \Big|\Big|^2\right],
@@ -1155,7 +1155,7 @@ The term $H_{\theta}(\vy|\vx) =\E_{q_{\theta}(\vy|\vx)\pi_0(\vx)}\left[ \log q_{
 
 Note than under this parametrisation the term $H_{\theta}(\vy|\vx)$ can be obtained in closed form $\E_{\pi_0(\vx)}[\log {\sigma}_{\theta}(\vx)]$ and has the clear interpretation of maximising the variance / spread of our mapping.
  
-The above results raise an interesting question: is it possible to train GANs for domain adaptation by alternating  half bridge styled GAN iterations until convergence as some form of approximate IPFP? The additional term difference from the half bridges removes the theoretical support from this proposed heuristic. Nonetheless, there might still be a further relationship that we may have missed between the two (e.g. a lower bound).
+The above results raise an interesting question: is it possible to train GANs for domain adaptation by alternating half bridge styled GAN iterations until convergence as some form of approximate IPFP? The additional term difference from the half bridges removes the theoretical support from this proposed heuristic. Nonetheless, there might still be a deeper relationship that we may have missed between the two.
 
 \section{Summary}
 
@@ -1163,7 +1163,7 @@ In this chapter we have:
 
 \begin{itemize}
     \item highlighted the differences between the Schrödinger bridge problem and learning a stochastic flow between two distributions via maximum likelihood,
-    \item showed the similarities between GANs for domain adaptation and solving a single half bridge sub iteration in IPFP.
+    \item showed the similarities between GANs for domain adaptation and solving a single half bridge sub-iteration in IPFP.
 \end{itemize}
 
 
@@ -1171,19 +1171,19 @@ In this chapter we have:
 %\chapter{Design and Implementation}
 \chapter{Empirical Schrödinger Bridges}
 
-Having introduced, motivated and discussed the Schrödinger bridge problem, we will move onto the core section of this thesis, where we propose and discuss numerical implementations of the Schrödinger bridge problem. We call the empirical Schrödinger bridge, the setting of the Schrödinger bridge problem where the marginal/boundary distributions are only available via samples (i.e. their empirical distribution):
+Having introduced, motivated and discussed the Schrödinger bridge problem, we will move onto the core section of this thesis, where we propose and discuss numerical implementations of the Schrödinger bridge problem. We call the empirical Schrödinger bridge: the setting of the Schrödinger bridge problem where the marginal/boundary distributions are only available via samples (i.e. their empirical distribution):
 \begin{align}
     \hat{\pi}_0(\vx)  = \frac{1}{N}\sum_i \delta(\vx -\vx_i) &, \quad\hat{\pi}_1(\vy)  = \frac{1}{M}\sum_j \delta(\vy -\vy_j), \nonumber\\
     \vx_i \sim \pi_0 &, \quad \vy_j \sim \pi_1.
 \end{align}
 
-Note that \cite{pavon2018data} refer to this problem as the data driven Schrödinger bridge. We will discuss different algorithms derived from the g-IPFP framework for solving the Schrödinger bridge under this empirical setting. As this is a fairly new problem of interest in the applied/numerical setting, there is not much accessible and validated prior work available. Thus, for prior approaches we will only be reproducing and commenting on the work of \cite{pavon2018data}. Note that we do not explore the method by \cite{bernton2019schr}, we reserve this for further work.
+Note that \cite{pavon2018data} refer to this problem as the data driven Schrödinger bridge. We will discuss different algorithms derived from the g-IPFP framework for solving the Schrödinger bridge in this setting. As this is a fairly new problem of interest in the applied/numerical setting, there is not much accessible and validated prior work available. We will only comment on the work of \cite{pavon2018data} and omit a discussion of \cite{bernton2019schr}, we reserve this for further work.
 
 Our core contributions in this chapter are:
 
 \begin{itemize}
     \item The rephrasing of the method by \cite{pavon2018data} as an unnormalised likelihood estimation problem which allows a connection to alternative methods within the machine learning and applied statistics community.
-    \item The proposal of two completely new numerical algorithms for solving the empirical Schrödinger bridge problem.
+    \item The proposal of two novel numerical algorithms for solving the empirical Schrödinger bridge problem.
 \end{itemize}
 
 
@@ -1218,7 +1218,7 @@ By removing the constant entropy term we arrive at:
 \end{align*}
 A similar argument follows for Equation \ref{eq:term2}
 \end{proof}
-Note that Equation \ref{eq:zero} motivates the use of other probability metrics/divergences as long as they share the same property of being minimised  when their arguments are equal. Following Observation \ref{obs:pavon}, the essence of the method in \cite{pavon2018data} is parametrising  $\hphi_0(\vx), \;  \phi_1(\vy) $ with a parametric family of positive functions and minimise an empirical estimate of Equation \ref{eq:pavon_cros_ent}:
+Note that Equation \ref{eq:zero} motivates the use of other probability metrics/divergences, provided they share the same property of being minimised  when their arguments are equal. Following Observation \ref{obs:pavon}, the essence of the method in \cite{pavon2018data} is parametrising  $\hphi_0(\vx), \;  \phi_1(\vy) $ with a parametric family of positive functions and minimise an empirical estimate of Equation \ref{eq:pavon_cros_ent}:
 \begin{align}
     \hat{\beta}^*_i = \argmax_{\hat{\beta} } &\frac{1}{M} \sum_s \log \hphi_0(\vx_s; \hat{\beta} )   \phi_0^{(i)}(\vx_s)
     \quad \vx_s\sim \pi_0(\vx), \nonumber \\
@@ -1245,7 +1245,7 @@ Now all that is left to numerically carry out this approximate variant of Fortet
 
 \subsection{Importance Sampling Approach by \citet{pavon2018data} }
 
-Estimating the terms $ \phi_0^{(i)}(\vx_s), \hphi_1^{(i)}(\vy_s)$, can be done without much trouble as they are expectations with respect to the prior which we can sample from, either directly in the case of Brownian motion, or via the EM discretisation for more complex Itô-process priors. \cite{pavon2018data} only estimate the term $\hphi_0^{(i)}(\vx_s)$,
+Estimating the terms $ \phi_0^{(i)}(\vx_s), \hphi_1^{(i)}(\vy_s)$, can be done through direct sampling from the prior, either directly in the case of Brownian motion, or via the EM discretisation for more complex Itô-process priors. \cite{pavon2018data} only estimate the term $\hphi_0^{(i)}(\vx_s)$,
 
 \begin{align}\label{eq:pavon_transition_mc}
     \phi_0^{(i)}(\vx_s) &= \int P(\vy| \vx_s) \phi_1^{(i)}(\vy; \beta) d\vy, \nonumber \\
@@ -1267,7 +1267,7 @@ Now all that is required is estimating the outer integrals with respect to $d\vx
     & = \int \tilde{\pi}_0(\vx) \frac{\hphi_0(\vx; \hat{\beta} ) \int P(\vy| \vx_s) \phi_1^{(i)}(\vx; \beta) d\vy}{\tilde{\pi}_0(\vx)} d\vx, \nonumber \\ 
      &\approx  \frac{1}{\tilde{M}\tilde{N}}\sum_{lk} \frac{\hphi_0(\vx_k; \hat{\beta} )\phi_1^{(i)}(\tilde{\vy}_{lk}; \beta) }{\tilde{\pi}_0(\vx_k)} ,  \quad \vy_{lk} \sim   P(\vy| \vx_k), \, \vx_k\sim\tilde{\pi}_0(\vx),
 \end{align}
-where the authors of \cite{pavon2018data} recommend  setting  $\tilde{\pi}_0(\vx)$ to a density estimator of $\pi_0(\vx)$, since the integrand  $\hphi_0(\vx; \hat{\beta} )\phi_0^{(i)}(\vx)$ will converge  to a density estimator for $\pi_0(\vx)$ as we iterate Fortet's algorithm. However, in the early iterations of Fortet's algorithm there is no particular advantage in using this heuristic to initialise the importance sampler. Furthermore, this naive importance sampling scheme does not focus on sampling in areas where the integrand has mass (i.e. near its modes for example). Finally, due to the curse of dimensionality, vanilla importance samplers will not scale to high dimensions.
+where the authors of \cite{pavon2018data} recommend  setting  $\tilde{\pi}_0(\vx)$ to a density estimator of $\pi_0(\vx)$, since the integrand  $\hphi_0(\vx; \hat{\beta} )\phi_0^{(i)}(\vx)$ will converge  to a density estimator for $\pi_0(\vx)$ as we iterate Fortet's algorithm. However, in the early iterations of Fortet's algorithm there is no particular advantage in using this heuristic to initialise the importance sampler. Furthermore, this naive importance sampling scheme does not focus on sampling in areas where the integrand has mass (i.e.\ near its modes for example). Finally, due to the curse of dimensionality, vanilla importance samplers will not scale to high dimensions. % Finally, vanilla importance sampling does not scale to high dimensions (due to the curse of dimensionality) .
 
 \subsection{Alternative Formulation as an Unnormalised Likelihood Problem}\label{sec:unormfit}
 Rather than enforcing the normalization constraint via a method of Lagrange multipliers, we can enforce it via the following reparametrisation:
@@ -1282,18 +1282,18 @@ and
 \end{align}
 turning the problem into estimating and fitting an unnormalised likelihood \citep{gutmann2010noise}. This formulation opens the door to alternate estimation techniques to maximum likelihood such as noise contrastive estimation \citep{gutmann2010noise}. 
 \\~\\
-A natural follow-up that arises from this setup is to parametrise the potentials with Gaussian distributions and mixture of Gaussian distributions. This parametrisation would lead to closed form expressions for the partition function and intuitively mixtures of Gaussians seem flexible enough to fit arbitrary distributions. However, we found that these parametrisations are not flexible enough to fit most distributions. This can be explained by looking at how Fortet's algorithm requires one potential to be the reciprocal of the other times the marginal, which in many cases can lead to having one potential being log-concave whilst the other is log-convex. This does not hold true for Gaussian potentials. Further details can be found in Appendix \ref{app:bad_gauss}.
+A natural follow-up arising from this setup is to parametrise the potentials with (mixtures of) Gaussian distributions. This parametrisation would lead to closed form expressions for the partition function and intuitively mixtures of Gaussians seem flexible enough to fit arbitrary distributions. However, we found that these parametrisations are not flexible enough to fit most distributions. This can be explained by looking at how Fortet's algorithm requires one potential to be the reciprocal of the other times the marginal, which in many cases can lead to having one potential being log-concave whilst the other is log-convex. This does not hold true for Gaussian potentials. Further details are found in Appendix \ref{app:bad_gauss}.
 \\~\\\\~\\\\~\\
 
 \section{Direct Half Bridge Drift Estimation with Gaussian Processes}
 
-We will now present a novel approach to approximately solving the empirical Schrödinger bridge problem by exploiting the ``closed form'' expressions of the half bridge problem.  Thus, rather than parametrising the measures in the half bridge and solving the optimisation numerically, we seek to directly approximate the measure that extremises the half bridge objective. We do this by using Gaussian processes \citep{williams2006gaussian} to estimate the drift of the trajectories sampled from the optimal half bridge measure.
+We now present a novel approach to approximately solving the empirical Schrödinger bridge problem by exploiting the ``closed form'' expressions of the half bridge problem.  Thus, rather than parametrising the measures in the half bridge and solving the optimisation numerically, we seek to directly approximate the measure that extremises the half bridge objective. We do this by using Gaussian processes \citep{williams2006gaussian} to estimate the drift of the trajectories sampled from the optimal half bridge measure.
 
 We start from the following observation which in short tells us how to sample from the optimal half bridge distribution:
 \begin{observation}
 Given that we can parametrise a measure $\Q$ with its drift as the solution to the following SDE:
 \begin{align*}
-    d\rvx^{\pm}&(t) =  \pm \rvb^{\pm}(t) + \sqrt{\gamma} d \rvw^{\pm}(t) ,\\
+    d\rvx^{\pm}&(t) =  \rvb^{\pm}(t) + \sqrt{\gamma} d \rvw^{\pm}(t) ,\\
  &\rvx(0) \sim p_0^\Q,\:\rvx(1) \sim p_1^\Q.
 \end{align*}
 Then we can sample from the solution to the following half bridges:
@@ -1301,22 +1301,26 @@ Then we can sample from the solution to the following half bridges:
    \P^{*-} = \arginf_{\P \in \calD(\cdot,\pi_1)}\KL(\P || \Q) \\ 
    \P^{*+} = \arginf_{\P \in \calD(\pi_0,\cdot )}\KL(\P || \Q)
 \end{align*}
-via simulating trajectories (e.g. using the EM method) following the SDEs:
+via simulating trajectories (e.g.\ using the EM method) following the SDEs:
 \begin{align*}
-     d\rvx^{-}(t) &=  - \rvb^{-}(t) + \sqrt{\gamma} d \rvw^{-}(t) , \quad  \rvx(1) \sim \pi_1, \\
+     d\rvx^{-}(t) &=   \rvb^{-}(t) + \sqrt{\gamma} d \rvw^{-}(t) , \quad  \rvx(1) \sim \pi_1, \\
      d\rvx^{+}(t) &=  \rvb^{+}(t) + \sqrt{\gamma} d \rvw^{+}(t) , \quad  \rvx(0) \sim \pi_0.
 \end{align*}
 Paths sampled from the above SDEs will be distributed according to $\P^{*-}$ and $\P^{*+}$ respectively.
 \end{observation}
 \begin{proof}(Sketch.)
-w.l.o.g. The disintegration $\Q( \cdot| \rvx(0) )$ follows the dynamics $d\rvx^{+}(t) =  \rvb^{+}(t) + \sqrt{\gamma} d \rvw^{+}(t)$. Since the optimal half bridge's disintegration is given by $\P^+( \cdot| \rvx(0) ) =\Q( \cdot| \rvx(0) )$, its dynamics (in the $(0,1]$ interval) follow  $d\rvx^{+}(t) =  \rvb^{+}(t) + \sqrt{\gamma} d \rvw^{+}(t)$. What is left is to attach the constraint via $\rvx(0) \sim \pi_0(\rvx(0))$. 
+w.l.o.g. The disintegration $\Q( \cdot| \rvx(0) )$ follows the dynamics $d\rvx^{+}(t) =  \rvb^{+}(t) + \sqrt{\gamma} d \rvw^{+}(t)$. Since the optimal half bridge's disintegration is given by $\P^+( \cdot| \rvx(0) ) =\Q( \cdot| \rvx(0) )$, its dynamics also follow  $d\rvx^{+}(t) =  \rvb^{+}(t) + \sqrt{\gamma} d \rvw^{+}(t)$. What is left is to attach the constraint via $\rvx(0) \sim \pi_0(\rvx(0))$. 
 
 This is simply enforcing the constraints via the product rule (disintegration theorem) and then matching the remainder of the unconstrained interval with the disintegration for the reference distribution $\Q$ following Theorems \ref{thrm:half_bridge_forward} and \ref{thrm:half_bridge_backward}.
 \end{proof}
-Intuitively, we are performing a cut and paste styled operation by cutting  the dynamics of the shortened (unconstrained) time interval and pasting the constraint to it at the corresponding boundary.
+Intuitively, we are performing a cut and paste styled operation by cutting the dynamics of the shortened (unconstrained) time interval and pasting the constraint to it at the corresponding boundary.
 \subsection{Fitting the Drift from Samples}
 
-Once we have sampled trajectories from the half bridge solution ($\left\{ \big(\vx^{+}_n(t_k) \big)_{k=0}^T \right\}_{n=0}^{N}$ or  $\left\{\big(\vx^{-}_m(t_l)\big)_{l=0}^T\right\}_{m=0}^{M}$ ) we  apply the methodology from \citep{ruttor2013approximate, batz2018approximate} in order to infer the optimal half bridge drifts. Note that the method by \cite{ruttor2013approximate} is specified for inferring the drift from a single sampled trajectory, we adapt this method to work for multiple sampled trajectories.
+Once we have sampled trajectories from the half bridge solutions,
+\begin{align}
+    \left\{ \big(\vx^{+}_n(t_k) \big)_{k=0}^T \right\}_{n=0}^{N}, \quad \left\{\big(\vx^{-}_m(t_l)\big)_{l=0}^T\right\}_{m=0}^{M},
+\end{align} %($\left\{ \big(\vx^{+}_n(t_k) \big)_{k=0}^T \right\}_{n=0}^{N}$ or  $\left\{\big(\vx^{-}_m(t_l)\big)_{l=0}^T\right\}_{m=0}^{M}$ ) 
+we  apply the methodology from \citep{ruttor2013approximate, batz2018approximate} in order to infer the optimal half bridge drifts. Note that the method by \cite{ruttor2013approximate} is specified for inferring the drift from a single sampled trajectory, we adapt this method to work for multiple sampled trajectories.
 
 Using the Euler-Mayurama discretisations, we know that the transition probabilities follow a Gaussian distribution.
 
@@ -1335,7 +1339,7 @@ Placing Gaussian process priors on the drift functions $\vb^{-}_{\Q_{i}} \sim \m
         \frac{\vx^{-}_n(t_k) - \vx^{-}_n(t_k - \Delta t)}{\Delta t} = \vb^{+}_{\P_{i}}\left(\vx^{-}_n(t_k - \Delta t), t_k - \Delta t\right) +\frac{\bm{\gamma}^{1/2}}{\Delta t}\epsilon ,\\
         \frac{\vx^{-}_m(t_l - \Delta t)  - \vx^{-}_m(t_l)}{\Delta t}  = -\vb^{-}_{\Q_{i}}\left(\vx^{-}_m(t_l - \Delta t), t_l - \Delta t\right) +\frac{\bm{\gamma}^{1/2}}{\Delta t}\epsilon,
 \end{align*}
-where $\epsilon \sim \calN(\vzero, \I)$. Following \citep{ruttor2013approximate, batz2018approximate}, we assume the dimensions of the drift function are independent (which is equivalent to imposing a block diagonal kernel matrix on a multi-output GP) and thus we fit a separate GP for each dimension, yielding the following predictive mean per dimension $d$ of the drift:
+where $\epsilon \sim \calN(\vzero, \I)$. Following \citep{ruttor2013approximate, batz2018approximate}, we assume the dimensions of the drift function are independent (equivalent to imposing a block diagonal kernel matrix on a multi-output GP) and thus we fit a separate GP for each dimension, yielding the following predictive mean per dimension $d$ of the drift:
 \begin{align}
 [\bar{\vb}^{+}_{\P_{i}}(\vx, t)]_d = \vec\big(\vk_d^{+}(\vx \oplus t)\big)^{\top} \left(\tilde{\mK}_d^{+} + \frac{\gamma}{\Delta t} \mathbb{I}_{MT}\right)^{-1}\!\!\!\!\!\!\vec(\mY_d^{+}), \\
 [\vb^{-}_{\Q_{i}}(\vx, t)]_d = \vec\big(\vk_d^{-}(\vx \oplus t)\big)^{\top} \left(\tilde{\mK}_d^{-} + \frac{\gamma}{\Delta t} \mathbb{I}_{NT}\right)^{-1}\!\!\!\!\!\!\vec(\mY_d^{-}) ,
@@ -1349,17 +1353,17 @@ where,
    &[\vk_d^{-}(\vx \oplus t)]_{kn} = K_d(\vx \oplus t , \vx^{-}_n(t_k)\oplus (t_k))\\
    &[\mY_d^{+}]_{lm} =  \left[\frac{\vx^{-}_m(t_l) - \vx^{-}_m(t_l - \Delta t)}{\Delta t}\right]_d, \quad [\mY_d^{-}]_{kn} =  \left[\frac{\vx^{+}_n(t_k - \Delta t)  - \vx^{+}_n(t_k)}{\Delta t} \right]_d,
 \end{align*}
- $\oplus$ is the concatenation operator, $\vec$ is the standard vectorization operator 
+ $\oplus$ is the concatenation operator, $\vec$ is the standard vectorisation operator 
 \begin{landscape}
 \begin{figure}
     % \centering
     \vspace{-2cm}
     \includegraphics[scale=0.7]{images/gp_IPFP.PNG}
-    \caption{$i^{\text{th}}$ Iteration for drift based approximation to g-IPFP. In each iteration, we draw samples from the process in the direction that incorporates the constraint as an initial value, and we learn the drift which simulates the same path measure in the opposite direction to the sampling. With each iteration $\mathbf{\color{blue}{p^{\P^{*}_i}_0}}$ and $\mathbf{\color{red}{p^{\Q^{*}_i}_1}}$ get close to $\mathbf{\color{blue}{\pi_0}}$ and $\mathbf{\color{red}{\pi_1}}$ respectively.}
+    \caption{$i^{\text{th}}$ Iteration for drift based approximation to g-IPFP. In each iteration, we draw samples from the process in the direction that incorporates the constraint as an initial value, and we learn the drift which simulates the same path measure in the opposite direction to the sampling. With each iteration $\mathbf{\color{blue}{p^{\P^{*}_i}_0}}$ and $\mathbf{\color{red}{p^{\Q^{*}_i}_1}}$ get closer to $\mathbf{\color{blue}{\pi_0}}$ and $\mathbf{\color{red}{\pi_1}}$ respectively.}
     \label{fig:gp_drift}
 \end{figure}
 \end{landscape}
-and $K_d: \R^{d+1} \times \R^{d+1} \rightarrow \R$ is a valid kernel function. In practice, we are not making use of the predictive variances \footnote{We are effectively simply doing Kernel Ridge Regression.}. Instead, we simply use the predictive mean as an estimate of the drift and subsequently use that estimate to perform the EM method.
+and $K_d: \R^{d+1} \times \R^{d+1} \rightarrow \R$ is a valid kernel function. In practice, we are not making use of the predictive variances\footnote{We are effectively simply doing Kernel Ridge Regression.}. Instead, we simply use the predictive mean as an estimate of the drift and subsequently use that estimate to perform the EM method.
 
 We now have the relevant ingredients to carry out this flavour of approximate g-IPFP specified in Algorithm  \ref{alg:gp_gipfp}, where the $\text{SDESolve}\Big(-\bar{\vb}^{-}_{\Q_{i-1}}, \gamma, \pi_1, \Delta t, M\Big)$ routine generates $M$ trajectories using the Euler-Mayurama method.
 
@@ -1403,7 +1407,7 @@ Taking logs on Equation \ref{eq:markov_e} and preserving a linear order in $\Del
 \begin{align*}
     (\vb^+(\vx_t,t)-\vb^-(\vx_{t+\Delta t},t+\Delta t)(\vx_{t+\Delta t}-\vx_t)=\log p_{t+\Delta t}(\vx_{t+\Delta t}) - \log p_t(\vx_t), 
 \end{align*}
-which in the continuous time limit arrives to our chosen flavour \footnote{Different authors (e.g. \cite{nagasawa2012stochastic}) parametrise the duality formula with different signs in turn changing the sign of the EM discretisation.} of Nelson's duality formula \citep{nelson1967dynamical}:
+which in the continuous time limit arrives to our chosen flavour\footnote{Different authors (e.g. \cite{nagasawa2012stochastic}) parametrise the duality formula with different signs in turn changing the sign of the EM discretisation.} of Nelson's duality formula \citep{nelson1967dynamical}:
 \begin{align*}
       \vb^+(\vx_t,t) -\vb^-(\vx_t,t) = \nabla\log p(\vx_t, t).
 \end{align*}
@@ -1430,18 +1434,18 @@ The dual drifts can be obtained using Nelson's duality equations:
 \end{align*}
 We express the dynamical evolution of $\P$ in the backward half bridge as a time reversed process \citep{pavon1991free, nelson1967dynamical}, such that the terminal distribution constraint $\rvx(1) \sim \pi_1$ becomes an initial value problem in reversed time, which is something we know how to sample from. 
 
-In theory, we now have all the elements required to carry out g-IPFP under this control formulation. However, the dual drifts require the logarithmic gradient of the solution to their respective Fokker-Plank equations (i.e. $\nabla_{\vx} p^{\P_{i}}(\rvx(t), t)$, $\nabla_{\vx} p^{\Q_{i-1}}(\rvx(t), t)$). Estimating $p^{\P_{i}}(\rvx(t), t)$ or $p^{\Q_{i-1}}(\rvx(t), t)$ is very costly since we will also need to evaluate such estimations for every point in the interval $[0,1]$ that we use to estimate the integral $\int_0^1 \hdots dt$.
+In theory, we now have all the elements required to carry out g-IPFP under this control formulation. However, the dual drifts require the logarithmic gradient of the solution to their respective Fokker-Plank equations (i.e.\ $\nabla_{\vx} p^{\P_{i}}(\rvx(t), t)$, $\nabla_{\vx} p^{\Q_{i-1}}(\rvx(t), t)$). Estimating $p^{\P_{i}}(\rvx(t), t)$ or $p^{\Q_{i-1}}(\rvx(t), t)$ is very costly since we will also need to evaluate such estimations for every point in the interval $[0,1]$ that we use to estimate the integral $\int_0^1 \hdots dt$.
 
 \subsection{Forward and Backward Diffusions}
 
-As mentioned previously, Equations \ref{eq:controlled_half_bridge_backward}, and \ref{eq:controlled_haalf_bridge_forward} exhibit the computational challenge of estimating solutions to the FPK equation along trajectories in $[0,1]$.  In order to overcome this, we derive alternate expressions for Equations \ref{eq:controlled_half_bridge_backward} and \ref{eq:controlled_haalf_bridge_forward} that do not involve FPK solution terms inside the time integral.
+As mentioned, Equations \ref{eq:controlled_half_bridge_backward}, and \ref{eq:controlled_haalf_bridge_forward} exhibit the computational challenge of estimating $p^{\X_{i}}(\rvx(t), t)$. In order to overcome this, we derive alternate expressions for Equations \ref{eq:controlled_half_bridge_backward} and \ref{eq:controlled_haalf_bridge_forward} that do not involve FPK solution terms inside the time integral.
 \begin{proposition}\label{prop:halfforcontrol}
 The forward half bridge (setting $\gamma=1$  for simplicity):
 \begin{align*} 
    \rvb^{+}_{\Q_{i}}(t) =\min_{\rvb_\Q^{-} \in \calB } & \E_\Q\left[\int_0^1 \frac{1}{2}\big|\big|\rvb_\Q^{+}(t) -\rvb^{+}_{\P_{i}}(t)\big|\big|^2 dt\right], \nonumber \\
     s.t.\;\;\; d\rvx(t) = \rvb_\Q^{+}(t) &dt +  \rvw^{+}(t), \;\; \rvx(0) \sim \pi_0
 \end{align*}
-can be expressed as \footnote{We thank Professor Austen Lamacraft for providing the first sketch of this proof, which we have reviewed in detail and iterated on.}:
+can be expressed as\footnote{We thank Professor Austen Lamacraft for providing the first sketch of this proof, which we have reviewed in detail and iterated on.}:
 \begin{align} \label{eq:div_control_forward}
    \rvb^{+}_{\Q_{i}}(t) =\min_{\rvb^{-} \in \calB } -2\E_{p^{\Q}_1}\left[\log \pi_1 \right] &+ \E_{\Q}\left[\int_0^1 \left(\frac{1}{2}||\rvb_\Q^{+}(t) -\rvb_{\P_{i}}^{-}(t)||^2 - \nabla\cdot\rvb^{-}_{\P_{i}}(t) \right)\right], \nonumber \\
     s.t.\;\;\; d\rvx(t) = \rvb_\Q^{+}(t) &dt + \rvw^{+}(t), \;\; \rvx(0) \sim \pi_0.
@@ -1465,7 +1469,7 @@ Using the chain rule for the second derivative $\Delta \log  p = -\frac{(\nabla 
 &\KL(\Q||{\P_{i}}) =\KL( p_0^{\Q}|| p_0^{{\P_{i}}}) +\\ &\frac{1}{2}\E_{\Q}\left[\int_0^1 \left(\!\!|| \rvb_\Q^{+} - \rvb_{\P_{i}}^{-}||^2 \!\!- 2\nabla\log p_t^{\P_{i}}\!\!\!\cdot \!( \rvb_\Q^{+} - \rvb_{\P_{i}}^{-}) - \Delta \log  p^{\P_{i}}\!\!\!+ \frac{\nabla  p^{\P_{i}}}{ p^{\P_{i}}}\!\!\right)dt\right].
 \end{align*}
 
-Using Itô's rule we can show the following is true: 
+Using Itô's rule, we can show the following: 
 \begin{align*}
 \E_\Q\left[\log p^{\P_{i}}_1-\log p^{\P_{i}}_0\right] = \E_\Q\left[\int dt \left(\rvb^+_\Q\cdot\nabla\log p_t^{\P_{i}} + \frac{1}{2}\Delta \log p_t^{\P_{i}}\right)\right],\\
 \E_\Q\left[\int dt \left(\rvb_+^\Q\cdot\nabla\log p_t^{\P_{i}} \right)\right] = \E_\Q\left[\log p^{\P_{i}}_1-\log p^{\P_{i}}_0 - \int dt \left( \frac{1}{2}\Delta \log p_t^{\P_{i}}\right)\right].
@@ -1479,13 +1483,13 @@ which implies (taking expectations on both sides w.r.t. $\Q$ and then dividing b
 \begin{align*}
 \partial_t \E_{\Q}[\log  p_t^{{\P_{i}}}] = \E_{\Q}{\left[\rvb^+_\Q\cdot\nabla\log p_t^{\P_{i}} + \frac{1}{2}\Delta \log p_t^{\P_{i}}\right]}.
 \end{align*}
-Integrating both sides from $0$ to $1$ (and applying Fubbini) gives exactly the above result.
+Integrating both sides from $0$ to $1$ (and applying Fubini) gives the result.
 
 Substituting this back into the KL (the Laplacians cancel out):
 \begin{align*}
 \KL(\Q||{\P_{i}}) = &\E_\Q\left[-\log \frac{ p^{\P_{i}}_1}{ p^\Q_0}\right] \\+ &\frac{1}{2}\E_{\Q}\left[\int_0^1 \left(|| \rvb_\Q^{+} - \rvb_{\P_{i}}^{-}||^2 + 2\nabla\log p_t^{\P_{i}} \cdot \rvb_{\P_{i}}^{-}+ \frac{\Delta  p^{\P_{i}}}{ p^{\P_{i}}}\right)dt\right].
 \end{align*}
-Using that $ p_t^{\P_{i}}$ obeys the Fokker-Planck equation (this is the case for diagonal covariance Itô-Processes, otherwise we would have cross terms from the Hessian, see Equation 13.4 in \cite{nelson1967dynamical}\footnote{more generally we have $\pm\partial_t p_t^{\P_{i}} = \frac{1}{2}\Delta p_t^{\P_{i}}\mp\nabla\cdot(\rvb_\pm^{\P_{i}} p_t^{\P_{i}})$}): 
+Since $ p_t^{\P_{i}}$ obeys the Fokker-Planck equation (this is the case for diagonal covariance Itô-Processes, otherwise we would have cross terms from the Hessian, see Equation 13.4 in \cite{nelson1967dynamical}\footnote{more generally we have $\pm\partial_t p_t^{\P_{i}} = \frac{1}{2}\Delta p_t^{\P_{i}}\mp\nabla\cdot(\rvb_\pm^{\P_{i}} p_t^{\P_{i}})$}): 
 \begin{align*}
 -\partial_t p_t^{\P_{i}} = \frac{1}{2}\Delta p_t^{\P_{i}}+\nabla\cdot(\rvb_{-}^{\P_{i}} p_t^{\P_{i}}).
 \end{align*}
@@ -1500,15 +1504,15 @@ Dividing both sides by $ p_t^{\P_{i}}$:
 \end{align*}
 Substituting back into the KL we have:
 \begin{align*}
-\KL(\Q||{\P_{i}}) &= \E_\Q\left[-\log \frac{{ p^{\P_{i}}_1}^2}{ p^\Q_0  p_0^{{\P_{i}}}}\right] + \frac{1}{2}\E_{\Q}\left[\int_0^1 \left(|| \rvb_\Q^{+} - \rvb_{\P_{i}}^{-}||^2 - 2\nabla\cdot \rvb^{-}_{\P_{i}} \right)dt\right], \\
-\KL(\Q||{\P_{i}}) &= \E_\Q\left[-\log \frac{{ p^{\P_{i}}_1}^2}{ p^\Q_0   p_0^{{\P_{i}}}}\right] + \E_{\Q}\left[\int_0^1 \left(\frac{1}{2}|| \rvb_\Q^{+} - \rvb_{\P_{i}}^{-}||^2 - \nabla\cdot \rvb^{-}_{\P_{i}} \right)dt\right].
+\KL(\Q||{\P_{i}}) &= \E_\Q\left[-\log \frac{{ p^{\P_{i}}_1}^2}{ p^\Q_0  p_0^{{\P_{i}}}}\right] + \frac{1}{2}\E_{\Q}\left[\int_0^1 \left(|| \rvb_\Q^{+} - \rvb_{\P_{i}}^{-}||^2 - 2\nabla\cdot \rvb^{-}_{\P_{i}} \right)dt\right], %\\
+%\KL(\Q||{\P_{i}}) &= \E_\Q\left[-\log \frac{{ p^{\P_{i}}_1}^2}{ p^\Q_0   p_0^{{\P_{i}}}}\right] + \E_{\Q}\left[\int_0^1 \left(\frac{1}{2}|| \rvb_\Q^{+} - \rvb_{\P_{i}}^{-}||^2 - \nabla\cdot \rvb^{-}_{\P_{i}} \right)dt\right].
 \end{align*}
 We are only interested in terms that depend on $\rvb^{+}_\Q$ for the optimisation. Using that $p^{\P_{i}}_1=\pi_1$, which follows as a constraint from the previous iteration, we arrive at:
 \begin{align}
 \KL(\Q||{\P_{i}}) \propto -2\E_{ p^\Q_1}\left[\log {{ \pi_1 }} \right] + \E_{\Q}\left[\int_0^1 \left(\frac{1}{2}|| \rvb_\Q^{+} - \rvb_{\P_{i}}^{-}||^2 - \nabla\cdot \rvb^{-}_{\P_{i}} \right)dt\right].
 \end{align}
 \end{proof}
-Following the same steps as above we can derive the equivalent result for the backward bridge:
+Following the same steps as above, we derive the equivalent result for the backward bridge.
 \begin{proposition}
 The backward half bridge:
 \begin{align*} 
@@ -1541,7 +1545,7 @@ We highlight that the newly derived objective has an interpretable  decompositio
  \mathcolor{blue}{\overbrace{-2\E_{p^{\P}_0}\left[\log \pi_0 \right]}^{\textbf{cross entropy/data fit}}} &+ \mathcolor{red}{\overbrace{\E_{\P}\left[\int_0^1 \left(\frac{1}{2}||\rvb_\P^{-}(t) - \rvb_{\Q_{i-1}}^{+}(t)||^2 + \nabla\cdot\rvb^{+}_{\Q_{i-1}}(t) \right)\right] }^{\textbf{path error}}}.
 \end{align*}
 
-The $\mathcolor{blue}{\textbf{cross entropy/data fit}}$ term acts a density estimator encouraging the drift to match its end point distribution, in this case $\mathcolor{blue}{\pi_0}$ (remember the starting distribution $\pi_1$ is already enforced via the SDE parametrisation). Meanwhile, the $\mathcolor{red}{\textbf{path error}}$ term enforces the duality of the drifts, as well as making the process akin to the reference prior in the KL sense.
+The $\mathcolor{blue}{\textbf{cross entropy/data fit}}$ term acts a density estimator encouraging the drift to match its end point distribution, in this case $\mathcolor{blue}{\pi_0}$. Meanwhile, the $\mathcolor{red}{\textbf{path error}}$ term enforces the duality of the drifts, as well as making the process akin to the reference prior in the KL sense.
 
 Note that the new terms left to estimate that may seem nontrivial are the cross entropy terms $\E_{p^{\Q}_1}\left[\log \pi_1 \right]$ and $\E_{p^{\P}_0}\left[\log \pi_0 \right]$. We will later discuss how to estimate the cross entropy of two distribution that are only available through samples. 
 
@@ -1554,10 +1558,10 @@ The objectives we have just derived are in general not solvable in closed form f
     \item We need to be able to estimate the cross entropy terms as discussed previously.
 \end{itemize}
 
-We will now proceed to discuss these approximations in more detail.
+We proceed to discuss these approximations in more detail.
 \subsubsection{Numerical Optimization (Differentiable Parametrisation)}
 
-In order to optimise the control based variants of the half bridge objectives, we need to parametrise the drift as a differentiable function \footnote{We could alternatively parametrise the space of admissible control signals $\calB$ as a functional space (i.e. an  RKHS) in which we may be able to carry out minimisation of the half bridges in closed form.}. We parametrise the forward and backward drift with neural networks:
+In order to optimise the control based variants of the half bridge objectives, we need to parametrise the drift as a differentiable function \footnote{We could alternatively parametrise the space of admissible control signals $\calB$ as a functional space (i.e.\ an  RKHS \citep{alvarezkernel}) in which we may be able to carry out minimisation of the half bridges in closed form.}. We parametrise the forward and backward drift with neural networks:
 \begin{align} \label{eq:drift_param}
     \rvb^{+}_{\Q}(t) := \rvb^{+}_{\phi}(\vx(t), t), \nonumber \\
     \rvb^{-}_{\P}(t) := \rvb^{-}_{\theta}(\vx(t), t).
@@ -1639,7 +1643,7 @@ minimizing the forward KL (red) and the reverse KL (blue).}
     \label{fig:babrber_kl}
 \end{figure}
 
-The forward KL (e.g. Maximum Likelihood)  $\argmin_{\Q \in \cdot }\KL(\P ||\Q)$  blows up  when $\P$ tries to assign $0$ to regions where $\Q$ has mass. The reverse KL (i.e $\argmin_{\Q }$ $\KL(\Q ||\P)$), on the other hand, it is a well studied fact that it can be prone to mode collapse \citep{zhang2019variational}. The issue arises from the expectations and minimisations both being taken with respect to $\Q$. Thus we can set the measure $\Q$ to 0 for regions where $\P$ has mass without incurring in an additional penalty since this zeroes out the cost over that region.
+The forward KL (e.g. Maximum Likelihood)  $\argmin_{\Q \in \cdot }\KL(\P ||\Q)$  blows up  when $\P$ tries to assign $0$ to regions where $\Q$ has mass. The reverse KL (i.e $\argmin_{\Q }$ $\KL(\Q ||\P)$) can be prone to mode collapse \citep{zhang2019variational}. The issue arises from the expectations and minimisations both being taken with respect to $\Q$. Thus we can set the measure $\Q$ to 0 for regions where $\P$ has mass without incurring in an additional penalty since this zeroes out the cost over that region.
 
 As put succinctly in \cite{lawrence2001variational}:
 
@@ -1692,7 +1696,7 @@ In this section we studied and proposed different approaches for numerically sol
 %\chapter{Evaluation} 
 \chapter{Experiments}
 
-In this section we explore to what extent our methods for the empirical Schrödinger bridge perform on toy 1D and 2D datasets. We limit to toy data which we can visually evaluate, due to the early nature of the approaches. This helps gain a practical understanding of their mechanics and limitations before handling real world data. 
+In this section we explore the performance of our methods for the empirical Schrödinger bridge on toy 1D and 2D datasets. We limit to toy data which we can visually evaluate, due to the early nature of the approaches. This helps gainining a practical understanding of their mechanics and limitations before handling real world data. 
 
 Our experiments can be grouped into the following tasks:
 \begin{itemize}
@@ -1701,7 +1705,7 @@ Our experiments can be grouped into the following tasks:
     \item \textbf{Non-Gaussian Distributions Tests:} Here we explore the tasks for mapping from a unimodal Gaussian to a complex non-Gaussian distribution, such as the moons and circles datasets \cite{pedregosa2011scikit}. Due to time constraints, we only explored this test with the direct drift estimation approach.
 \end{itemize}
 
-Finally, we select two toy datasets (one unimodal to unimodal and one unimodal to bimodal) which all methods managed to fit visually and construct a hypothesis test in order to compare the methods against each other in a more statistically sound framework.  We have open sourced the code for the experiments and algorithms \footnote{For our proposed approach the experiments can be found at \url{https://github.com/franciscovargas/SC-IPFP/tree/master/SC_IPFP/torch/final_notebooks}. For the experiments with the method by \cite{pavon2018data} the notebooks can be found at \url{https://github.com/franciscovargas/DataDrivenSchrodingerBridge/tree/master/notebooks}}.
+Finally, we select two toy datasets (one unimodal to unimodal and one unimodal to bimodal) which all methods managed to fit visually, and construct a hypothesis test for comparing the methods against each other in a more statistically sound framework.  We have open-sourced the code for the experiments and algorithms \footnote{For our proposed approach the experiments can be found at \url{https://github.com/franciscovargas/SC-IPFP/tree/master/SC_IPFP/torch/final_notebooks}. For the experiments with the method by \cite{pavon2018data} the notebooks can be found at \url{https://github.com/franciscovargas/DataDrivenSchrodingerBridge/tree/master/notebooks}}.
 \begin{figure}[t]
     \centering
     \includegraphics[scale=0.4,trim={2.3cm 0.2cm 1.5cm 0}, clip]{images/Pavon/Forward_unimodal_working_pavon_relu_nn500.png}\\\vspace{-0.2cm}
@@ -1720,7 +1724,7 @@ Finally, we select two toy datasets (one unimodal to unimodal and one unimodal t
 \end{figure}
 We found \cite{pavon2018data} to be extremely sensitive to the value of $\gamma$ in the prior $\W^{\gamma}$: for most values of $\gamma < 5$, the method worked poorly and the boundary distributions would collapse to Dirac delta distributions. In order to overcome this issue, we had to experiment with large values of $\gamma$. Alternatively, we found that another heuristic to overcome this issue was to standardise the data.  This led us to understand that the issue was due to not being able to cover the support of the boundary distributions when sampling from the transition density of $\W^{\gamma}$. 
 
-We set $\gamma=1000$ in all the following experiments, unless stated otherwise. We determined this value to be stable enough for us to explore the method. We used $400$ Monte Carlo  samples for each of the expectations approximated. A single hidden layer neural network \citep{lecun2015deep} with ReLu activations \citep{glorot2011deep} with $500$ hidden units is used to parametrise the potentials across all experiments. We used Glorot initialisation \citep{glorot2010understanding} to initialize the weights and the optimizer was Adagrad \citep{duchi2011adaptive}.  Each example was trained for an outer loop of $250$ epochs with $150$ inner epochs for the MLE subiterations. 
+We set $\gamma=1000$ in all the following experiments, unless stated otherwise. We determined this value to be stable enough for us to explore the method. We used $400$ Monte Carlo  samples for each of the expectations approximated. A single hidden layer neural network \citep{lecun2015deep} with ReLu activations \citep{glorot2011deep} with $500$ hidden units is used to parametrise the potentials across all experiments. We used Glorot initialisation \citep{glorot2010understanding} to initialize the weights and the optimizer was Adagrad \citep{duchi2011adaptive}.  Each example was trained for an outer loop of $250$ epochs with $150$ inner epochs for the MLE sub-iterations. 
 \begin{figure}
     \centering
     \includegraphics[scale=0.4,trim={2.3cm 1cm 2.5cm 0}, clip]{images/Pavon/pavon convergence big var.png} \vspace{-0.6cm}
@@ -1984,7 +1988,7 @@ Similar to the circles dataset, the scales were picked to give a nice visual sca
 \section{Stochastic Control (SC)  Approach}
 
 
-Throughout this section we employ neural networks \citep{lecun2015deep} to parametrise the drifts in Equation \ref{eq:drift_param} and experiment with 3 different types of activations: Tanh, Hard Tanh, ReLu.  We varied layer widths and depths in order to obtain good results without careful regard for overfitting, since, as mentioned earlier, we are merely exploring the capacities and faults of the approaches. Across all experiments, we initialise the weights of the neural networks using Glorot initialisation \citep{glorot2010understanding} and we used the Adagrad optimiser \citep{duchi2011adaptive}. Due to the KNN based approach to computing cross entropy being unstable, we used the KDE based approach across all experiments. This method allowed using bigger datasets than the previous two methods, thus we used 900 datapoints in each toy dataset, 100 time steps for the EM method and a batch size of 900 (only one batch) for the optimiser. 
+Throughout this section we employ neural networks \citep{lecun2015deep} to parametrise the drifts in Equation \ref{eq:drift_param} and experiment with 3 different types of activations: Tanh, Hard Tanh, ReLu.  We varied layer widths and depths in order to obtain good results, without careful regard for overfitting, since, as mentioned, we are merely exploring the capacities and faults of the approaches. Across all experiments, we initialise the weights of the neural networks using Glorot initialisation \citep{glorot2010understanding} and we used the Adagrad optimiser \citep{duchi2011adaptive}. Due to the KNN based approach to computing cross entropy being unstable, we used the KDE based approach across all experiments. This method allowed using bigger datasets than the previous two methods, thus we used 900 datapoints in each toy dataset, 100 time steps for the EM method and a batch size of 900 (only one batch) for the optimiser. 
 
 \subsection{Unimodal Experiments}
 For the unimodal experiments we focus on mapping between normal distributions with different means and variances.
@@ -2002,7 +2006,7 @@ Data was generated using:
     \label{fig:boundsbigvarnn}
 \end{figure}
 
-For these particular experiments, we found very little differences among the trajectories learned by different activations. Results can be found in Figures \ref{fig:boundsbigvarnn} and \ref{fig:trajectoriesbigvarnn}, from which we can see a good fit for the marginal with low variance, but a worse fit for the high variance distribution where the variance seems to be matched but the mode is not.
+For these particular experiments, we found very little differences among the trajectories learned by different activations. Results can be found in Figures \ref{fig:boundsbigvarnn} and \ref{fig:trajectoriesbigvarnn}, where we can see a good fit for the marginal with low variance, but a worse fit for the high variance distribution where the variance is matched but the mode is not.
 \subsection{Multimodal Experiments}
 In this section we followed the generative process:
 \begin{align*}
@@ -2110,7 +2114,7 @@ First, we summarize our findings, highlighting the empirical capacities of the t
     \item \textbf{ 3 Modes:} Being able to split into 3 modes and merge into one.
     \item \textbf{Non-Gaussian $\bm{\pi_0,\pi_1}$:} Being able to handle non-Gaussian boundary distributions (moons and circles datasets). 
     \item \textbf{Small Variance:} Being able to match a boundary distribution that has a numerically small variance (e.g. tending towards a point mass).  
-    \item \textbf{Works at $\bm{\gamma=1}$:} Being able to work for a volatility of $\gamma=1$. We consider it working if it handles at least  a radius of 4 from the between the two distributions, meaning the mode that is most distant to the unimodal distribution has a magnitude of 4. The only method failing this milestone was the method by \cite{pavon2018data} since the method effectively only worked for $\gamma=1$ when the support of the data was within the unit cube.
+    \item \textbf{Works at $\bm{\gamma=1}$:} Being able to work for a volatility of $\gamma=1$. We consider it working if it handles at least  a radius of 4 between the two distributions, meaning the mode that is most distant to the unimodal distribution has a magnitude of 4. The only method failing this milestone was the method by \cite{pavon2018data} since the method effectively only worked for $\gamma=1$ when the support of the data was within the unit cube.
     \item \textbf{Distant $\bm{\pi_0, \pi_1}$:} This is effectively the same milestone as above, however we do not limit the radius to 3. It tests how well the models work when the distributions are very far apart from each other. We found that the method by \cite{pavon2018data} and our direct drift estimation approach did not work well in this scenario and required either increasing $\gamma$ or standardising the data.
 \end{itemize}
 
@@ -2144,13 +2148,13 @@ and
      \color{blue}{\pi_0(x)} &\color{blue}{= \calN(x; 0,  1)} \\
     \color{red}{\pi_1(y)} &\color{red}{= \frac{1}{2}\calN(y; 1.8, 0.6 ^2)}\color{red}{ + \frac{1}{2}\calN(y; -1.9, 0.6 ^2) }.
 \end{align*}
-We then carry out a Kolmogorov-Smirnov \citep{kolmogorov1933sulla} test where the null hypothesis is that the learned marginals from our methods are equal. We set the significance level to its usual setting  $\alpha=0.05$, meaning that if we observe a $p$-value $\leq 0.05$, we reject the null hypothesis that the two distributions are equal. We present results in Table \ref{tab:final}, displaying both the Kolmogorov test statistic as a goodness of fit measure (the lower the better) across methods and the estimated $p$-value for the test. We reject the null-hypothesis three times for the stochastic control based method meaning that it had the lowest performance across all methods. We also observe that overall the Direct Drift method and the method by \cite{pavon2018data} are fairly on-par for these two datasets.
+We then perform a Kolmogorov-Smirnov \citep{kolmogorov1933sulla} test where the null hypothesis is that the learned marginals from our methods are equal. We set the significance level to its usual setting  $\alpha=0.05$, meaning that if we observe a $p$-value $\leq 0.05$, we reject the null hypothesis that the two distributions are equal. We present results in Table \ref{tab:final}, displaying both the Kolmogorov test statistic as a goodness of fit measure (the lower the better) across methods and the estimated $p$-value for the test. We reject the null-hypothesis three times for the stochastic control based method meaning that it had the lowest performance across all methods. We also observe that overall the Direct Drift method and the method by \cite{pavon2018data} are fairly on-par for these two datasets.
 %\chapter{Summary and Conclusions} 
 \chapter{Discussion}
 Schrödinger bridges have broad applications in physical sciences, but only recently have they sparked interest in the machine learning community.
-In this work we have aimed to bridge this gap, firstly by trying to present an extensive, yet accessible background to the problem, producing proofs for select known results whose original resource we could not find. We have highlighted some of its known connections to the more popular Wasserstein distance and thus we have suggested its potential application in machine learning as a way of comparing distributions. Furthermore, we explored the connection between IPFP and generative adversarial networks, motivating the potential application of using Schrödinger bridges for the task of domain adaptation.
+In this work we have aimed to bridge this gap, firstly by trying to present an extensive yet accessible background to the problem, producing proofs for select known results whose original resource we could not find. We have highlighted some of its known connections to the more popular Wasserstein distance and thus we have suggested its potential application in machine learning as a way of comparing distributions. Furthermore, we explored the connection between IPFP and generative adversarial networks, motivating the potential application of using Schrödinger bridges for the task of domain adaptation.
 
-We have learned and illustrated how challenging it is to develop a numerical algorithm for solving the Schrödinger bridge. Part of this challenge comes from having to deal with more than one boundary condition. This is where the g-IPFP framework comes in, allowing us to alternate sub-problems (half bridges) with only one boundary condition until convergence. However, empirically solving these half bridges turned out to be challenging, since they presented harder variants of typical challenges that arise in machine learning, such as numerical integration and density estimation.
+We have learned and illustrated how challenging it is to develop a numerical algorithm for solving the Schrödinger bridge. Part of this challenge comes from having to deal with more than one boundary condition. This is where the g-IPFP framework comes in, allowing us to alternate between sub-problems (half bridges) with only one boundary condition until convergence. However, empirically solving these half bridges proved challenging, since they presented harder variants of typical challenges that arise in machine learning, such as numerical integration and density estimation.
 
 We proposed two methods for solving the empirical setting of the Schrödinger bridge and explored them through simple 1D and 2D simulations which allowed us to visually and extensively evaluate the properties of the proposed methods.  We compared against the recently proposed method by \cite{pavon2018data} and showed competitive performance across two toy datasets, whilst being more robust to values of $\gamma$ than the method of \citep{pavon2018data}.
 
@@ -2164,8 +2168,8 @@ The key contributions of this thesis are:
     \item Provided a thorough and accessible introduction to the problem, with motivational examples closer to machine learning as well as intuitive proof sketches for steps that are skipped in the available literature.
     \item Structured the existing IPFP algorithmic framework and provided formal connections between existing methods, highlighting that they are within the IPFP framework.
     \item Turned the iterative procedure for solving the Schrödinger bridge into a classical machine learning task at each iteration (i.e. regression). This contribution makes the problem much more accessible to the machine learning community.
-    \item Proposed, implemented and evaluated two new working methods that use common methodology from machine learning. The newly proposed methods overcome some of the conceptual issues in \cite{pavon2018data} (e.g. importance sampling does not scale to high dimensions, unstable for low values of $\gamma$).
-    \item Using thorough experimentation, we uncovered many of the breaking points of different methods (e.g. mode collapse, sampling between distant boundary distributions), including ours. This is work that is missing from \cite{pavon2018data} and \cite{bernton2019schr}, thus we provide a holistic view of the methods, which is helpful for porting the algorithms to practical applications.
+    \item Proposed, implemented and evaluated two new working methods that use common methodology from machine learning. The newly proposed methods overcome some of the conceptual issues in \cite{pavon2018data} (e.g.\ importance sampling not scaling to high dimensions, instability for low values of $\gamma$).
+    \item Using thorough experimentation, we uncovered many of the breaking points of different methods (e.g.\ mode collapse, sampling between distant boundary distributions), including ours. This is work that was missing from \cite{pavon2018data} and \cite{bernton2019schr}, thus we provided a holistic view of the methods, helpful for porting the algorithms to practical applications.
 \end{itemize}
 
 \section{Further Work}
@@ -2173,12 +2177,12 @@ The key contributions of this thesis are:
 Whilst we introduced and evaluated to a great extent the first successful machine learning based approach for solving the Schrödinger bridge, there are still areas of exploration left to pursue further:
 
 \begin{itemize}
-    \item Since our best performing method is based on Gaussian processes, they will not scale well to large datasets. \cite{ruttor2013approximate} propose a sparse expectation maximisation based algorithm for inferring the drift of SDEs which we did not explore. This could potentially make the DDE method scalable enough for optimising the GP hyperparameters, which we were unable to do due to speed limitations.
+    \item Our best performing method is based on Gaussian processes, which will not scale well to large datasets. \cite{ruttor2013approximate} propose a sparse expectation maximisation based algorithm for inferring the drift of SDEs which we did not explore. This could potentially make the DDE method scalable enough for optimising the GP hyperparameters, which we were unable to do due to speed limitations.
     \item We found that the method by \cite{ruttor2013approximate} had difficulties in learning drifts whose end point distribution was very sharp (low variance). Optimising the hyperparameters may fix this issue.  
     \item Explore the learning of the drift using a method that is not based on Gaussian processes.
     \item Some of the unimodal examples admit closed form solutions for the full bridge. We should use this as a ground truth and compute the relative path error to the closed form drift in order to evaluate the methods.
     \item The direct half bridge drift estimation method we proposed can be adapted to the static Schrödinger bridge. This would be an interesting avenue of research, potentially reducing the computational complexity of the approach.
-    \item We should explore our methods on real tasks and real datasets. One possible task is 2-sample hypothesis tests as in \cite{gretton2012kernel}, where we would use our approach to compare datasets to each other. 
+    \item We should explore our methods on real world data. One possible task is 2-sample hypothesis tests as in \cite{gretton2012kernel}, where we would use our approach to compare datasets to each other. 
     \item Explore and compare our proposed method with the method in \cite{bernton2019schr}.
 \end{itemize}
 
@@ -2272,7 +2276,7 @@ where $\mL$ can be parametrised in terms of an unconstrained vector.
 \section{Mixture of Exponentiated Quadratics}
 
 
-We now consider if it is possible to extend the exponentiated quadratic  parametrisation of the potentials to a mixture of exponentiated quadratics. In order to achieve this parametrisation, we need to reconsider the integrability constraint.
+We now consider whether it is possible to extend the exponentiated quadratic  parametrisation of the potentials to a mixture of exponentiated quadratics. In order to achieve this parametrisation, we need to reconsider the integrability constraint.
 
 \begin{align}
 \hphi_0( \vx ; \beta) =  \sum_{k_x} \pi_{k_x} \calN(\vx | \vmu_{k_x}, \mSigma_{k_x}) \\
